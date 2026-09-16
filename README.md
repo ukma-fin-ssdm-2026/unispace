@@ -1,5 +1,6 @@
 ## Інформація про команду
 
+[![CI Pipeline](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml/badge.svg)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml)
 ---
 ### Наші ролі: 
 1. Супроводжувач репо - Дар'я Мельник (DarkHeavenAngel)

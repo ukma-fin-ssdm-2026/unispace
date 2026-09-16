@@ -124,6 +124,6 @@ docs: add AI usage section
 - [x] Трекурова Анастасія (GitHub: @stacytrek) 
 - [x] Михайлик Ольга (GitHub: @plusikkk) 
 - [X] Тимохина Ксенія (GitHub: @XenonTim) 
-- [X] Спіріна Дар’я (GitHub: @Hedgehog-blue) 
+- [ ] Спіріна Дар’я (GitHub: @Hedgehog-blue) 
 
 Примітка: Структуровано за допомогою ШІ.

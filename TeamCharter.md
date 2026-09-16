@@ -123,7 +123,7 @@ docs: add AI usage section
 - [ ] Мельник Дар’я (GitHub: @DarkHeavenAngel) 
 - [x] Михайлик Ольга (GitHub: @plusikkk) 
 - [ ] Трекурова Анастасія (GitHub: @stacytrek) 
-- [ ] Тимохина Ксенія (GitHub: @XenonTim) 
+- [X] Тимохина Ксенія (GitHub: @XenonTim) 
 - [ ] Спіріна Дар’я (GitHub: @Hedgehog-blue) 
 
 Примітка: Структуровано за допомогою ШІ.

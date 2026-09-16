@@ -121,9 +121,9 @@ docs: add AI usage section
  
 ## 9. Підписи 
 - [ ] Мельник Дар’я (GitHub: @DarkHeavenAngel) 
-- [ ] Михайлик Ольга (GitHub: @plusikkk) 
 - [x] Трекурова Анастасія (GitHub: @stacytrek) 
-- [ ] Тимохина Ксенія (GitHub: @XenonTim) 
+- [x] Михайлик Ольга (GitHub: @plusikkk) 
+- [X] Тимохина Ксенія (GitHub: @XenonTim) 
 - [ ] Спіріна Дар’я (GitHub: @Hedgehog-blue) 
 
 Примітка: Структуровано за допомогою ШІ.

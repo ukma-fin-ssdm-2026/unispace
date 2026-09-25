@@ -16,10 +16,19 @@ UniSpace — вебзастосунок, який працює як шар ке�
 * Користувацькі історії [(User Stories)](docs/requirements/user-stories.md)
 * Матриця простежуваності [(RTM)](docs/requirements/rtm.md)
 
+## Архітектура системи
+Архітектурна документація, моделі даних та діаграми зберігаються в директорії `docs/architecture/`:
+* Архітектурний огляд [(High-Level Design)](docs/architecture/high-level-design.md)
+* Матриця простежуваності архітектури [(Traceability Matrix)](docs/architecture/traceability-matrix.md)
+* Модель даних [(Data Model)](docs/architecture/data-model.md)
+* Модель загроз STRIDE [(Threat Model)](docs/architecture/threat-model.md)
+* Архітектурні рішення [(ADR)](docs/architecture/decisions/)
+* UML Діаграми [(UML)](docs/architecture/uml/)
+
 ## Інформація про команду
 ### Наші ролі: 
-1. Супроводжувач репо та керівник якості - Дар'я Мельник (DarkHeavenAngel)
+1. Супроводжувач репо, керівник якості та керівник архітектури - Дар'я Мельник (DarkHeavenAngel)
 2. Супроводжувач СІ та керівник простежуваності - Ольга Михайлик (plusikkk)
 3. Керівник документації - Анастасія Трекурова (stacytrek)
-4. Керівник трекера завдань та керівник вимог - Ксенія Тимохина (XenonTim)
-5. Керівник опису проєкту та керівник функціональних вимог - Дар'я Спіріна (Hedgehog-blue)
+4. Керівник трекера завдань, керівник вимог та керівник UML- Ксенія Тимохина (XenonTim)
+5. Керівник опису проєкту, керівник функціональних вимог та керівник моделі даних і загроз - Дар'я Спіріна (Hedgehog-blue)

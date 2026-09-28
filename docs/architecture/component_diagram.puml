@@ -1,0 +1,84 @@
+@startuml
+!theme plain
+skinparam componentStyle uml2
+skinparam roundCorner 10
+
+skinparam package {
+    BackgroundColor<<Frontend>> #EAF3FF
+    BorderColor<<Frontend>> #7A9EC2
+    BackgroundColor<<Backend>> #EBF7EE
+    BorderColor<<Backend>> #76A880
+    BackgroundColor<<Data>> #FBEBF3
+    BorderColor<<Data>> #B5849E
+}
+
+package "SpaceOps" {
+
+    package "Frontend (Client)" <<Frontend>> {
+        [Client Application\n(Web UI)] as Client
+        note right of Client
+            Handles user
+            interactions:
+            view schedule, book rooms,
+            manage tasks, etc.
+        end note
+    }
+
+    () "REST API\n(HTTPS)" as REST_API
+
+    package "Backend (Business Logic)" <<Backend>> {
+        [API Gateway / Auth Service\n(Authentication & Authorization)] as Gateway
+        note right of Gateway
+            Validates user credentials
+            and access rights, and routes
+            requests to appropriate services.
+        end note
+
+        [Task Management Service\n(Tasks & Scheduling)] as TaskService
+        [Resource Management Service\n(Rooms & Resources)] as ResourceService
+        [Reporting Service\n(Reports & Analytics)] as ReportService
+
+        [Data Access Layer\n(Entity Framework)] as DAL
+        note right of DAL
+            Provides unified access
+            to data using Entity Framework
+            (ORM).
+        end note
+    }
+
+    () "EF / SQL" as SQL_Interface
+
+    package "Data Layer" <<Data>> {
+        database "SQLite Database\n(Data Storage)" as DB
+        note right of DB
+            Stores application data:
+            users, tasks, rooms, bookings, etc.
+
+            In future, can be migrated
+            to PostgreSQL.
+        end note
+    }
+}
+
+package "External Services" {
+    [Email Service\n(SMTP)] as EmailService
+    [Calendar / CA3\n(Import schedule)] as CalendarService
+}
+
+Client --> REST_API
+REST_API --> Gateway
+
+Gateway ..> TaskService : Tasks requests
+Gateway ..> ResourceService : Resource requests
+Gateway ..> ReportService : Reporting requests
+
+TaskService ..> DAL
+ResourceService ..> DAL
+ReportService ..> DAL
+
+DAL --> SQL_Interface
+SQL_Interface --> DB
+
+Gateway ..> EmailService : Send notifications\n(email)
+ResourceService ..> CalendarService : Import schedule\n(from CA3)
+@enduml

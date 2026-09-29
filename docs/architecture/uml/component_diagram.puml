@@ -12,7 +12,7 @@ skinparam package {
     BorderColor<<Data>> #B5849E
 }
 
-package "SpaceOps" {
+package "UniSpace" {
 
     package "Frontend (Client)" <<Frontend>> {
         [Client Application\n(Web UI)] as Client
@@ -46,16 +46,13 @@ package "SpaceOps" {
         end note
     }
 
-    () "EF / SQL" as SQL_Interface
+    () "SQL / ORM" as SQL_Interface
 
     package "Data Layer" <<Data>> {
-        database "SQLite Database\n(Data Storage)" as DB
+        database "PostgreSQL Database\n(Data Storage)" as DB
         note right of DB
             Stores application data:
             users, tasks, rooms, bookings, etc.
-
-            In future, can be migrated
-            to PostgreSQL.
         end note
     }
 }

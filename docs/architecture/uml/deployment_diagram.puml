@@ -1,0 +1,34 @@
+@startuml
+title UniSpace Deployment Diagram
+
+node "Client Device" <<Device>> {
+    node "Web Browser" <<Execution Environment>> {
+        component "Client Application (Web UI)"
+    }
+}
+
+node "Application Server" <<Server>> {
+    node "Django Web Server (Gunicorn)" <<Execution Environment>> {
+        component "Backend API"
+    }
+}
+
+node "Database Server" <<Server>> {
+    database "PostgreSQL" {
+        artifact "unispace_db" <<Database Schema>>
+    }
+}
+
+cloud "External Systems" {
+    node "CA3 System (САЗ)" <<External Server>>
+    node "Microsoft Identity Platform" <<External Service>>
+    node "SMTP Server" <<External Service>>
+}
+
+"Client Application (Web UI)" -down-> "Backend API" : HTTPS (REST)
+"Backend API" -down-> "PostgreSQL" : SQL / Django ORM
+
+"Backend API" .right.> "CA3 System (САЗ)" : HTTPS (HTML Parsing / Read-Only)
+"Backend API" .right.> "Microsoft Identity Platform" : HTTPS (OAuth2 / OIDC)
+"Backend API" .right.> "SMTP Server" : SMTP Protocol
+@enduml

@@ -1,0 +1,86 @@
+@startuml
+!theme plain
+autonumber
+skinparam roundCorner 8
+skinparam BoxPadding 10
+
+actor "Викладач" as Teacher
+box "Frontend" #EAF3FF
+    participant "Client Web UI" as UI
+end box
+
+box "Backend (UniSpace)" #EBF7EE
+    participant "API Gateway" as Gateway
+    participant "Booking & Conflict\nService" as Booking
+    participant "Audit Logging\nService" as Audit
+    participant "Notification\nService" as Notif
+    participant "Django ORM / DAL" as DAL
+end box
+
+box "Data Layer" #FBEBF3
+    database "PostgreSQL DB" as DB
+end box
+
+box "External Systems" #FFFFFF
+    participant "SMTP Server" as SMTP
+end box
+
+Teacher -> UI : Обирає нову аудиторію та тисне "Зберегти"
+activate UI
+
+UI -> Gateway : POST /api/v1/bookings/change\n{lesson_id, new_room_id, reason}
+activate Gateway
+
+Gateway -> Booking : changeRoom(lesson_id, new_room_id, teacher_id, reason)
+activate Booking
+
+Booking -> DAL : checkSlotAvailability(new_room_id, timeslot)
+activate DAL
+DAL -> DB : SELECT COUNT(*) FROM bookings\nWHERE room_id = :id AND timeslot && :slot
+activate DB
+DB --> DAL : count_overlapping
+deactivate DB
+DAL --> Booking : is_available (true / false)
+deactivate DAL
+
+alt #LightGreen Аудиторія вільна (is_available == true)
+    Booking -> DAL : updateBookingRoom(booking_id, new_room_id)
+    activate DAL
+    DAL -> DB : UPDATE bookings SET room_id = ...
+    activate DB
+    DB --> DAL : success
+    deactivate DB
+    DAL --> Booking : booking_updated
+    deactivate DAL
+
+    Booking -> Audit : logAction(teacher_id, "ROOM_CHANGE", old_room, new_room, reason)
+    activate Audit
+    Audit -> DAL : insertAuditRecord(...)
+    activate DAL
+    DAL -> DB : INSERT INTO audit_logs ...
+    activate DB
+    DB --> DAL : success
+    deactivate DB
+    deactivate DAL
+    Audit --> Booking : log_recorded
+    deactivate Audit
+
+    Booking -> Notif : dispatchRoomChangeAlert(lesson_id, new_room)
+    activate Notif
+    Notif ->> SMTP : Send Email to students (async)
+    Notif --> Booking : notifications_queued
+    deactivate Notif
+
+    Booking --> Gateway : 200 OK {status: "success", new_room: 412}
+    deactivate Booking
+    Gateway --> UI : 200 OK (JSON)
+    deactivate Gateway
+    UI --> Teacher : Відображення оновленого розкладу
+
+else #Pink Виявлено накладку (is_available == false)
+    Booking --> Gateway : 409 Conflict {"error": "Аудиторія зайнята іншим заняттям"}
+    Gateway --> UI : 409 Conflict
+    UI --> Teacher : Повідомлення: "Аудиторія зайнята іншим заняттям"\n(блокування збереження без помилки 500)
+    deactivate UI
+end
+@enduml

@@ -4,81 +4,126 @@ skinparam componentStyle uml2
 skinparam roundCorner 10
 
 skinparam package {
-    BackgroundColor<<Frontend>> #EAF3FF
-    BorderColor<<Frontend>> #7A9EC2
-    BackgroundColor<<Backend>> #EBF7EE
-    BorderColor<<Backend>> #76A880
-    BackgroundColor<<Data>> #FBEBF3
-    BorderColor<<Data>> #B5849E
+    BackgroundColor<<Frontend>> #EAF3FF
+    BorderColor<<Frontend>> #7A9EC2
+    BackgroundColor<<Backend>> #EBF7EE
+    BorderColor<<Backend>> #76A880
+    BackgroundColor<<Data>> #FBEBF3
+    BorderColor<<Data>> #B5849E
 }
 
-package "SpaceOps" {
+package "UniSpace" {
 
-    package "Frontend (Client)" <<Frontend>> {
-        [Client Application\n(Web UI)] as Client
-        note right of Client
-            Handles user
-            interactions:
-            view schedule, book rooms,
-            manage tasks, etc.
-        end note
-    }
+    package "Frontend (Client)" <<Frontend>> {
+        [Client Application\n(Django UI / Templates)] as Client
+        note right of Client
+            Handles user interactions:
+            - Schedule view
+            - Room filtering & selection
+            - Re-booking & cancellation
+            - Conflict resolution dashboard
+            - In-app notification center
+        end note
+    }
 
-    () "REST API\n(HTTPS)" as REST_API
+    () "REST API / Internal HTTP" as REST_API
 
-    package "Backend (Business Logic)" <<Backend>> {
-        [API Gateway / Auth Service\n(Authentication & Authorization)] as Gateway
-        note right of Gateway
-            Validates user credentials
-            and access rights, and routes
-            requests to appropriate services.
-        end note
+    package "Backend (Business Logic)" <<Backend>> {
+        [API Gateway & Router] as Gateway
 
-        [Task Management Service\n(Tasks & Scheduling)] as TaskService
-        [Resource Management Service\n(Rooms & Resources)] as ResourceService
-        [Reporting Service\n(Reports & Analytics)] as ReportService
+        [Auth & User Service\n(RBAC & SSO Handler)] as AuthService
+        note right of AuthService
+            FR-001 - FR-003, SEC-002:
+            Handles Microsoft SSO tokens,
+            user sessions, and role checks.
+        end note
 
-        [Data Access Layer\n(Entity Framework)] as DAL
-        note right of DAL
-            Provides unified access
-            to data using Entity Framework
-            (ORM).
-        end note
-    }
+        [CA3 Parser Service\n(Schedule Importer)] as SyncService
+        note right of SyncService
+            FR-004, FR-005, A-001:
+            HTML parser reading
+            schedule data from CA3.
+        end note
 
-    () "EF / SQL" as SQL_Interface
+        [Classroom Directory Service\n(Auditorium Registry)] as RoomService
+        note right of RoomService
+            FR-008, FR-009, FR-018:
+            Manages rooms, capacity,
+            and equipment.
+        end note
 
-    package "Data Layer" <<Data>> {
-        database "SQLite Database\n(Data Storage)" as DB
-        note right of DB
-            Stores application data:
-            users, tasks, rooms, bookings, etc.
+        [Booking & Conflict Service\n(Core Engine)] as BookingService
+        note bottom of BookingService
+            FR-010 - FR-014, FR-020, REL-001:
+            Handles re-booking, slot overlap validation,
+            alternative room matching, and conflicts.
+        end note
 
-            In future, can be migrated
-            to PostgreSQL.
-        end note
-    }
+        [Notification Service\n(Email & In-App)] as NotificationService
+        note right of NotificationService
+            FR-015, FR-016:
+            Dispatches change alerts to students
+            and conflict warnings to teachers.
+        end note
+
+        [Audit Service\n(Immutable Audit Trail)] as AuditService
+        note right of AuditService
+            FR-017, SEC-003:
+            Append-only change log:
+            who, when, target room, and reason.
+        end note
+
+        [Data Access Layer\n(Django ORM)] as DAL
+    }
+
+    () "SQL / ORM" as SQL_Interface
+
+    package "Data Layer" <<Data>> {
+        database "PostgreSQL Database\n(Data Storage)" as DB
+        note right of DB
+            Stores:
+            - Users & roles
+            - Imported CA3 schedules
+            - Classrooms & equipment
+            - Active bookings & cancellations
+            - Append-only audit logs
+        end note
+    }
 }
 
-package "External Services" {
-    [Email Service\n(SMTP)] as EmailService
-    [Calendar / CA3\n(Import schedule)] as CalendarService
+cloud "External Systems" {
+    [CA3 System (САЗ)\n(HTML Schedule Source)] as CA3
+    [Microsoft Identity Platform\n(MS SSO)] as MSSO
+    [SMTP Server\n(Corporate / Test Mail)] as SMTP
 }
 
 Client --> REST_API
 REST_API --> Gateway
 
-Gateway ..> TaskService : Tasks requests
-Gateway ..> ResourceService : Resource requests
-Gateway ..> ReportService : Reporting requests
+Gateway ..> AuthService : Auth / RBAC
+Gateway ..> RoomService : Room directory queries
+Gateway ..> BookingService : Booking & cancellation requests
+Gateway ..> SyncService : Sync triggers (Dispatcher)
+Gateway ..> AuditService : Audit log requests
+Gateway ..> NotificationService : In-app notifications
 
-TaskService ..> DAL
-ResourceService ..> DAL
-ReportService ..> DAL
+BookingService ..> RoomService : Check capacity & equipment
+BookingService ..> NotificationService : Trigger alerts on change
+BookingService ..> AuditService : Record booking actions
+SyncService ..> BookingService : Register default bookings & conflicts
+SyncService ..> NotificationService : Notify on collisions
+
+AuthService ..> DAL
+SyncService ..> DAL
+RoomService ..> DAL
+BookingService ..> DAL
+AuditService ..> DAL
+NotificationService ..> DAL
 
 DAL --> SQL_Interface
 SQL_Interface --> DB
 
-Gateway ..> EmailService : Send notifications\n(email)
-ResourceService ..> CalendarService : Import schedule\n(from CA3)
+AuthService ..> MSSO : Validate tokens
+SyncService ..> CA3 : HTTP GET / HTML Parsing (Read-Only)
+NotificationService ..> SMTP : Dispatch emails (SMTP)
 @enduml

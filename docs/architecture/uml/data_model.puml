@@ -1,0 +1,149 @@
+@startuml
+title UniSpace — ER-модель даних
+
+hide methods
+hide stereotypes
+
+entity "User" as user {
+    * id : UUID <<PK>>
+    --
+    * external_identity_id : string <<чутливі дані>>
+    * email : string <<персональні дані>>
+    * full_name : string <<персональні дані>>
+    * role : enum
+    group_id : UUID <<FK>>
+}
+
+entity "AcademicGroup" as academic_group {
+    * id : UUID <<PK>>
+    --
+    * name : string
+    * source_key : string
+}
+
+entity "Lesson" as lesson {
+    * id : UUID <<PK>>
+    --
+    * source_key : string
+    * subject : string
+    * date : date
+    * start_time : time
+    * end_time : time
+    * teacher_id : UUID <<FK>>
+    * group_id : UUID <<FK>>
+}
+
+entity "Room" as room {
+    * id : UUID <<PK>>
+    --
+    * building : string
+    * number : string
+    * capacity : integer
+    board_type : string
+    * projector_working : boolean
+    * has_computers : boolean
+    * is_available : boolean
+}
+
+entity "Booking" as booking {
+    * id : UUID <<PK>>
+    --
+    * lesson_id : UUID <<FK>>
+    * room_id : UUID <<FK>>
+    * status : enum
+    * source : enum
+    * created_at : datetime
+    * updated_at : datetime
+}
+
+entity "Conflict" as conflict {
+    * id : UUID <<PK>>
+    --
+    * first_lesson_id : UUID <<FK>>
+    * second_lesson_id : UUID <<FK>>
+    * room_id : UUID <<FK>>
+    * overlap_start : datetime
+    * overlap_end : datetime
+    * detected_at : datetime
+    * status : enum
+    resolved_at : datetime
+}
+
+entity "Notification" as notification {
+    * id : UUID <<PK>>
+    --
+    * user_id : UUID <<FK>> <<персональні дані>>
+    * type : enum
+    * message : text
+    * created_at : datetime
+    * is_read : boolean
+}
+
+entity "AuditLog" as audit_log {
+    * id : UUID <<PK>>
+    --
+    * booking_id : UUID <<FK>>
+    * user_id : UUID <<FK>> <<персональні дані>>
+    * action : enum
+    previous_room_id : UUID <<FK>>
+    new_room_id : UUID <<FK>>
+    reason : text
+    * created_at : datetime
+}
+
+entity "SyncLog" as sync_log {
+    * id : UUID <<PK>>
+    --
+    * started_at : datetime
+    finished_at : datetime
+    * status : enum
+    error_message : text
+}
+
+academic_group o|--o{ user : містить
+
+academic_group ||--o{ lesson : має
+user ||--o{ lesson : проводить
+
+lesson ||--o{ booking : має
+room ||--o{ booking : призначена
+
+lesson ||--o{ conflict : перше заняття
+lesson ||--o{ conflict : друге заняття
+room ||--o{ conflict : виникає в
+
+user ||--o{ notification : отримує
+
+booking ||--o{ audit_log : має
+user ||--o{ audit_log : виконує
+room o|--o{ audit_log : попередня аудиторія
+room o|--o{ audit_log : нова аудиторія
+
+note right of user
+  Автентифікація через Microsoft Account
+  з університетською електронною поштою.
+  UniSpace не зберігає паролі.
+end note
+
+note right of booking
+  Інваріант:
+  одна аудиторія не може мати
+  декілька активних бронювань
+  на часові проміжки, що перетинаються.
+end note
+
+note right of audit_log
+  Append-only.
+  Зберігання щонайменше 12 місяців.
+end note
+
+legend left
+  |= Позначення |= Значення |
+  | <<PK>> | Первинний ключ |
+  | <<FK>> | Зовнішній ключ |
+  | <<персональні дані>> | Персональні дані |
+  | <<чутливі дані>> | Чутливі дані |
+  | * | Обов'язковий атрибут |
+endlegend
+
+@enduml

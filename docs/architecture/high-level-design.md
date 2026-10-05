@@ -40,7 +40,7 @@
 ## 4. Огляд розгортання (Deployment)
 Система розгортається на трьох базових вузлах (див. [deployment_diagram.puml](uml/deployment_diagram.puml)):
 1. **Client Device:** Веббраузер кінцевого користувача, який відображає згенеровані HTML-сторінки.
-2. **Application Server:** Хостить два незалежні Django-застосунки (відповідно до обмеження C-004): `Frontend` (клієнтський UI на базі Django Templates) та `Backend` (серверна частина з REST API).
+2. **Application Server:** Хостить два незалежні Django-застосунки (відповідно до обмеження C-004): `Frontend` (клієнтський UI на базі Django Templates, працює на порту **8001**) та `Backend` (серверна частина з REST API, працює на порту **8000**).
 3. **Database Server:** Хостить PostgreSQL схему `unispace_db`.
 
 ---

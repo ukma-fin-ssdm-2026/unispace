@@ -1,34 +1,64 @@
 @startuml
 title UniSpace Deployment Diagram
 
-node "Client Device" <<Device>> {
-    node "Web Browser" <<Execution Environment>> {
-        component "Client Application (Web UI)"
+skinparam roundCorner 8
+skinparam node {
+    BackgroundColor #FAFAFA
+    BorderColor #444444
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #333333
+}
+skinparam cloud {
+    BackgroundColor #FFFFFF
+    BorderColor #666666
+}
+
+skinparam rectangle<<TrustBoundary>> {
+    BorderStyle dashed
+    BorderColor #D9534F
+    BorderThickness 1.5
+    BackgroundColor transparent
+    FontColor #D9534F
+    FontStyle bold
+}
+
+rectangle "Client Zone" <<TrustBoundary>> as TB_Client {
+    node "Client Device" <<Device>> {
+        node "Web Browser" <<Execution Environment>> {
+            component "Client Application (Web UI)" as WebUI
+        }
     }
 }
 
-node "Application Server" <<Server>> {
-    node "Django Web Server (Gunicorn)" <<Execution Environment>> {
-        component "Backend API"
+rectangle "UniSpace Application Zone" <<TrustBoundary>> as TB_App {
+    node "Application Server" <<Server>> {
+        node "Django Web Server (Gunicorn)" <<Execution Environment>> {
+            component "Backend API" as BackendAPI
+        }
     }
 }
 
-node "Database Server" <<Server>> {
-    database "PostgreSQL" {
-        artifact "unispace_db" <<Database Schema>>
+rectangle "Data Persistence Zone" <<TrustBoundary>> as TB_Data {
+    node "Database Server" <<Server>> {
+        database "PostgreSQL" {
+            artifact "unispace_db" <<Database Schema>>
+        }
     }
 }
 
-cloud "External Systems" {
-    node "CA3 System (САЗ)" <<External Server>>
-    node "Microsoft Identity Platform" <<External Service>>
-    node "SMTP Server" <<External Service>>
+rectangle "External Third-Party Zone (External Trust Boundaries)" <<TrustBoundary>> as TB_Ext {
+    cloud "External Systems" {
+        node "CA3 System (САЗ)" <<External Server>> as CA3
+        node "Microsoft Identity Platform" <<External Service>> as MS_Auth
+        node "SMTP Server" <<External Service>> as SMTP
+    }
 }
 
-"Client Application (Web UI)" -down-> "Backend API" : HTTPS (REST)
-"Backend API" -down-> "PostgreSQL" : SQL / Django ORM
-
-"Backend API" .right.> "CA3 System (САЗ)" : HTTPS (HTML Parsing / Read-Only)
-"Backend API" .right.> "Microsoft Identity Platform" : HTTPS (OAuth2 / OIDC)
-"Backend API" .right.> "SMTP Server" : SMTP Protocol
+WebUI -down-> BackendAPI : HTTPS (REST)\n[TB-1: Browser ↔ Backend API]
+BackendAPI -down-> "PostgreSQL" : SQL / Django ORM\n[TB-3: Backend API ↔ PostgreSQL]
+BackendAPI .right.> CA3 : HTTPS (HTML Parsing / Read-Only)\n[TB-4: Backend API ↔ САЗ]
+BackendAPI .right.> MS_Auth : HTTPS (OAuth2 / OIDC)\n[TB-2: Backend API ↔ Microsoft Identity]
+BackendAPI .right.> SMTP : SMTP Protocol (TLS)\n[TB-5: Backend API ↔ SMTP Server]
 @enduml

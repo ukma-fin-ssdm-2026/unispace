@@ -34,53 +34,67 @@ activate Gateway
 Gateway -> Booking : changeRoom(lesson_id, new_room_id, teacher_id, reason)
 activate Booking
 
-Booking -> DAL : checkSlotAvailability(new_room_id, timeslot)
-activate DAL
-DAL -> DB : SELECT COUNT(*) FROM bookings\nWHERE room_id = :id AND timeslot && :slot
-activate DB
-DB --> DAL : count_overlapping
-deactivate DB
-DAL --> Booking : is_available (true / false)
-deactivate DAL
-
-alt #LightGreen Аудиторія вільна (is_available == true)
-    Booking -> DAL : updateBookingRoom(booking_id, new_room_id)
+group #FloralWhite Database Transaction [transaction.atomic()]
+    Booking -> DAL : executeInTransaction()
     activate DAL
-    DAL -> DB : UPDATE bookings SET room_id = ...
+    
+    DAL -> DB : BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED
     activate DB
-    DB --> DAL : success
-    deactivate DB
-    DAL --> Booking : booking_updated
-    deactivate DAL
 
-    Booking -> Audit : logAction(teacher_id, "ROOM_CHANGE", old_room, new_room, reason)
-    activate Audit
-    Audit -> DAL : insertAuditRecord(...)
-    activate DAL
-    DAL -> DB : INSERT INTO audit_logs ...
-    activate DB
-    DB --> DAL : success
-    deactivate DB
-    deactivate DAL
-    Audit --> Booking : log_recorded
-    deactivate Audit
+    DAL -> DB : SELECT * FROM bookings\nWHERE room_id = :id AND timeslot && :slot\nFOR UPDATE
+    note right of DB
+      FOR UPDATE блокує записи слота.
+      Усуває Race Condition (REL-001, TM-09).
+    end note
+    DB --> DAL : locked_overlapping_rows
+    DAL --> Booking : is_available (true / false)
 
-    Booking -> Notif : dispatchRoomChangeAlert(lesson_id, new_room)
-    activate Notif
-    Notif ->> SMTP : Send Email to students (async)
-    Notif --> Booking : notifications_queued
-    deactivate Notif
+    alt #LightGreen Аудиторія вільна (is_available == true)
+        Booking -> DAL : updateBookingRoom(booking_id, new_room_id)
+        DAL -> DB : UPDATE bookings SET room_id = :new_room_id WHERE id = :id
+        DB --> DAL : updated
 
-    Booking --> Gateway : 200 OK {status: "success", new_room: 412}
-    deactivate Booking
-    Gateway --> UI : 200 OK (JSON)
-    deactivate Gateway
-    UI --> Teacher : Відображення оновленого розкладу
+        Booking -> Audit : logAction(teacher_id, "ROOM_CHANGE", old_room, new_room, reason)
+        activate Audit
+        Audit -> DAL : insertAuditRecord(...)
+        DAL -> DB : INSERT INTO audit_logs ...
+        DB --> DAL : audit_saved
+        Audit --> Booking : log_recorded
+        deactivate Audit
 
-else #Pink Виявлено накладку (is_available == false)
-    Booking --> Gateway : 409 Conflict {"error": "Аудиторія зайнята іншим заняттям"}
-    Gateway --> UI : 409 Conflict
-    UI --> Teacher : Повідомлення: "Аудиторія зайнята іншим заняттям"\n(блокування збереження без помилки 500)
-    deactivate UI
+        DAL -> DB : COMMIT
+        DB --> DAL : transaction_committed
+        deactivate DB
+        DAL --> Booking : success
+        deactivate DAL
+
+        Booking -> Notif : dispatchRoomChangeAlert(lesson_id, new_room)
+        activate Notif
+        Notif ->> SMTP : Send Email to students (async)
+        Notif --> Booking : notifications_queued
+        deactivate Notif
+
+        Booking --> Gateway : 200 OK {status: "success", new_room: 412}
+        deactivate Booking
+        Gateway --> UI : 200 OK (JSON)
+        deactivate Gateway
+        UI --> Teacher : Відображення оновленого розкладу
+
+    else #Pink Виявлено накладку (is_available == false)
+        Booking -> DAL : rollback()
+        activate DAL
+        DAL -> DB : ROLLBACK
+        activate DB
+        DB --> DAL : transaction_rolled_back
+        deactivate DB
+        deactivate DAL
+
+        Booking --> Gateway : 409 Conflict {"error": "Аудиторія зайнята іншим заняттям"}
+        activate Gateway
+        Gateway --> UI : 409 Conflict
+        deactivate Gateway
+        UI --> Teacher : Валідаційне повідомлення: "Аудиторія зайнята іншим заняттям"
+        deactivate UI
+    end
 end
 @enduml

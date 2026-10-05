@@ -1,34 +1,75 @@
 @startuml
 title UniSpace Deployment Diagram
 
-node "Client Device" <<Device>> {
-    node "Web Browser" <<Execution Environment>> {
-        component "Client Application (Web UI)"
+skinparam roundCorner 8
+skinparam node {
+    BackgroundColor #FAFAFA
+    BorderColor #444444
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #333333
+}
+skinparam cloud {
+    BackgroundColor #FFFFFF
+    BorderColor #666666
+}
+
+skinparam rectangle<<TrustBoundary>> {
+    BorderStyle dashed
+    BorderColor #D9534F
+    BorderThickness 1.5
+    BackgroundColor transparent
+    FontColor #D9534F
+    FontStyle bold
+}
+
+rectangle "Client Zone (Untrusted Device)" <<TrustBoundary>> {
+    node "Client Device" <<Device>> {
+        node "Web Browser" <<Execution Environment>> {
+            component "Web UI (HTML/CSS/JS)" as BrowserUI
+        }
     }
 }
 
-node "Application Server" <<Server>> {
-    node "Django Web Server (Gunicorn)" <<Execution Environment>> {
-        component "Backend API"
+rectangle "UniSpace DMZ & Presentation Zone" <<TrustBoundary>> {
+    node "Frontend Server (Port 8001)" <<Server>> {
+        node "Django Web Server (Frontend App)" <<Execution Environment>> {
+            component "Frontend UI Templates & Views" as FrontendApp
+        }
     }
 }
 
-node "Database Server" <<Server>> {
-    database "PostgreSQL" {
-        artifact "unispace_db" <<Database Schema>>
+rectangle "UniSpace Application Zone (Trusted App Environment)" <<TrustBoundary>> {
+    node "Backend Application Server (Port 8000)" <<Server>> {
+        node "Django Web Server (Gunicorn)" <<Execution Environment>> {
+            component "Backend API" as BackendAPI
+        }
     }
 }
 
-cloud "External Systems" {
-    node "CA3 System (САЗ)" <<External Server>>
-    node "Microsoft Identity Platform" <<External Service>>
-    node "SMTP Server" <<External Service>>
+rectangle "Data Persistence Zone (Restricted / Private)" <<TrustBoundary>> {
+    node "Database Server" <<Server>> {
+        database "PostgreSQL" {
+            artifact "unispace_db" <<Database Schema>> as DB
+        }
+    }
 }
 
-"Client Application (Web UI)" -down-> "Backend API" : HTTPS (REST)
-"Backend API" -down-> "PostgreSQL" : SQL / Django ORM
+rectangle "External Third-Party Zone (External Services)" <<TrustBoundary>> {
+    cloud "External Systems" {
+        node "CA3 System (САЗ)" <<External Server>> as CA3
+        node "Microsoft Identity Platform" <<External Service>> as MS_Auth
+        node "SMTP Server" <<External Service>> as SMTP
+    }
+}
 
-"Backend API" .right.> "CA3 System (САЗ)" : HTTPS (HTML Parsing / Read-Only)
-"Backend API" .right.> "Microsoft Identity Platform" : HTTPS (OAuth2 / OIDC)
-"Backend API" .right.> "SMTP Server" : SMTP Protocol
+BrowserUI -down-> FrontendApp : HTTP/HTTPS (Port 8001)\n[User UI Access]
+FrontendApp -down-> BackendAPI : HTTPS (Port 8000 / REST)\n[TB-1: Client/Frontend ↔ Backend API]
+
+BackendAPI -down-> DB : TCP:5432 (SQL / Django ORM)\n[TB-3: Backend API ↔ PostgreSQL]
+
+BackendAPI .right.> CA3 : HTTPS (HTML Parsing / Read-Only)\n[TB-4: Backend API ↔ САЗ]
+BackendAPI .right.> MS_Auth : HTTPS (OAuth2 / OIDC)\n[TB-2: Backend API ↔ Microsoft Identity]
+BackendAPI .right.> SMTP : SMTP Protocol (TLS)\n[TB-5: Backend API ↔ SMTP Server]
 @enduml

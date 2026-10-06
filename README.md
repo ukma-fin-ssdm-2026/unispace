@@ -12,12 +12,27 @@ UniSpace — вебзастосунок, який працює як шар ке�
 
 **1. Запуск Backend (REST API та Документація)**
 - Клонуйте репозиторій та перейдіть у папку бекенду: `cd Backend`
+- Створіть віртуальне середовище: `python -m venv .venv`
+- Активуйте віртуальне середовище:
+   - **Windows:** `.\.venv\Scripts\activate`
+   - **macOS / Linux:** `source .venv/bin/activate`
+- Налаштуйте змінні середовища:
+   - Створіть копію файлу `.env.example` і назвіть її `.env`
+   - Відкрийте `.env` і впишіть свої локальні налаштування для доступу до бази даних (логін, пароль) та `SECRET_KEY`.
+- Підготуйте базу даних:
+   - Переконайтеся, що у вас встановлено PostgreSQL і сервер працює.
+   - Створіть порожню базу даних (наприклад, `CREATE DATABASE unispace;`).
 - Встановіть залежності: `pip install -r requirements.txt`
+- Застосуйте міграції бази даних: `python manage.py migrate`
 - Запустіть сервер розробки: `python manage.py runserver 8000`
 - *Специфікація OpenAPI генерується автоматично. Swagger UI доступний за адресою: `http://localhost:8000/api/docs/`*
 
 **2. Запуск Frontend (Web UI)**
 - Відкрийте нову вкладку терміналу та перейдіть у папку фронтенду: `cd Frontend`
+- Створіть віртуальне середовище: `python -m venv .venv`
+- Активуйте віртуальне середовище:
+   - **Windows:** `.\.venv\Scripts\activate`
+   - **macOS / Linux:** `source .venv/bin/activate`
 - Встановіть залежності: `pip install -r requirements.txt`
 - Запустіть сервер розробки на іншому порту: `python manage.py runserver 8001`
 - *Клієнтський вебзастосунок доступний за адресою: `http://localhost:8001/`*

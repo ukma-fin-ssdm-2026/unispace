@@ -1,0 +1,359 @@
+openapi: 3.0.3
+info:
+  title: UniSpace API
+  version: 1.0.0
+  description: API для системи керування аудиторним фондом UniSpace
+paths:
+  /api/v1/bookings/:
+    post:
+      operationId: v1_bookings_create
+      summary: Створити бронювання
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingCreate'
+            examples:
+              ПрикладВхіднихДанихДляБронювання:
+                value:
+                  room_id: 1
+                  start_time: '2026-10-02T10:00:00Z'
+                  end_time: '2026-10-02T11:30:00Z'
+                  title: Зустріч команди SpaceOps
+                summary: Приклад вхідних даних для бронювання
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BookingCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BookingCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+              examples:
+                ПрикладВхіднихДанихДляБронювання:
+                  value:
+                    room_id: 1
+                    start_time: '2026-10-02T10:00:00Z'
+                    end_time: '2026-10-02T11:30:00Z'
+                    title: Зустріч команди SpaceOps
+                  summary: Приклад вхідних даних для бронювання
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/bookings/{id}/:
+    delete:
+      operationId: v1_bookings_destroy
+      summary: Скасувати бронювання
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/rooms/:
+    get:
+      operationId: v1_rooms_list
+      summary: Отримати список аудиторій
+      parameters:
+      - in: query
+        name: capacity
+        schema:
+          type: integer
+          minimum: 1
+        description: Мінімальна місткість
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          default: 20
+        description: Кількість записів
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: Зсув
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/rooms/available-slots/:
+    get:
+      operationId: v1_rooms_available_slots_retrieve
+      summary: Пошук вільних слотів
+      parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+          format: date
+        required: true
+      - in: query
+        name: room_id
+        schema:
+          type: integer
+          minimum: 1
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailableSlotsResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/users/me/bookings/:
+    get:
+      operationId: v1_users_me_bookings_list
+      summary: Бронювання поточного користувача
+      parameters:
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          default: 10
+      - in: query
+        name: next_cursor
+        schema:
+          type: string
+          minLength: 1
+        description: Пагінація за курсором
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingResponse'
+              examples:
+                ПрикладВхіднихДанихДляБронювання:
+                  value:
+                  - room_id: 1
+                    start_time: '2026-10-02T10:00:00Z'
+                    end_time: '2026-10-02T11:30:00Z'
+                    title: Зустріч команди SpaceOps
+                  summary: Приклад вхідних даних для бронювання
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+components:
+  schemas:
+    AvailableSlotsResponse:
+      type: object
+      properties:
+        room_id:
+          type: integer
+        date:
+          type: string
+          format: date
+        available_slots:
+          type: array
+          items:
+            type: string
+      required:
+      - available_slots
+      - date
+      - room_id
+    BookingCreate:
+      type: object
+      properties:
+        room_id:
+          type: integer
+          minimum: 1
+          description: ID аудиторії
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        title:
+          type: string
+          description: Тема або назва пари
+          maxLength: 100
+      required:
+      - end_time
+      - room_id
+      - start_time
+      - title
+    BookingResponse:
+      type: object
+      properties:
+        room_id:
+          type: integer
+          minimum: 1
+          description: ID аудиторії
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        title:
+          type: string
+          description: Тема або назва пари
+          maxLength: 100
+        id:
+          type: integer
+          readOnly: true
+        status:
+          type: string
+          default: booked
+      required:
+      - end_time
+      - id
+      - room_id
+      - start_time
+      - title
+    ErrorDetail:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Поле з помилкою
+        message:
+          type: string
+          description: Опис помилки
+        provided_value: {}
+      required:
+      - field
+      - message
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorSchema'
+      required:
+      - error
+    ErrorSchema:
+      type: object
+      properties:
+        code:
+          type: string
+          default: VALIDATION_ERROR
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+        request_id:
+          type: string
+          default: req_abc123
+        documentation:
+          type: string
+          format: uri
+      required:
+      - documentation
+      - message
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Назва або номер аудиторії (напр., 4-230)
+          maxLength: 50
+        capacity:
+          type: integer
+          minimum: 1
+          description: Місткість
+        has_projector:
+          type: boolean
+      required:
+      - capacity
+      - has_projector
+      - id
+      - name
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

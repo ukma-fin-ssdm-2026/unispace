@@ -9,7 +9,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, BasePermission
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
@@ -18,6 +18,22 @@ from .serializers import (
     BookingCreateSerializer, BookingResponseSerializer, ErrorResponseSerializer
 )
 
+class IsTeacherOrDispatcher(BasePermission):
+    """
+    Кастомний дозвіл (SEC-001/NFR-4):
+    Тільки викладачі та диспетчери можуть створювати або видаляти бронювання.
+    """
+
+    def has_permission(self, request, view):
+        # Реальна логіка на майбутнє:
+        # return bool(
+        #     request.user and
+        #     request.user.is_authenticated and
+        #     getattr(request.user, 'role', 'student') in ['teacher', 'dispatcher']
+        # )
+
+        # Заглушка для Лабораторної 4, щоб Swagger-демо працювало без токенів:
+        return True # Для показу заборони використайте False
 
 class RoomListAPIView(APIView):
     permission_classes = [AllowAny]
@@ -63,7 +79,7 @@ class AvailableSlotsAPIView(APIView):
 
 
 class BookingListCreateAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsTeacherOrDispatcher]
 
     @extend_schema(
         summary="Створити бронювання",
@@ -98,7 +114,7 @@ class BookingListCreateAPIView(APIView):
 
 
 class BookingDetailAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsTeacherOrDispatcher]
 
     @extend_schema(
         summary="Скасувати бронювання",

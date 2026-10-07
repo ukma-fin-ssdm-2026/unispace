@@ -1,6 +1,6 @@
 # UniSpace [![CI Pipeline](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml/badge.svg)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml)
 
-**Інтерактивна API Документація [(Swagger UI на GitHub Pages)](https://unispace-wtf6.onrender.com/api/docs/)**
+**Інтерактивна API Документація [(Swagger UI на Render)](https://unispace-wtf6.onrender.com/api/docs/)**
 
 ## Опис проєкту
 Розклад університету публікується в САЗ, але САЗ фіксує лише початковий стан: яка пара, у якої групи, в якій аудиторії. Реальні зміни — перенесення пари в інший кабінет, тимчасова зайнятість приміщення, накладки двох занять в одній аудиторії — відбуваються поза системою, узгоджуються в месенджерах і часто доходять до студентів із запізненням або не доходять узагалі.
@@ -46,9 +46,9 @@ UniSpace — вебзастосунок, який працює як шар ке�
 
 **Необхідні змінні середовища (Environment Variables):**
 * `PYTHON_VERSION` = `3.12.0`
-* `SECRET_KEY` = `<ващ-унікальний-секретний-ключ>`
+* `SECRET_KEY` = `<ваш-унікальний-секретний-ключ>`
 * `DEBUG` = `False`
-* `ALLOWED_HOSTS` = `<домен>` *(наприклад, `unispace-api.onrender.com`)*
+* `ALLOWED_HOSTS` = `<unispace-wtf6.onrender.com>`
 * `DATABASE_URL` = `<url-бази>` *(Internal Database URL від вашого PostgreSQL інстансу на Render)*
 
 ## Проєктування та реалізація API

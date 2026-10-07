@@ -46,6 +46,7 @@ UniSpace — вебзастосунок, який працює як шар ке�
 
 **Необхідні змінні середовища (Environment Variables):**
 * `PYTHON_VERSION` = `3.12.0`
+* `SECRET_KEY` = `<ващ-унікальний-секретний-ключ>`
 * `DEBUG` = `False`
 * `ALLOWED_HOSTS` = `<домен>` *(наприклад, `unispace-api.onrender.com`)*
 * `DATABASE_URL` = `<url-бази>` *(Internal Database URL від вашого PostgreSQL інстансу на Render)*

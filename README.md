@@ -47,12 +47,12 @@ UniSpace — вебзастосунок, який працює як шар ке�
 
 ## Архітектура системи
 Архітектурна документація, моделі даних та діаграми зберігаються в директорії `docs/architecture/`:
-* Архітектурний огляд [(High-Level Design)](docs/architecture/high-level-design.md)
-* Матриця простежуваності архітектури [(Traceability Matrix)](docs/architecture/traceability-matrix.md)
-* Модель даних [(Data Model)](docs/architecture/data-model.md)
-* Модель загроз STRIDE [(Threat Model)](docs/architecture/threat-model.md)
-* Архітектурні рішення [(ADR)](docs/architecture/decisions/)
-* UML Діаграми [(UML)](docs/architecture/uml/)
+- Архітектурний огляд [(High-Level Design)](docs/architecture/high-level-design.md)
+- Матриця простежуваності архітектури [(Traceability Matrix)](docs/architecture/traceability-matrix.md)
+- Модель даних [(Data Model)](docs/architecture/data-model.md)
+- Модель загроз STRIDE [(Threat Model)](docs/architecture/threat-model.md)
+- Архітектурні рішення [(ADR)](docs/architecture/decisions/)
+- UML Діаграми [(UML)](docs/architecture/uml/)
 
 ## Артефакти вимог
 Усі вимоги, користувацькі історії та матриця простежуваності зберігаються в директорії `docs/requirements/`:

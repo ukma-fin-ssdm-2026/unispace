@@ -56,6 +56,20 @@ class AvailableSlotsResponseSerializer(serializers.Serializer):
     date = serializers.DateField()
     available_slots = serializers.ListField(child=serializers.CharField())
 
+# --- Валідатори GET-параметрів ---
+class RoomQuerySerializer(serializers.Serializer):
+    limit = serializers.IntegerField(min_value=1, default=20, help_text="Кількість записів")
+    offset = serializers.IntegerField(min_value=0, default=0, help_text="Зсув")
+    capacity = serializers.IntegerField(min_value=1, required=False, help_text="Мінімальна місткість")
+
+class AvailableSlotsQuerySerializer(serializers.Serializer):
+    room_id = serializers.IntegerField(min_value=1, required=True)
+    date = serializers.DateField(required=True)
+
+class UserBookingsQuerySerializer(serializers.Serializer):
+    limit = serializers.IntegerField(min_value=1, default=10)
+    next_cursor = serializers.CharField(required=False, help_text="Пагінація за курсором")
+
 @extend_schema_serializer(
     examples=[
         OpenApiExample(
@@ -72,7 +86,7 @@ class AvailableSlotsResponseSerializer(serializers.Serializer):
 
 # --- Ресурс: Бронювання (Bookings) ---
 class BookingCreateSerializer(serializers.Serializer):
-    room_id = serializers.IntegerField(help_text="ID аудиторії")
+    room_id = serializers.IntegerField(min_value=1, help_text="ID аудиторії")
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     title = serializers.CharField(max_length=100, help_text="Тема або назва пари")

@@ -10,12 +10,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 
 from .serializers import (
     RoomSerializer, AvailableSlotsResponseSerializer,
-    BookingCreateSerializer, BookingResponseSerializer, ErrorResponseSerializer
+    BookingCreateSerializer, BookingResponseSerializer, ErrorResponseSerializer,
+    RoomQuerySerializer, AvailableSlotsQuerySerializer, UserBookingsQuerySerializer
 )
 
 class IsTeacherOrDispatcher(BasePermission):
@@ -35,44 +35,55 @@ class IsTeacherOrDispatcher(BasePermission):
         # Заглушка для Лабораторної 4, щоб Swagger-демо працювало без токенів:
         return True # Для показу заборони використайте False
 
+# Допоміжна функція для генерації стандартної відповіді з помилкою
+def get_validation_error_response(errors):
+    return {
+        "error": {
+            "code": "VALIDATION_ERROR",
+            "message": "Запит містить невалідні поля",
+            "details": [{"field": k, "message": v[0]} for k, v in errors.items()],
+            "request_id": "req_abc123",
+            "documentation": "https://api.unispace.com/docs/errors#validation"
+        }
+    }
+
+
 class RoomListAPIView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
         summary="Отримати список аудиторій",
-        description="Повертає перелік аудиторій. Використовується пагінація на основі зсуву (limit/offset).",
-        parameters=[
-            OpenApiParameter(name='limit', description='Кількість записів', required=False, type=int, default=20),
-            OpenApiParameter(name='offset', description='Зсув', required=False, type=int, default=0),
-            OpenApiParameter(name='capacity', description='Мінімальна місткість', required=False, type=int),
-        ],
-        responses={200: RoomSerializer(many=True)}
+        parameters=[RoomQuerySerializer],
+        responses={200: RoomSerializer(many=True), 400: ErrorResponseSerializer}
     )
     def get(self, request, format=None):
-        # Заглушка. В майбутньому: rooms = Room.objects.all() ...
+        query = RoomQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        # Заглушка
         mock_data = [
             {"id": 1, "name": "Space A", "capacity": 20, "has_projector": True},
             {"id": 2, "name": "Space B", "capacity": 50, "has_projector": False},
         ]
-        serializer = RoomSerializer(mock_data, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
+        return Response(RoomSerializer(mock_data, many=True).data, status=status.HTTP_200_OK)
 
 class AvailableSlotsAPIView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
         summary="Пошук вільних слотів",
-        parameters=[
-            OpenApiParameter(name='room_id', required=True, type=int),
-            OpenApiParameter(name='date', required=True, type=OpenApiTypes.DATE),
-        ],
+        parameters=[AvailableSlotsQuerySerializer],
         responses={200: AvailableSlotsResponseSerializer, 400: ErrorResponseSerializer}
     )
     def get(self, request, format=None):
+        query = AvailableSlotsQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+
         mock_data = {
-            "room_id": int(request.GET.get('room_id', 1)),
-            "date": request.GET.get('date', "2026-10-02"),
+            "room_id": query.validated_data['room_id'],
+            "date": query.validated_data['date'],
             "available_slots": ["09:00-10:30", "12:00-13:30"]
         }
         return Response(mock_data, status=status.HTTP_200_OK)
@@ -84,29 +95,13 @@ class BookingListCreateAPIView(APIView):
     @extend_schema(
         summary="Створити бронювання",
         request=BookingCreateSerializer,
-        responses={
-            201: BookingResponseSerializer,
-            400: ErrorResponseSerializer,
-            409: ErrorResponseSerializer
-        }
+        responses={201: BookingResponseSerializer, 400: ErrorResponseSerializer, 409: ErrorResponseSerializer}
     )
     def post(self, request, format=None):
         serializer = BookingCreateSerializer(data=request.data)
-
-        # Демонстрація валідації та узгодженої структури помилок
         if not serializer.is_valid():
-            error_response = {
-                "error": {
-                    "code": "VALIDATION_ERROR",
-                    "message": "Запит містить невалідні поля",
-                    "details": [{"field": k, "message": v[0]} for k, v in serializer.errors.items()],
-                    "request_id": "req_abc123",
-                    "documentation": "https://api.unispace.com/docs/errors#validation"
-                }
-            }
-            return Response(error_response, status=status.HTTP_400_BAD_REQUEST)
+            return Response(get_validation_error_response(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
-        # Заглушка успішного створення. В майбутньому: serializer.save()
         response_data = serializer.validated_data
         response_data['id'] = 101
         response_data['status'] = "booked"
@@ -121,10 +116,17 @@ class BookingDetailAPIView(APIView):
         responses={204: None, 403: ErrorResponseSerializer, 404: ErrorResponseSerializer}
     )
     def delete(self, request, pk, format=None):
-        # Заглушка. В майбутньому:
-        # booking = self.get_object(pk)
-        # booking.status = 'cancelled'
-        # booking.save()
+        # Виконано вимогу: 404 для неіснуючого (або від'ємного) ID
+        if pk <= 0:
+            return Response({
+                "error": {
+                    "code": "NOT_FOUND",
+                    "message": f"Бронювання з ID {pk} не знайдено",
+                    "request_id": "req_abc123",
+                    "documentation": "https://api.unispace.com/docs/errors#not-found"
+                }
+            }, status=status.HTTP_404_NOT_FOUND)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -133,13 +135,14 @@ class UserBookingsAPIView(APIView):
 
     @extend_schema(
         summary="Бронювання поточного користувача",
-        parameters=[
-            OpenApiParameter(name='limit', type=int, default=10),
-            OpenApiParameter(name='next_cursor', type=str, description="Пагінація за курсором"),
-        ],
-        responses={200: BookingResponseSerializer(many=True)}
+        parameters=[UserBookingsQuerySerializer],
+        responses={200: BookingResponseSerializer(many=True), 400: ErrorResponseSerializer}
     )
     def get(self, request, format=None):
+        query = UserBookingsQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+
         mock_data = [{
             "id": 101,
             "room_id": 1,

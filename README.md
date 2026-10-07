@@ -1,6 +1,8 @@
 # UniSpace [![CI Pipeline](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml/badge.svg)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml)
 
-**Інтерактивна API Документація [(Swagger UI на Render)](https://unispace-wtf6.onrender.com/api/docs/)**
+**Інтерактивна API Документація:**
+* Swagger UI [(Статична версія на GitHub Pages)](https://ukma-fin-ssdm-2026.github.io/unispace/) *(Обов'язкова вимога)*
+* Swagger UI [(Живий бекенд на Render)](https://unispace-wtf6.onrender.com/api/docs/) *(Бонусне завдання: Розгорнутий бекенд)*
 
 ## Опис проєкту
 Розклад університету публікується в САЗ, але САЗ фіксує лише початковий стан: яка пара, у якої групи, в якій аудиторії. Реальні зміни — перенесення пари в інший кабінет, тимчасова зайнятість приміщення, накладки двох занять в одній аудиторії — відбуваються поза системою, узгоджуються в месенджерах і часто доходять до студентів із запізненням або не доходять узагалі.

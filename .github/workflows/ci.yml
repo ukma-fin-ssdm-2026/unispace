@@ -1,3 +1,8 @@
+# Примітка щодо використання ШІ:
+# Цей workflow написано за допомогою ШІ (Claude) на основі вимог Lab04 (Code-First генерація OpenAPI,
+# перевірка актуальності специфікації) та ролі Integration Lead із TeamCharter.md.
+# Верифікація: через pull request - проходження самого CI та рев'ю іншої учасниці команди.
+
 name: CI Pipeline
 
 on:
@@ -10,6 +15,14 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      # Тільки для CI: ключ не є секретом і не використовується ніде, крім тестів.
+      SECRET_KEY: ci-only-insecure-key-not-a-secret
+
+    defaults:
+      run:
+        working-directory: ./Backend
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -18,7 +31,41 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+        cache: pip
+        cache-dependency-path: Backend/requirements.txt
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
 
     - name: Run simple test
-      working-directory: ./Backend
       run: python test_init.py
+
+    - name: Django system check
+      run: python manage.py check
+
+    - name: Run Django tests
+      run: python manage.py test
+
+    # Code-First: специфікація генерується тільки з коду (drf-spectacular),
+    # --validate перевіряє її на відповідність стандарту OpenAPI.
+    - name: Generate and validate OpenAPI schema
+      run: python manage.py spectacular --file openapi-generated.yaml --validate
+
+    # Закомічений docs/api/openapi-generated.yaml має збігатися з тим, що дає код.
+    # Поки файл порожній (ще не згенерований), перевірку пропускаємо з попередженням.
+    # Після першого коміту YAML прибрати гілку "skip" і зробити перевірку обов'язковою.
+    - name: Check committed schema is up to date
+      run: |
+        if [ ! -s ../docs/api/openapi-generated.yaml ]; then
+          echo "::warning::docs/api/openapi-generated.yaml порожній - перевірку актуальності пропущено"
+        elif ! diff -u ../docs/api/openapi-generated.yaml openapi-generated.yaml; then
+          echo "::error::docs/api/openapi-generated.yaml застарів. Згенеруйте заново: cd Backend && python manage.py spectacular --file ../docs/api/openapi-generated.yaml"
+          exit 1
+        fi
+
+    # Згенерований YAML можна скачати зі сторінки запуску (Artifacts) і закомітити.
+    - name: Upload generated schema
+      uses: actions/upload-artifact@v4
+      with:
+        name: openapi-generated
+        path: Backend/openapi-generated.yaml

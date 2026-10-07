@@ -39,11 +39,11 @@ UniSpace — вебзастосунок, який працює як шар ке�
 
 ## Проєктування та реалізація API
 Усі артефакти, що стосуються RESTful API та Code-First підходу, зберігаються у відповідних директоріях (зверніть увагу: вихідний код розміщено в ізольованому Django-додатку):
-- [Вихідний код API з анотаціями (API Source Code)](Backend/api/)
-- [Специфікація OpenAPI (OpenAPI YAML)](docs/api/openapi-generated.yaml)
-- [Дизайн API (API Design)](docs/api/api-design.md)
-- [Атрибути якості API (Quality Attributes)](docs/api/quality-attributes.md)
-- [Файл Swagger UI (Swagger UI Index)](docs/api/index.html)
+* Вихідний код API з анотаціями [(API Source Code)](Backend/api/)
+* Специфікація OpenAPI [(OpenAPI YAML)](docs/api/openapi-generated.yaml)
+* Дизайн API [(API Design)](docs/api/api-design.md)
+* Атрибути якості API [(Quality Attributes)](docs/api/quality-attributes.md)
+* Файл Swagger UI [(Swagger UI Index)](docs/api/index.html)
 
 ## Архітектура системи
 Архітектурна документація, моделі даних та діаграми зберігаються в директорії `docs/architecture/`:

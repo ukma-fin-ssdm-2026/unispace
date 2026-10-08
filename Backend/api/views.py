@@ -52,7 +52,7 @@ class RoomListAPIView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
-        summary="Отримати список аудиторій",
+        summary="Отримати список аудиторій (оновлено)",
         parameters=[RoomQuerySerializer],
         responses={200: RoomSerializer(many=True), 400: ErrorResponseSerializer}
     )

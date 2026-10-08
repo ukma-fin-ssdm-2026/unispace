@@ -93,7 +93,7 @@ paths:
   /api/v1/rooms/:
     get:
       operationId: v1_rooms_list
-      summary: Отримати список аудиторій
+      summary: Отримати список аудиторій (оновлено)
       parameters:
       - in: query
         name: capacity

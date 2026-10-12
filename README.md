@@ -80,6 +80,7 @@ UniSpace — вебзастосунок, який працює як шар ке�
 Детальніше з проєктом та правилами нашої роботи можна ознайомитися у файлах:
 * Опис проєкту [(Project Description)](Project-Description.md)
 * Статут команди [(Team Charter)](TeamCharter.md)
+* Звіт про огляд коду [(Code Review Report)](docs/code-quality/review-report.md)
 
 ## Інформація про команду
 | Учасниця                | GitHub                                                 | Постійні ролі                                                                         | Ролі (Лабораторна 4) |

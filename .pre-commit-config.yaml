@@ -1,0 +1,55 @@
+# Pre-commit хуки (Lab05). Запускаються автоматично на кожен `git commit`.
+# Встановлення (один раз на компʼютер, з кореня репозиторію):
+#   pip install -r Backend/requirements-dev.txt
+#   pre-commit install
+# Перевірити весь проєкт вручну: pre-commit run --all-files
+#
+# Версії black / flake8 / bandit збігаються з Backend/requirements-dev.txt,
+# щоб локальна перевірка давала той самий результат, що й CI.
+# Хуки, які змінюють файли, обмежено папкою Backend/, щоб не чіпати документацію.
+#
+# Примітка щодо використання ШІ: конфігурацію складено з допомогою ШІ (Claude);
+# перевірено локальним запуском, результати - у docs/code-quality/static-analysis.md.
+
+repos:
+  # Базові перевірки
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        files: ^Backend/
+      - id: end-of-file-fixer
+        files: ^Backend/
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: detect-private-key
+
+  # Пошук секретів (паролі, токени, ключі)
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+
+  # Форматер: сам виправляє форматування
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 26.10.1
+    hooks:
+      - id: black
+        files: ^Backend/
+
+  # Лінтер
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.4.1
+    hooks:
+      - id: flake8
+        files: ^Backend/
+        args: ["--config=Backend/.flake8"]
+
+  # Аналізатор безпеки
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.9.4
+    hooks:
+      - id: bandit
+        files: ^Backend/
+        args: ["-c", "Backend/bandit.yaml"]

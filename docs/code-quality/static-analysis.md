@@ -121,3 +121,55 @@ Bandit шукає небезпечні виклики та конструкці�
 ## Використання ШІ
 
 Під час підготовки використовувався Claude. Він допоміг скласти конфігурації інструментів, розібрати виводи flake8 і bandit та зв'язати знахідку S-2 з моделлю загроз. Самі інструменти запускала Ольга Михайлик локально; всі виводи в цьому документі є справжніми результатами цих запусків. Знахідку S-2 перевірено за кодом `api/views.py`, `threat-model.md` (TM-02) і `requirements.md` (SEC-001).
+
+## Додаток A. Pre-commit-хуки
+
+Файл `.pre-commit-config.yaml` у корені репозиторію запускає перевірки локально, у момент `git commit`, ще до того, як код потрапить на GitHub. CI залишається другим рівнем захисту для тих, хто не встановив хуки.
+
+Встановлення (один раз на компʼютер, з кореня репозиторію):
+
+```
+pip install -r Backend/requirements-dev.txt
+pre-commit install
+```
+
+| Хук | Призначення | Виправляє сам |
+|---|---|---|
+| `trailing-whitespace`, `end-of-file-fixer` | зайві пробіли та порожні рядки в кінці файлів (лише `Backend/`) | так |
+| `check-yaml`, `check-merge-conflict`, `check-added-large-files` | битий YAML, маркери конфлікту, великі файли | ні |
+| `detect-private-key` | приватні ключі | ні |
+| `gitleaks` | **сканер секретів**: токени, паролі, ключі API | ні |
+| `black` | форматер (лише `Backend/`) | так |
+| `flake8` | лінтер (лише `Backend/`) | ні |
+| `bandit` | аналізатор безпеки (лише `Backend/`) | ні |
+
+Версії black, flake8 і bandit у хуках збігаються із зафіксованими в `Backend/requirements-dev.txt`, тому локальна перевірка, pre-commit і CI дають однаковий результат. Хуки, які змінюють файли, обмежено папкою `Backend/`, щоб не змінювати документацію.
+
+### Перевірка: хук зупинив коміт із секретом
+
+Щоб переконатися, що сканер секретів працює, створено тестовий файл `Backend/demo_secret.py` з вигаданим токеном у форматі GitHub Personal Access Token і зроблено спробу його закомітити:
+
+```
+$ git commit -m "test: demo secret"
+Detect hardcoded secrets.................................................Failed
+- hook id: gitleaks
+
+Finding:     TOKEN = "REDACTED
+Secret:      REDACTED
+RuleID:      github-pat
+File:        Backend/demo_secret.py
+Line:        1
+WRN leaks found: 1
+
+bandit...................................................................Failed
+>> Issue: [B105:hardcoded_password_string] Possible hardcoded password
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259
+   Location: ./Backend/demo_secret.py:1:8
+```
+
+Результат:
+
+- **gitleaks** розпізнав токен за правилом `github-pat` і зупинив коміт. У виводі секрет замасковано (`REDACTED`), тож він не потрапляє навіть у лог.
+- **bandit** незалежно виявив той самий рядок як жорстко закодований пароль (**B105**, CWE-259).
+- Коміт не створено; тестовий файл після перевірки видалено. Справжніх секретів у репозиторії немає: `pre-commit run --all-files` на всьому проєкті проходить без знахідок.

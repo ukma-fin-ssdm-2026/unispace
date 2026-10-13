@@ -2,6 +2,8 @@
 # Цей workflow написано за допомогою ШІ (Claude) на основі вимог Lab04 (Code-First генерація OpenAPI,
 # перевірка актуальності специфікації) та ролі Integration Lead із TeamCharter.md.
 # Верифікація: через pull request - проходження самого CI та рев'ю іншої учасниці команди.
+# Lab05: кроки black / flake8 / bandit додано з допомогою ШІ (Claude); команди попередньо
+# перевірено локально, результати - у docs/code-quality/static-analysis.md.
 
 name: CI Pipeline
 
@@ -32,10 +34,22 @@ jobs:
       with:
         python-version: '3.12'
         cache: pip
-        cache-dependency-path: Backend/requirements.txt
+        cache-dependency-path: |
+          Backend/requirements.txt
+          Backend/requirements-dev.txt
 
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: pip install -r requirements.txt -r requirements-dev.txt
+
+    # Lab05: статичний аналіз. Конфігурації лежать у Backend/ (pyproject.toml, .flake8, bandit.yaml).
+    - name: Check formatting (black)
+      run: black --check --diff .
+
+    - name: Lint (flake8)
+      run: flake8 .
+
+    - name: Security analysis (bandit)
+      run: bandit -r . -c bandit.yaml
 
     - name: Run simple test
       run: python test_init.py

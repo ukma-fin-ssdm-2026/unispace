@@ -50,11 +50,11 @@
 
 | HTTP Метод | Шлях (Endpoint) | Опис операції | Код успіху | Коди помилок |
 | :--- | :--- | :--- | :--- | :--- |
-| **GET** | `/api/v1/rooms/` | Отримати список аудиторій (з пагінацією limit/offset) | `200 OK` | - |
+| **GET** | `/api/v1/rooms/` | Отримати список аудиторій (з пагінацією limit/offset) | `200 OK` | `400 Bad Request` |
 | **GET** | `/api/v1/rooms/available-slots/` | Пошук вільних слотів для конкретної аудиторії на дату | `200 OK` | `400 Bad Request` |
 | **POST** | `/api/v1/bookings/` | Створити нове бронювання | `201 Created` | `400 Bad Request`, `409 Conflict` |
 | **DELETE** | `/api/v1/bookings/{id}/` | Скасувати бронювання за ідентифікатором | `204 No Content` | `403 Forbidden`, `404 Not Found` |
-| **GET** | `/api/v1/users/me/bookings/` | Отримати список бронювань поточного користувача | `200 OK` | - |
+| **GET** | `/api/v1/users/me/bookings/` | Отримати список бронювань поточного користувача | `200 OK` | `400 Bad Request` |
 
 *Примітка: Усі помилки (400, 403, 404, 409) повертаються в єдиній стандартизованій структурі `ErrorResponseSerializer`, яка містить поля `code`, `message`, `details`, `request_id` та `documentation`*.
 

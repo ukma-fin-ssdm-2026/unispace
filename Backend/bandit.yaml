@@ -1,0 +1,4 @@
+# Запуск з папки Backend: bandit -r . -c bandit.yaml
+exclude_dirs:
+  - ./staticfiles
+  - migrations

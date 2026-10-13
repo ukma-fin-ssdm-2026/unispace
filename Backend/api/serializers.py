@@ -1,13 +1,16 @@
 """
 Примітка щодо використання ШІ:
 Цей модуль написано за допомогою ШІ (Gemini).
-ШІ використовувався для практичної адаптації та реалізації попередньо спланованого командою CRUD-інтерфейсу під технічний стек нашого проєкту (Django REST Framework).
-Зокрема, інструмент допоміг із генерацією OpenAPI-анотацій (@extend_schema), структуруванням серіалізаторів та оформленням mock-даних згідно з вимогами підходу Code-First.
+ШІ використовувався для практичної адаптації та реалізації попередньо спланованого командою
+CRUD-інтерфейсу під технічний стек нашого проєкту (Django REST Framework).
+Зокрема, інструмент допоміг із генерацією OpenAPI-анотацій (@extend_schema), структуруванням
+серіалізаторів та оформленням mock-даних згідно з вимогами підходу Code-First.
 Увесь код верифіковано, перевірено на відповідність стандартам REST-семантики та затверджено Backend Lead.
 """
 
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
+
 
 # --- Узгоджена структура помилок ---
 class ErrorDetailSerializer(serializers.Serializer):
@@ -15,12 +18,14 @@ class ErrorDetailSerializer(serializers.Serializer):
     message = serializers.CharField(help_text="Опис помилки")
     provided_value = serializers.JSONField(required=False)
 
+
 class ErrorSchemaSerializer(serializers.Serializer):
     code = serializers.CharField(default="VALIDATION_ERROR")
     message = serializers.CharField()
     details = ErrorDetailSerializer(many=True, required=False)
     request_id = serializers.CharField(default="req_abc123")
     documentation = serializers.URLField()
+
 
 @extend_schema_serializer(
     examples=[
@@ -30,19 +35,17 @@ class ErrorSchemaSerializer(serializers.Serializer):
                 "error": {
                     "code": "VALIDATION_ERROR",
                     "message": "Запит містить невалідні поля",
-                    "details": [
-                        {"field": "start_time", "message": "Час початку має бути раніше часу закінчення."}
-                    ],
+                    "details": [{"field": "start_time", "message": "Час початку має бути раніше часу закінчення."}],
                     "request_id": "req_abc123",
-                    "documentation": "https://api.unispace.com/docs/errors#validation"
+                    "documentation": "https://api.unispace.com/docs/errors#validation",
                 }
-            }
+            },
         )
     ]
 )
-
 class ErrorResponseSerializer(serializers.Serializer):
     error = ErrorSchemaSerializer()
+
 
 # --- Ресурс: Аудиторії (Rooms) ---
 class RoomSerializer(serializers.Serializer):
@@ -51,10 +54,12 @@ class RoomSerializer(serializers.Serializer):
     capacity = serializers.IntegerField(min_value=1, help_text="Місткість")
     has_projector = serializers.BooleanField()
 
+
 class AvailableSlotsResponseSerializer(serializers.Serializer):
     room_id = serializers.IntegerField()
     date = serializers.DateField()
     available_slots = serializers.ListField(child=serializers.CharField())
+
 
 # --- Валідатори GET-параметрів ---
 class RoomQuerySerializer(serializers.Serializer):
@@ -62,14 +67,18 @@ class RoomQuerySerializer(serializers.Serializer):
     offset = serializers.IntegerField(min_value=0, default=0, help_text="Зсув")
     capacity = serializers.IntegerField(min_value=1, required=False, help_text="Мінімальна місткість")
 
+
 class AvailableSlotsQuerySerializer(serializers.Serializer):
     room_id = serializers.IntegerField(min_value=1, required=True)
     date = serializers.DateField(required=True)
+
 
 class UserBookingsQuerySerializer(serializers.Serializer):
     limit = serializers.IntegerField(min_value=1, default=10)
     next_cursor = serializers.CharField(required=False, help_text="Пагінація за курсором")
 
+
+# --- Ресурс: Бронювання (Bookings) ---
 @extend_schema_serializer(
     examples=[
         OpenApiExample(
@@ -78,13 +87,11 @@ class UserBookingsQuerySerializer(serializers.Serializer):
                 "room_id": 1,
                 "start_time": "2026-10-02T10:00:00Z",
                 "end_time": "2026-10-02T11:30:00Z",
-                "title": "Зустріч команди SpaceOps"
-            }
+                "title": "Зустріч команди SpaceOps",
+            },
         )
     ]
 )
-
-# --- Ресурс: Бронювання (Bookings) ---
 class BookingCreateSerializer(serializers.Serializer):
     room_id = serializers.IntegerField(min_value=1, help_text="ID аудиторії")
     start_time = serializers.DateTimeField()
@@ -92,11 +99,11 @@ class BookingCreateSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=100, help_text="Тема або назва пари")
 
     def validate(self, data):
-        if data['start_time'] >= data['end_time']:
+        if data["start_time"] >= data["end_time"]:
             raise serializers.ValidationError("Час початку має бути раніше часу закінчення.")
         return data
+
 
 class BookingResponseSerializer(BookingCreateSerializer):
     id = serializers.IntegerField(read_only=True)
     status = serializers.CharField(default="booked")
-

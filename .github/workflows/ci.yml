@@ -5,6 +5,7 @@
 # Lab05: кроки black / flake8 / bandit додано з допомогою ШІ (Claude); команди попередньо
 # перевірено локально, результати - у docs/code-quality/static-analysis.md.
 # Lab05 (бонус): кроки оновлення pip та pip-audit додано з допомогою ШІ (Claude), перевірено локально.
+# Lab05: сервіс PostgreSQL і перевірки міграцій додано з допомогою ШІ (Claude), перевірено проходженням CI.
 
 name: CI Pipeline
 
@@ -18,9 +19,27 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    # PostgreSQL для CI (ADR-002): та сама СУБД, що в Docker локально і на Render.
+    # Потрібен, бо моделі використовують можливості лише PostgreSQL (ExclusionConstraint).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: unispace_ci
+          POSTGRES_USER: unispace
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U unispace -d unispace_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     env:
-      # Тільки для CI: ключ не є секретом і не використовується ніде, крім тестів.
+      # Тільки для CI: ключ і пароль не є секретами і не використовуються ніде, крім тестів.
       SECRET_KEY: ci-only-insecure-key-not-a-secret
+      DATABASE_URL: postgresql://unispace:ci-only-password@localhost:5432/unispace_ci
 
     defaults:
       run:
@@ -60,14 +79,20 @@ jobs:
     - name: Security analysis (bandit)
       run: bandit -r . -c bandit.yaml
 
-    - name: Run simple test
-      run: python test_init.py
-
     - name: Django system check
       run: python manage.py check
 
+    # Падає, якщо моделі змінено, а міграцію не згенеровано.
+    - name: Check for missing migrations
+      run: python manage.py makemigrations --check --dry-run
+
+    # Падає, якщо міграції не застосовуються до справжньої бази PostgreSQL.
+    - name: Apply migrations (PostgreSQL)
+      run: python manage.py migrate --noinput
+
+    # Тести ендпоінтів API (Backend/api/tests.py); -v 2 виводить назву кожного тесту.
     - name: Run Django tests
-      run: python manage.py test
+      run: python manage.py test -v 2
 
     # Code-First: специфікація генерується тільки з коду (drf-spectacular),
     # --validate перевіряє її на відповідність стандарту OpenAPI.
@@ -75,13 +100,9 @@ jobs:
       run: python manage.py spectacular --file openapi-generated.yaml --validate
 
     # Закомічений docs/api/openapi-generated.yaml має збігатися з тим, що дає код.
-    # Поки файл порожній (ще не згенерований), перевірку пропускаємо з попередженням.
-    # Після першого коміту YAML прибрати гілку "skip" і зробити перевірку обов'язковою.
     - name: Check committed schema is up to date
       run: |
-        if [ ! -s ../docs/api/openapi-generated.yaml ]; then
-          echo "::warning::docs/api/openapi-generated.yaml порожній - перевірку актуальності пропущено"
-        elif ! diff -u ../docs/api/openapi-generated.yaml openapi-generated.yaml; then
+        if ! diff -u ../docs/api/openapi-generated.yaml openapi-generated.yaml; then
           echo "::error::docs/api/openapi-generated.yaml застарів. Згенеруйте заново: cd Backend && python manage.py spectacular --file ../docs/api/openapi-generated.yaml"
           exit 1
         fi

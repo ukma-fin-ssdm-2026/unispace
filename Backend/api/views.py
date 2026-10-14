@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission
 from drf_spectacular.utils import extend_schema
+from .models import Room
 
 from .serializers import (
     RoomSerializer,
@@ -70,12 +71,18 @@ class RoomListAPIView(APIView):
         if not query.is_valid():
             return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
 
-        # Заглушка
-        mock_data = [
-            {"id": 1, "name": "Space A", "capacity": 20, "has_projector": True},
-            {"id": 2, "name": "Space B", "capacity": 50, "has_projector": False},
-        ]
-        return Response(RoomSerializer(mock_data, many=True).data, status=status.HTTP_200_OK)
+        rooms = Room.objects.all()
+
+        capacity_filter = query.validated_data.get("capacity")
+        if capacity_filter:
+            rooms = rooms.filter(capacity__gte=capacity_filter)
+
+        offset = query.validated_data.get("offset", 0)
+        limit = query.validated_data.get("limit", 20)
+        rooms = rooms[offset : offset + limit]
+
+        serializer = RoomSerializer(rooms, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AvailableSlotsAPIView(APIView):

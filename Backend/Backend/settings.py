@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import unquote, urlparse
+
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -78,12 +81,36 @@ WSGI_APPLICATION = "Backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# Якщо задано DATABASE_URL - використовується PostgreSQL (ADR-002):
+#   локально - Postgres у Docker (див. Backend/docker-compose.yml),
+#   на Render - Internal Database URL інстансу PostgreSQL.
+# Якщо DATABASE_URL не задано - SQLite (CI та швидкий старт без Docker).
+# Формат: postgresql://<user>:<password>@<host>:<port>/<db_name>
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    _db_url = urlparse(DATABASE_URL)
+    if _db_url.scheme not in ("postgres", "postgresql"):
+        raise ImproperlyConfigured("DATABASE_URL має починатися з postgresql://")
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": _db_url.path.lstrip("/"),
+            "USER": unquote(_db_url.username or ""),
+            "PASSWORD": unquote(_db_url.password or ""),
+            "HOST": _db_url.hostname or "localhost",
+            "PORT": _db_url.port or 5432,
+            # Тримати зʼєднання відкритим до 60 с між запитами, щоб не підключатися щоразу заново.
+            "CONN_MAX_AGE": 60,
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation

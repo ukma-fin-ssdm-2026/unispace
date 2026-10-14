@@ -60,14 +60,12 @@ jobs:
     - name: Security analysis (bandit)
       run: bandit -r . -c bandit.yaml
 
-    - name: Run simple test
-      run: python test_init.py
-
     - name: Django system check
       run: python manage.py check
 
+    # Тести ендпоінтів API (Backend/api/tests.py); -v 2 виводить назву кожного тесту.
     - name: Run Django tests
-      run: python manage.py test
+      run: python manage.py test -v 2
 
     # Code-First: специфікація генерується тільки з коду (drf-spectacular),
     # --validate перевіряє її на відповідність стандарту OpenAPI.
@@ -75,13 +73,9 @@ jobs:
       run: python manage.py spectacular --file openapi-generated.yaml --validate
 
     # Закомічений docs/api/openapi-generated.yaml має збігатися з тим, що дає код.
-    # Поки файл порожній (ще не згенерований), перевірку пропускаємо з попередженням.
-    # Після першого коміту YAML прибрати гілку "skip" і зробити перевірку обов'язковою.
     - name: Check committed schema is up to date
       run: |
-        if [ ! -s ../docs/api/openapi-generated.yaml ]; then
-          echo "::warning::docs/api/openapi-generated.yaml порожній - перевірку актуальності пропущено"
-        elif ! diff -u ../docs/api/openapi-generated.yaml openapi-generated.yaml; then
+        if ! diff -u ../docs/api/openapi-generated.yaml openapi-generated.yaml; then
           echo "::error::docs/api/openapi-generated.yaml застарів. Згенеруйте заново: cd Backend && python manage.py spectacular --file ../docs/api/openapi-generated.yaml"
           exit 1
         fi

@@ -10,6 +10,7 @@ APISimpleTestCase: тестова база не створюється, і те�
 api/views.py та api/serializers.py; перевірено запуском `python manage.py test` локально і в CI.
 """
 
+from unittest.mock import Mock
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APISimpleTestCase
@@ -83,6 +84,12 @@ class BookingCreateTests(ErrorFormatMixin, APISimpleTestCase):
         "title": "Програмна інженерія",
     }
 
+    def setUp(self):
+        teacher = Mock()
+        teacher.is_authenticated = True
+        teacher.role = "teacher"
+        self.client.force_authenticate(user=teacher)
+
     def test_create_booking_returns_201(self):
         response = self.client.post(self.url, self.valid_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -109,6 +116,12 @@ class BookingDeleteTests(APISimpleTestCase):
         response = self.client.delete(reverse("booking-detail", args=[1]))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    def setUp(self):
+        dispatcher = Mock()
+        dispatcher.is_authenticated = True
+        dispatcher.role = "dispatcher"
+        self.client.force_authenticate(user=dispatcher)
+
     def test_delete_unknown_booking_returns_404(self):
         response = self.client.delete(reverse("booking-detail", args=[0]))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -133,3 +146,63 @@ class OpenApiSchemaTests(APISimpleTestCase):
     def test_schema_is_served(self):
         response = self.client.get(reverse("schema"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class BookingSecurityTests(APISimpleTestCase):
+    """Regression tests for unauthorized booking operations."""
+
+    def test_anonymous_user_cannot_create_booking(self):
+        payload = {
+            "room_id": 1,
+            "start_time": "2026-10-20T10:00:00Z",
+            "end_time": "2026-10-20T11:30:00Z",
+            "title": "Unauthorized booking",
+        }
+
+        response = self.client.post(
+            reverse("booking-list-create"),
+            payload,
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+    def test_anonymous_user_cannot_delete_booking(self):
+        response = self.client.delete(reverse("booking-detail", args=[1]))
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+    def test_student_cannot_create_booking(self):
+        student = Mock()
+        student.is_authenticated = True
+        student.role = "student"
+        self.client.force_authenticate(user=student)
+
+        response = self.client.post(
+            reverse("booking-list-create"),
+            {
+                "room_id": 1,
+                "start_time": "2026-10-20T10:00:00Z",
+                "end_time": "2026-10-20T11:30:00Z",
+                "title": "Unauthorized booking",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_student_cannot_delete_booking(self):
+        student = Mock()
+        student.is_authenticated = True
+        student.role = "student"
+        self.client.force_authenticate(user=student)
+
+        response = self.client.delete(reverse("booking-detail", args=[1]))
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

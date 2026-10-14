@@ -4,6 +4,7 @@
 # Верифікація: через pull request - проходження самого CI та рев'ю іншої учасниці команди.
 # Lab05: кроки black / flake8 / bandit додано з допомогою ШІ (Claude); команди попередньо
 # перевірено локально, результати - у docs/code-quality/static-analysis.md.
+# Lab05 (бонус): кроки оновлення pip та pip-audit додано з допомогою ШІ (Claude), перевірено локально.
 
 name: CI Pipeline
 
@@ -38,8 +39,16 @@ jobs:
           Backend/requirements.txt
           Backend/requirements-dev.txt
 
+    # Оновлюємо сам pip: старі версії pip мають відомі вразливості (див. static-analysis.md, D-1).
+    - name: Upgrade pip
+      run: python -m pip install --upgrade pip
+
     - name: Install dependencies
       run: pip install -r requirements.txt -r requirements-dev.txt
+
+    # Аудит залежностей: звіряє версії з базою відомих вразливостей (PyPI Advisory / OSV).
+    - name: Dependency audit (pip-audit)
+      run: pip-audit -r requirements.txt -r requirements-dev.txt
 
     # Lab05: статичний аналіз. Конфігурації лежать у Backend/ (pyproject.toml, .flake8, bandit.yaml).
     - name: Check formatting (black)

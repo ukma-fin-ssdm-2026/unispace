@@ -1,0 +1,28 @@
+# Локальна база PostgreSQL для розробки (ADR-002).
+# Django запускається як звичайно (у .venv) і підключається до цієї бази через DATABASE_URL з .env.
+#
+#   docker compose up -d     - запустити базу у фоні
+#   docker compose down      - зупинити (дані зберігаються у volume pgdata)
+#   docker compose down -v   - зупинити і видалити всі дані бази
+#
+# Логін і пароль беруться з Backend/.env (не комітиться). Шаблон - Backend/.env.example.
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Задайте POSTGRES_DB у Backend/.env}
+      POSTGRES_USER: ${POSTGRES_USER:?Задайте POSTGRES_USER у Backend/.env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Задайте POSTGRES_PASSWORD у Backend/.env}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

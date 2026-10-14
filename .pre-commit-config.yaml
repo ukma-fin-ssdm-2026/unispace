@@ -6,7 +6,8 @@
 #
 # Версії black / flake8 / bandit збігаються з Backend/requirements-dev.txt,
 # щоб локальна перевірка давала той самий результат, що й CI.
-# Хуки, які змінюють файли, обмежено папкою Backend/, щоб не чіпати документацію.
+# Хуки, які змінюють файли, обмежено папками Backend/ і Frontend/, щоб не чіпати документацію.
+# flake8 і bandit запускаються окремо для кожної папки з її власною конфігурацією.
 #
 # Примітка щодо використання ШІ: конфігурацію складено з допомогою ШІ (Claude);
 # перевірено локальним запуском, результати - у docs/code-quality/static-analysis.md.
@@ -17,9 +18,9 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
-        files: ^Backend/
+        files: ^(Backend|Frontend)/
       - id: end-of-file-fixer
-        files: ^Backend/
+        files: ^(Backend|Frontend)/
       - id: check-yaml
       - id: check-merge-conflict
       - id: check-added-large-files
@@ -35,21 +36,39 @@ repos:
   - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 26.10.1
     hooks:
+      # Конфіг передається явно: якщо black отримує файли з обох папок одразу,
+      # він шукає pyproject.toml у корені репозиторію і застосовує довжину рядка 88 замість 120.
       - id: black
+        name: black (Backend)
         files: ^Backend/
+        args: ["--config=Backend/pyproject.toml"]
+      - id: black
+        name: black (Frontend)
+        files: ^Frontend/
+        args: ["--config=Frontend/pyproject.toml"]
 
   # Лінтер
   - repo: https://github.com/PyCQA/flake8
     rev: 7.4.1
     hooks:
       - id: flake8
+        name: flake8 (Backend)
         files: ^Backend/
         args: ["--config=Backend/.flake8"]
+      - id: flake8
+        name: flake8 (Frontend)
+        files: ^Frontend/
+        args: ["--config=Frontend/.flake8"]
 
   # Аналізатор безпеки
   - repo: https://github.com/PyCQA/bandit
     rev: 1.9.4
     hooks:
       - id: bandit
+        name: bandit (Backend)
         files: ^Backend/
         args: ["-c", "Backend/bandit.yaml"]
+      - id: bandit
+        name: bandit (Frontend)
+        files: ^Frontend/
+        args: ["-c", "Frontend/bandit.yaml"]

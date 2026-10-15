@@ -172,6 +172,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+  /api/v1/sync/:
+    post:
+      operationId: v1_sync_create
+      description: Ручний запуск синхронізації. У разі спрацьовування Circuit Breaker
+        повертає 429 Too Many Requests.
+      summary: Запустити імпорт розкладу
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncLog'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/sync-logs/:
+    get:
+      operationId: v1_sync_logs_list
+      description: Повертає список логів імпорту розкладу із САЗ.
+      summary: Отримати історію синхронізацій
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SyncLog'
+          description: ''
   /api/v1/users/me/bookings/:
     get:
       operationId: v1_users_me_bookings_list
@@ -349,6 +394,65 @@ components:
       - has_projector
       - id
       - name
+    StatusEnum:
+      enum:
+      - in_progress
+      - success
+      - failed
+      type: string
+      description: |-
+        * `in_progress` - in_progress
+        * `success` - success
+        * `failed` - failed
+    SyncLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        started_at:
+          type: string
+          format: date-time
+          description: Час початку синхронізації
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Час завершення синхронізації
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Поточний статус синхронізації
+
+            * `in_progress` - in_progress
+            * `success` - success
+            * `failed` - failed
+        trigger:
+          allOf:
+          - $ref: '#/components/schemas/TriggerEnum'
+          description: |-
+            Джерело запуску (ручний диспетчером чи за розкладом)
+
+            * `manual` - manual
+            * `scheduled` - scheduled
+        error_message:
+          type: string
+          nullable: true
+          description: Текст помилки парсингу або мережі, якщо статус failed
+      required:
+      - id
+      - started_at
+      - status
+      - trigger
+    TriggerEnum:
+      enum:
+      - manual
+      - scheduled
+      type: string
+      description: |-
+        * `manual` - manual
+        * `scheduled` - scheduled
   securitySchemes:
     basicAuth:
       type: http

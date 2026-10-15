@@ -23,6 +23,7 @@ from .serializers import (
     RoomQuerySerializer,
     AvailableSlotsQuerySerializer,
     UserBookingsQuerySerializer,
+    SyncLogSerializer,
 )
 
 
@@ -167,3 +168,60 @@ class UserBookingsAPIView(APIView):
             }
         ]
         return Response(mock_data, status=status.HTTP_200_OK)
+
+
+class SyncLogListAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        summary="Отримати історію синхронізацій",
+        description="Повертає список логів імпорту розкладу із САЗ.",
+        responses={200: SyncLogSerializer(many=True)},
+    )
+    def get(self, request, format=None):
+        # Заглушка (Mock-дані)
+        mock_logs = [
+            {
+                "id": 1,
+                "started_at": "2026-10-15T08:00:00Z",
+                "finished_at": "2026-10-15T08:05:00Z",
+                "status": "success",
+                "trigger": "scheduled",
+                "error_message": None,
+            },
+            {
+                "id": 2,
+                "started_at": "2026-10-15T09:10:00Z",
+                "finished_at": "2026-10-15T09:10:30Z",
+                "status": "failed",
+                "trigger": "manual",
+                "error_message": "Timeout 30s",
+            },
+        ]
+        serializer = SyncLogSerializer(mock_logs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class SyncTriggerAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        summary="Запустити імпорт розкладу",
+        description=(
+            "Ручний запуск синхронізації. У разі спрацьовування " "Circuit Breaker повертає 429 Too Many Requests."
+        ),
+        request=None,
+        responses={201: SyncLogSerializer, 429: ErrorResponseSerializer},
+    )
+    def post(self, request, format=None):
+        # Заглушка для успішного старту (створення запису in_progress)
+        mock_response = {
+            "id": 3,
+            "started_at": "2026-10-15T09:27:00Z",
+            "finished_at": None,
+            "status": "in_progress",
+            "trigger": "manual",
+            "error_message": None,
+        }
+        serializer = SyncLogSerializer(mock_response)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

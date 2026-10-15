@@ -354,7 +354,7 @@ aedc80315ca50254e76b76e39b3f53741c707100
 | Ручна валідація ідентифікатора (`if pk <= 0:`); після появи моделей використати `get_object_or_404` | Заплановано | - |
 | Логіка (навіть mock) змішана з обробкою HTTP; виділити сервісний шар `services.py` | Заплановано | - |
 | `models.py` порожній, хоча UML-модель даних уже є; обмеження на рівні БД для NFR-2 | Виправлено | Моделі `User`, `AcademicGroup`, `Lesson`, `Room`, `Booking`, `Conflict`, `Notification`, `AuditLog`, `SyncLog`, міграція `0001_initial.py`. Обмеження на рівні БД: `ExclusionConstraint` для перетину бронювань, `CheckConstraint` (час початку < часу кінця, місткість ≥ 1) та `UniqueConstraint` |
-| Поле `provided_value` у `ErrorDetailSerializer` є в схемі, але код його не заповнює | 🗓 Заплановано | У всіх гілках `get_validation_error_response` формує лише `field` і `message` |
+| Поле `provided_value` у `ErrorDetailSerializer` є в схемі, але код його не заповнює | Заплановано | - |
 | У CI немає статичного аналізу (`ruff`/flake8/black) | Виправлено | black `--check`, flake8, bandit, а також `pip-audit` і оновлення pip. Конфігурації: `pyproject.toml`, `.flake8`, `bandit.yaml` |
 | CI не покриває `Frontend` | Виправлено | Окремий job `frontend` (pip-audit, black, flake8, bandit, `manage.py check`); pre-commit теж працює для обох папок |
 | `Backend/test_init.py` («Hello World») і крок `python test_init.py` у CI | Виправлено | Файл і крок прибрано |

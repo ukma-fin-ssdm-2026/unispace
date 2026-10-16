@@ -7,6 +7,7 @@
 # Lab05 (бонус): кроки оновлення pip та pip-audit додано з допомогою ШІ (Claude), перевірено локально.
 # Lab05: сервіс PostgreSQL і перевірки міграцій додано з допомогою ШІ (Claude), перевірено проходженням CI.
 # Lab05: job frontend (ті самі перевірки для Frontend/) додано з допомогою ШІ (Claude).
+# Lab06: запуск тестів через pytest з покриттям гілок додано з допомогою ШІ (Claude).
 
 name: CI Pipeline
 
@@ -91,9 +92,9 @@ jobs:
     - name: Apply migrations (PostgreSQL)
       run: python manage.py migrate --noinput
 
-    # Тести ендпоінтів API (Backend/api/tests.py); -v 2 виводить назву кожного тесту.
-    - name: Run Django tests
-      run: python manage.py test -v 2
+    # Тести (Backend/api/tests.py і api/test_*.py) з покриттям гілок; налаштування - Backend/pyproject.toml.
+    - name: Run tests with coverage (pytest)
+      run: pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html
 
     # Code-First: специфікація генерується тільки з коду (drf-spectacular),
     # --validate перевіряє її на відповідність стандарту OpenAPI.
@@ -114,6 +115,14 @@ jobs:
       with:
         name: openapi-generated
         path: Backend/openapi-generated.yaml
+
+    # HTML-звіт покриття можна скачати зі сторінки запуску (Artifacts) і відкрити htmlcov/index.html.
+    - name: Upload coverage report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-html
+        path: Backend/htmlcov/
 
   # Lab05: перевірки фронтенду (окремий Django-проєкт у Frontend/) після огляду іншої команди.
   frontend:

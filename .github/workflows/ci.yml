@@ -6,6 +6,7 @@
 # перевірено локально, результати - у docs/code-quality/static-analysis.md.
 # Lab05 (бонус): кроки оновлення pip та pip-audit додано з допомогою ШІ (Claude), перевірено локально.
 # Lab05: сервіс PostgreSQL і перевірки міграцій додано з допомогою ШІ (Claude), перевірено проходженням CI.
+# Lab05: job frontend (ті самі перевірки для Frontend/) додано з допомогою ШІ (Claude).
 
 name: CI Pipeline
 
@@ -113,3 +114,49 @@ jobs:
       with:
         name: openapi-generated
         path: Backend/openapi-generated.yaml
+
+  # Lab05: перевірки фронтенду (окремий Django-проєкт у Frontend/) після огляду іншої команди.
+  frontend:
+    runs-on: ubuntu-latest
+
+    env:
+      # Тільки для CI: ключ не є секретом і не використовується ніде, крім перевірок.
+      SECRET_KEY: ci-only-insecure-key-not-a-secret
+
+    defaults:
+      run:
+        working-directory: ./Frontend
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: pip
+        cache-dependency-path: |
+          Frontend/requirements.txt
+          Frontend/requirements-dev.txt
+
+    - name: Upgrade pip
+      run: python -m pip install --upgrade pip
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt -r requirements-dev.txt
+
+    - name: Dependency audit (pip-audit)
+      run: pip-audit -r requirements.txt -r requirements-dev.txt
+
+    - name: Check formatting (black)
+      run: black --check --diff .
+
+    - name: Lint (flake8)
+      run: flake8 .
+
+    - name: Security analysis (bandit)
+      run: bandit -r . -c bandit.yaml
+
+    - name: Django system check
+      run: python manage.py check

@@ -18,7 +18,7 @@ from datetime import date, datetime, time, timezone
 
 import pytest
 
-from api.models import AcademicGroup, Booking, Lesson, Room, User
+from api.models import AcademicGroup, AuditLog, Booking, Lesson, Room, User
 
 _counter = itertools.count(1)
 
@@ -64,6 +64,25 @@ def make_booking(teacher, group, room):
         )
 
     return _make_booking
+
+
+@pytest.fixture
+def other_room(db):
+    return Room.objects.create(building="1", number="1-226", capacity=40)
+
+
+@pytest.fixture
+def audit_log(make_booking, teacher, room, other_room):
+    """Збережений запис аудиту: викладач переніс заняття з room в other_room."""
+    booking = make_booking(at(10), at(11, 30))
+    return AuditLog.objects.create(
+        booking=booking,
+        user=teacher,
+        action="room_changed",
+        previous_room=room,
+        new_room=other_room,
+        reason="Зламався проєктор",
+    )
 
 
 def at(hour, minute=0, day=date(2026, 10, 20)):

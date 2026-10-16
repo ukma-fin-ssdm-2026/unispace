@@ -28,20 +28,16 @@ from .serializers import (
 
 class IsTeacherOrDispatcher(BasePermission):
     """
-    Кастомний дозвіл (SEC-001/NFR-4):
-    Тільки викладачі та диспетчери можуть створювати або видаляти бронювання.
+    Only authenticated teachers and dispatchers
+    can create or delete bookings.
     """
 
-    def has_permission(self, request, view):
-        # Реальна логіка на майбутнє:
-        # return bool(
-        #     request.user and
-        #     request.user.is_authenticated and
-        #     getattr(request.user, 'role', 'student') in ['teacher', 'dispatcher']
-        # )
+    message = "Only teachers and dispatchers can manage bookings."
 
-        # Заглушка для Лабораторної 4, щоб Swagger-демо працювало без токенів:
-        return True  # Для показу заборони використайте False
+    def has_permission(self, request, view):
+        user = request.user
+
+        return bool(user and user.is_authenticated and getattr(user, "role", None) in ("teacher", "dispatcher"))
 
 
 # Допоміжна функція для генерації стандартної відповіді з помилкою

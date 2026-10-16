@@ -112,3 +112,18 @@ class BookingCreateSerializer(serializers.Serializer):
 class BookingResponseSerializer(BookingCreateSerializer):
     id = serializers.IntegerField(read_only=True)
     status = serializers.CharField(default="booked")
+
+
+class SyncLogSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    started_at = serializers.DateTimeField(help_text="Час початку синхронізації")
+    finished_at = serializers.DateTimeField(required=False, allow_null=True, help_text="Час завершення синхронізації")
+    status = serializers.ChoiceField(
+        choices=["in_progress", "success", "failed"], help_text="Поточний статус синхронізації"
+    )
+    trigger = serializers.ChoiceField(
+        choices=["manual", "scheduled"], help_text="Джерело запуску (ручний диспетчером чи за розкладом)"
+    )
+    error_message = serializers.CharField(
+        required=False, allow_null=True, help_text="Текст помилки парсингу або мережі, якщо статус failed"
+    )

@@ -2,3 +2,8 @@
 exclude_dirs:
   - ./staticfiles
   - migrations
+
+# У тестах pytest assert - основний механізм перевірки, тому B101 там не є вразливістю.
+# У робочому коді (api/*.py, крім тестів) правило B101 і далі діє.
+assert_used:
+  skips: ["*/test_*.py", "*/tests.py", "*/conftest.py", "conftest.py"]

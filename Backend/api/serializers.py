@@ -10,6 +10,7 @@ CRUD-інтерфейсу під технічний стек нашого про
 
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
+from .models import Room
 
 
 # --- Узгоджена структура помилок ---
@@ -48,11 +49,15 @@ class ErrorResponseSerializer(serializers.Serializer):
 
 
 # --- Ресурс: Аудиторії (Rooms) ---
-class RoomSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(max_length=50, help_text="Назва або номер аудиторії (напр., 4-230)")
-    capacity = serializers.IntegerField(min_value=1, help_text="Місткість")
-    has_projector = serializers.BooleanField()
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = ["id", "building", "number", "capacity", "has_computers", "projector_working"]
+
+        extra_kwargs = {
+            "number": {"help_text": "Назва або номер аудиторії (напр., 4-230)"},
+            "capacity": {"help_text": "Місткість (кількість посадкових місць)"},
+        }
 
 
 class AvailableSlotsResponseSerializer(serializers.Serializer):

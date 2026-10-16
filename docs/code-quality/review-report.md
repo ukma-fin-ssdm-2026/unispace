@@ -328,7 +328,46 @@ aedc80315ca50254e76b76e39b3f53741c707100
 Хибні зауваження ШІ:
 * "OffsetPage.of коректно обрізає межі": команда з'ясувала що він не перевіряє від'ємні limit/offset.
 
+## Реакція UniSpace на відгук іншої команди
+
+[Відгук від SOLIDni](https://github.com/ukma-fin-ssdm-2026/YourPathUkma/blob/main/review/unispace_review.md)
+
+### Прогрес врахування відгуку
+| Зауваження | Статус | Де / що зроблено |
+|---|---|---|
+| `Backend/api/views.py`: залишено закоментований «мертвий» код перевірки прав | Виправлено | `security-lab05-analysis`: коментований блок прибрано, замість нього справжня перевірка.|
+| `Backend/settings.py`: некоректний відступ і перенесення коми в `TEMPLATES`; налаштувати автоформатування |  Виправлено | Рядок `"DIRS": [BASE_DIR / "templates"],` відформатований. Додано black у CI (`ci.yml`) і у `.pre-commit-config.yaml`. Форматування застосовано окремим PR `style/apply-black` (за `static-analysis.md`) |
+| `MAILERS` не є налаштуванням Django, потрібен `EMAIL_BACKEND` | Заплановано | - |
+| Коментарі посилаються на Django 6.1, а в `requirements.txt` Django 5.2 | Заплановано | - |
+| `serializers.py`: `@extend_schema_serializer` відокремлений від класу коментарем | Виправлено | Коментар розділу перенесено над декоратор (`static-analysis.md`, розділ 6). У всіх гілках декоратор стоїть безпосередньо над класом |
+| Два окремі Django-проєкти (`Backend` і `Frontend`) в одному репозиторії | Прийнято | Свідоме рішення: ADR-001 і `high-level-design.md` (обмеження C-004). Два незалежні Django-застосунки зберігаємо |
+| Порожня `src/api/`, подвоєння `Backend/Backend` | Прийнято | `src/api/` потрібна за структурою, яку вимагає опис лабораторних, її `README.md` пояснює, що код API лежить у `Backend/api/`. `Backend/Backend` це стандартний `startproject` |
+|Дублювання виклику `get_validation_error_response()` в кожному ендпойнті; потрібен глобальний `EXCEPTION_HANDLER` DRF | Заплановано | - |
+| Базовий `APIView` дає багато boilerplate; перейти на `GenericAPIView`/`ModelViewSet` | Заплановано | - |
+| README описує PostgreSQL і `DATABASE_URL`, а в налаштуваннях жорстко SQLite; `psycopg` не використовується | Виправлено | `settings.py` читає `DATABASE_URL`. Підтримується лише `postgresql://`, інакше `ImproperlyConfigured`. Без змінної лишається SQLite (CI/швидкий старт). Залежність змінено на `psycopg[binary]` |
+| README пропонує `pip install -r requirements.txt` у `Frontend`, але файлу немає | Виправлено | Додано `Frontend/requirements.txt`, `requirements-dev.txt`, `.env.example`; README описує налаштування `.env`, залежності й `pre-commit install` |
+| `Frontend/settings.py`: захардкоджений `SECRET_KEY` (закомічений у git), `DEBUG = True`, `ALLOWED_HOSTS = []` | Виправлено | Значення читаються зі змінних середовища. `DEBUG` за замовчуванням `False` . Старий ключ вважаємо скомпрометованим. Нові секрети блокує gitleaks у pre-commit. Знахідка F-1 задокументована |
+| `Backend/settings.py`: `SECRET_KEY = os.environ.get('SECRET_KEY')` без перевірки, без змінної застосунок падає з незрозумілою помилкою | Заплановано | - |
+| Відсутня конфігурація `LOGGING` в обох проєктах (NFR-5, NFR-4) | Заплановано | - |
+| `IsTeacherOrDispatcher` завжди повертає `True`, суперечить NFR-4 | Виправлено | Перевірка `is_authenticated` та ролі `teacher`/`dispatcher`, повідомлення про відмову. 4 регресійні тести на HTTP 403 для анонімів і студентів (знахідка S-2 у `static-analysis.md`) |
+| `GET /users/me/bookings/` має `AllowAny`; у майбутньому вимагати `IsAuthenticated` | Заплановано | - |
+| Ручна валідація ідентифікатора (`if pk <= 0:`); після появи моделей використати `get_object_or_404` | Заплановано | - |
+| Логіка (навіть mock) змішана з обробкою HTTP; виділити сервісний шар `services.py` | Заплановано | - |
+| `models.py` порожній, хоча UML-модель даних уже є; обмеження на рівні БД для NFR-2 | Виправлено | Моделі `User`, `AcademicGroup`, `Lesson`, `Room`, `Booking`, `Conflict`, `Notification`, `AuditLog`, `SyncLog`, міграція `0001_initial.py`. Обмеження на рівні БД: `ExclusionConstraint` для перетину бронювань, `CheckConstraint` (час початку < часу кінця, місткість ≥ 1) та `UniqueConstraint` |
+| Поле `provided_value` у `ErrorDetailSerializer` є в схемі, але код його не заповнює | Заплановано | - |
+| У CI немає статичного аналізу (`ruff`/flake8/black) | Виправлено | black `--check`, flake8, bandit, а також `pip-audit` і оновлення pip. Конфігурації: `pyproject.toml`, `.flake8`, `bandit.yaml` |
+| CI не покриває `Frontend` | Виправлено | Окремий job `frontend` (pip-audit, black, flake8, bandit, `manage.py check`); pre-commit теж працює для обох папок |
+| `Backend/test_init.py` («Hello World») і крок `python test_init.py` у CI | Виправлено | Файл і крок прибрано |
+| Коментар у CI про «порожній YAML» застарів; прибрати гілку `skip` | Виправлено | Перевірка `diff -u` актуальності схеми безумовна, гілки `skip` немає |
+| `Backend/api/tests.py` порожній, `manage.py test` виконує 0 тестів; тести на 200/400/404 і формат помилок | Виправлено | Тести для всіх 5 ендпойнтів (200/201/204/400/404), спільний `ErrorFormatMixin` для формату помилок, тест схеми OpenAPI. `BookingSecurityTests` (403) |
+| Додати `coverage` у CI | Заплановано | - |
+| Тест NFR-2 додати разом із реальним бронюванням | Заплановано | - |
+| `pages.yml`: деплой документації запускається на кожен push у `main` незалежно від результату CI | Виправлено | Тригер `workflow_run` після `CI Pipeline` з умовою `conclusion == 'success'`, `workflow_dispatch` і checkout за `head_sha` |
+
 > **Примітка щодо використання ШІ:**
 > Штучний інтелект використовувався для аналізу наданих фрагментів
 коду, формулювання зауважень, структурування звіту, оформлення
-в Markdown та генерації повного звіту для бонусного завдання. 
+в Markdown, генерації повного звіту для бонусного завдання та перевірки
+коду виправлень за чек-лістом відгуку іншої команди.
+> Всі результати перевірено людиною (Тимохина Ксенія)
+та затверджено командою. 

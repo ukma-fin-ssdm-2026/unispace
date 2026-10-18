@@ -8,8 +8,11 @@ APISimpleTestCase: тестова база не створюється, і те�
 
 Примітка щодо використання ШІ: тести написано з допомогою ШІ (Claude) за кодом
 api/views.py та api/serializers.py; перевірено запуском `python manage.py test` локально і в CI.
+
+Контракт оновлено під TDD (використання UUID та lesson_id).
 """
 
+import uuid
 from unittest.mock import Mock
 from django.urls import reverse
 from rest_framework import status
@@ -57,11 +60,14 @@ class RoomListTests(ErrorFormatMixin, APISimpleTestCase):
 class AvailableSlotsTests(ErrorFormatMixin, APISimpleTestCase):
     url = reverse("available-slots")
 
+    def setUp(self):
+        self.test_room_id = str(uuid.uuid4())
+
     def test_valid_query_returns_200(self):
-        response = self.client.get(self.url, {"room_id": 1, "date": "2026-10-20"})
+        response = self.client.get(self.url, {"room_id": self.test_room_id, "date": "2026-10-20"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["room_id"], 1)
+        self.assertEqual(body["room_id"], self.test_room_id)
         self.assertEqual(body["date"], "2026-10-20")
         self.assertIsInstance(body["available_slots"], list)
 
@@ -69,20 +75,18 @@ class AvailableSlotsTests(ErrorFormatMixin, APISimpleTestCase):
         self.assert_validation_error(self.client.get(self.url), "room_id", "date")
 
     def test_invalid_date_returns_400(self):
-        self.assert_validation_error(self.client.get(self.url, {"room_id": 1, "date": "20-10-2026"}), "date")
+        self.assert_validation_error(
+            self.client.get(self.url, {"room_id": self.test_room_id, "date": "20-10-2026"}), "date"
+        )
 
-    def test_room_id_zero_returns_400(self):
-        self.assert_validation_error(self.client.get(self.url, {"room_id": 0, "date": "2026-10-20"}), "room_id")
+    def test_invalid_uuid_format_returns_400(self):
+        self.assert_validation_error(
+            self.client.get(self.url, {"room_id": "not-a-uuid", "date": "2026-10-20"}), "room_id"
+        )
 
 
 class BookingCreateTests(ErrorFormatMixin, APISimpleTestCase):
     url = reverse("booking-list-create")
-    valid_payload = {
-        "room_id": 1,
-        "start_time": "2026-10-20T10:00:00Z",
-        "end_time": "2026-10-20T11:30:00Z",
-        "title": "Програмна інженерія",
-    }
 
     def setUp(self):
         teacher = Mock()
@@ -90,40 +94,43 @@ class BookingCreateTests(ErrorFormatMixin, APISimpleTestCase):
         teacher.role = "teacher"
         self.client.force_authenticate(user=teacher)
 
+        self.valid_payload = {
+            "room_id": str(uuid.uuid4()),
+            "lesson_id": str(uuid.uuid4()),
+        }
+
     def test_create_booking_returns_201(self):
         response = self.client.post(self.url, self.valid_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         self.assertEqual(body["status"], "booked")
         self.assertIn("id", body)
-        self.assertEqual(body["title"], self.valid_payload["title"])
 
-    def test_end_before_start_returns_400(self):
-        payload = {**self.valid_payload, "end_time": "2026-10-20T09:00:00Z"}
-        self.assert_validation_error(self.client.post(self.url, payload, format="json"), "non_field_errors")
+    def test_missing_lesson_id_returns_400(self):
+        payload = {"room_id": self.valid_payload["room_id"]}
+        self.assert_validation_error(self.client.post(self.url, payload, format="json"), "lesson_id")
 
-    def test_missing_title_returns_400(self):
-        payload = {key: value for key, value in self.valid_payload.items() if key != "title"}
-        self.assert_validation_error(self.client.post(self.url, payload, format="json"), "title")
-
-    def test_too_long_title_returns_400(self):
-        payload = {**self.valid_payload, "title": "x" * 101}
-        self.assert_validation_error(self.client.post(self.url, payload, format="json"), "title")
+    def test_invalid_uuid_returns_400(self):
+        payload = {**self.valid_payload, "lesson_id": "invalid-uuid"}
+        self.assert_validation_error(self.client.post(self.url, payload, format="json"), "lesson_id")
 
 
 class BookingDeleteTests(APISimpleTestCase):
-    def test_delete_existing_booking_returns_204(self):
-        response = self.client.delete(reverse("booking-detail", args=[1]))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
     def setUp(self):
         dispatcher = Mock()
         dispatcher.is_authenticated = True
         dispatcher.role = "dispatcher"
         self.client.force_authenticate(user=dispatcher)
 
+        self.test_booking_id = str(uuid.uuid4())
+        self.unknown_booking_id = str(uuid.uuid4())
+
+    def test_delete_existing_booking_returns_204(self):
+        response = self.client.delete(reverse("booking-detail", args=[self.test_booking_id]))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
     def test_delete_unknown_booking_returns_404(self):
-        response = self.client.delete(reverse("booking-detail", args=[0]))
+        response = self.client.delete(reverse("booking-detail", args=[self.unknown_booking_id]))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         error = response.json()["error"]
         self.assertEqual(error["code"], "NOT_FOUND")
@@ -151,32 +158,24 @@ class OpenApiSchemaTests(APISimpleTestCase):
 class BookingSecurityTests(APISimpleTestCase):
     """Regression tests for unauthorized booking operations."""
 
-    def test_anonymous_user_cannot_create_booking(self):
-        payload = {
-            "room_id": 1,
-            "start_time": "2026-10-20T10:00:00Z",
-            "end_time": "2026-10-20T11:30:00Z",
-            "title": "Unauthorized booking",
+    def setUp(self):
+        self.test_booking_id = str(uuid.uuid4())
+        self.valid_payload = {
+            "room_id": str(uuid.uuid4()),
+            "lesson_id": str(uuid.uuid4()),
         }
 
+    def test_anonymous_user_cannot_create_booking(self):
         response = self.client.post(
             reverse("booking-list-create"),
-            payload,
+            self.valid_payload,
             format="json",
         )
-
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_403_FORBIDDEN,
-        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_anonymous_user_cannot_delete_booking(self):
-        response = self.client.delete(reverse("booking-detail", args=[1]))
-
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_403_FORBIDDEN,
-        )
+        response = self.client.delete(reverse("booking-detail", args=[self.test_booking_id]))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_student_cannot_create_booking(self):
         student = Mock()
@@ -186,15 +185,9 @@ class BookingSecurityTests(APISimpleTestCase):
 
         response = self.client.post(
             reverse("booking-list-create"),
-            {
-                "room_id": 1,
-                "start_time": "2026-10-20T10:00:00Z",
-                "end_time": "2026-10-20T11:30:00Z",
-                "title": "Unauthorized booking",
-            },
+            self.valid_payload,
             format="json",
         )
-
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_student_cannot_delete_booking(self):
@@ -203,6 +196,5 @@ class BookingSecurityTests(APISimpleTestCase):
         student.role = "student"
         self.client.force_authenticate(user=student)
 
-        response = self.client.delete(reverse("booking-detail", args=[1]))
-
+        response = self.client.delete(reverse("booking-detail", args=[self.test_booking_id]))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

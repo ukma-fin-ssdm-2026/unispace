@@ -92,9 +92,9 @@ jobs:
     - name: Apply migrations (PostgreSQL)
       run: python manage.py migrate --noinput
 
-    # Тести (Backend/api/tests.py і api/test_*.py) з покриттям гілок; налаштування - Backend/pyproject.toml.
-    - name: Run tests with coverage (pytest)
-      run: pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html
+    # Тести (Backend/api/tests.py і api/test_*.py) з перевіркою порогу покриття (Coverage Gate Bonus); налаштування - Backend/pyproject.toml.
+    - name: Run tests with coverage and gate (pytest)
+      run: pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html --cov-fail-under=75
 
     # Code-First: специфікація генерується тільки з коду (drf-spectacular),
     # --validate перевіряє її на відповідність стандарту OpenAPI.

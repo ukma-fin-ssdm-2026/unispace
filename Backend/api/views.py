@@ -6,7 +6,11 @@ CRUD-інтерфейсу під технічний стек нашого про
 Зокрема, інструмент допоміг із генерацією OpenAPI-анотацій (@extend_schema), структуруванням
 серіалізаторів та оформленням mock-даних згідно з вимогами підходу Code-First.
 Увесь код верифіковано, перевірено на відповідність стандартам REST-семантики та затверджено Backend Lead.
+
+Контракт оновлено під TDD (використання UUID та lesson_id).
 """
+
+import uuid
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -38,7 +42,6 @@ class IsTeacherOrDispatcher(BasePermission):
 
     def has_permission(self, request, view):
         user = request.user
-
         return bool(user and user.is_authenticated and getattr(user, "role", None) in ("teacher", "dispatcher"))
 
 
@@ -116,9 +119,12 @@ class BookingListCreateAPIView(APIView):
         if not serializer.is_valid():
             return Response(get_validation_error_response(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
-        response_data = serializer.validated_data
-        response_data["id"] = 101
+        response_data = serializer.validated_data.copy()
+        response_data["id"] = uuid.uuid4()
         response_data["status"] = "booked"
+        response_data["title"] = "Mock Subject"
+        response_data["start_time"] = "2026-10-20T10:00:00Z"
+        response_data["end_time"] = "2026-10-20T11:30:00Z"
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
@@ -130,8 +136,7 @@ class BookingDetailAPIView(APIView):
         responses={204: None, 403: ErrorResponseSerializer, 404: ErrorResponseSerializer},
     )
     def delete(self, request, pk, format=None):
-        # Виконано вимогу: 404 для неіснуючого (або від'ємного) ID
-        if pk <= 0:
+        if str(pk) == "00000000-0000-0000-0000-000000000000":
             return Response(
                 {
                     "error": {
@@ -162,8 +167,9 @@ class UserBookingsAPIView(APIView):
 
         mock_data = [
             {
-                "id": 101,
-                "room_id": 1,
+                "id": uuid.uuid4(),
+                "room_id": uuid.uuid4(),
+                "lesson_id": uuid.uuid4(),
                 "start_time": "2026-10-02T10:00:00Z",
                 "end_time": "2026-10-02T11:30:00Z",
                 "title": "Зустріч SpaceOps",
@@ -182,10 +188,9 @@ class SyncLogListAPIView(APIView):
         responses={200: SyncLogSerializer(many=True)},
     )
     def get(self, request, format=None):
-        # Заглушка (Mock-дані)
         mock_logs = [
             {
-                "id": 1,
+                "id": uuid.uuid4(),
                 "started_at": "2026-10-15T08:00:00Z",
                 "finished_at": "2026-10-15T08:05:00Z",
                 "status": "success",
@@ -193,7 +198,7 @@ class SyncLogListAPIView(APIView):
                 "error_message": None,
             },
             {
-                "id": 2,
+                "id": uuid.uuid4(),
                 "started_at": "2026-10-15T09:10:00Z",
                 "finished_at": "2026-10-15T09:10:30Z",
                 "status": "failed",
@@ -217,9 +222,8 @@ class SyncTriggerAPIView(APIView):
         responses={201: SyncLogSerializer, 429: ErrorResponseSerializer},
     )
     def post(self, request, format=None):
-        # Заглушка для успішного старту (створення запису in_progress)
         mock_response = {
-            "id": 3,
+            "id": uuid.uuid4(),
             "started_at": "2026-10-15T09:27:00Z",
             "finished_at": None,
             "status": "in_progress",

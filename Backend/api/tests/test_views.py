@@ -123,7 +123,7 @@ class BookingDeleteTests(APISimpleTestCase):
         self.client.force_authenticate(user=dispatcher)
 
         self.test_booking_id = str(uuid.uuid4())
-        self.unknown_booking_id = str(uuid.uuid4())
+        self.unknown_booking_id = "00000000-0000-0000-0000-000000000000"
 
     def test_delete_existing_booking_returns_204(self):
         response = self.client.delete(reverse("booking-detail", args=[self.test_booking_id]))

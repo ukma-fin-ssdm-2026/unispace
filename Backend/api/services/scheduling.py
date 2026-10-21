@@ -23,4 +23,6 @@ def intervals_overlap(start1: datetime, end1: datetime, start2: datetime, end2: 
 
 
 def overlap_duration(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> timedelta:
+    if not intervals_overlap(start1, end1, start2, end2):
+        return timedelta(0)
     return min(end1, end2) - max(start1, start2)

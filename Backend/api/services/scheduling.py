@@ -1,6 +1,6 @@
 """Доменні функції планування аудиторій (чисті функції, без звернень до бази даних)."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def _require_timezone(*moments: datetime) -> None:
@@ -20,3 +20,7 @@ def intervals_overlap(start1: datetime, end1: datetime, start2: datetime, end2: 
     first_starts_before_second_ends = start1 < end2
     second_starts_before_first_ends = start2 < end1
     return first_starts_before_second_ends and second_starts_before_first_ends
+
+
+def overlap_duration(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> timedelta:
+    return min(end1, end2) - max(start1, start2)

@@ -1,4 +1,3 @@
-
 from unittest.mock import Mock
 
 import pytest
@@ -21,12 +20,15 @@ def dispatcher_request():
     return request
 
 
-@pytest.mark.parametrize("limit,valid", [
-    (1, True),
-    (20, True),
-    (0, False),
-    (-1, False),
-])
+@pytest.mark.parametrize(
+    "limit,valid",
+    [
+        (1, True),
+        (20, True),
+        (0, False),
+        (-1, False),
+    ],
+)
 def test_room_limit_boundaries(limit, valid):
     # Arrange
     serializer = RoomQuerySerializer(data={"limit": limit})
@@ -38,12 +40,15 @@ def test_room_limit_boundaries(limit, valid):
     assert result is valid
 
 
-@pytest.mark.parametrize("capacity,valid", [
-    (1, True),
-    (30, True),
-    (0, False),
-    (-1, False),
-])
+@pytest.mark.parametrize(
+    "capacity,valid",
+    [
+        (1, True),
+        (30, True),
+        (0, False),
+        (-1, False),
+    ],
+)
 def test_room_capacity_boundaries(capacity, valid):
     # Arrange
     serializer = RoomQuerySerializer(data={"capacity": capacity})
@@ -55,19 +60,24 @@ def test_room_capacity_boundaries(capacity, valid):
     assert result is valid
 
 
-@pytest.mark.parametrize("status,valid", [
-    ("in_progress", True),
-    ("success", True),
-    ("failed", True),
-    ("unknown", False),
-])
+@pytest.mark.parametrize(
+    "status,valid",
+    [
+        ("in_progress", True),
+        ("success", True),
+        ("failed", True),
+        ("unknown", False),
+    ],
+)
 def test_sync_status_choices(status, valid):
     # Arrange
-    serializer = SyncLogSerializer(data={
-        "started_at": "2026-10-20T10:00:00Z",
-        "status": status,
-        "trigger": "manual",
-    })
+    serializer = SyncLogSerializer(
+        data={
+            "started_at": "2026-10-20T10:00:00Z",
+            "status": status,
+            "trigger": "manual",
+        }
+    )
 
     # Act
     result = serializer.is_valid()

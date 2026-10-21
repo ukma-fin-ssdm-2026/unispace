@@ -7,12 +7,16 @@
 """
 
 import uuid
+from datetime import datetime
 
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.constraints import ExclusionConstraint
 from django.contrib.postgres.fields import DateTimeRangeField, RangeBoundary, RangeOperators
+
 from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.utils import timezone
+
 from django.db import models
 from django.db.models import F, Func, Q
 
@@ -172,7 +176,6 @@ class Booking(UUIDModel):
         null=True,
         blank=True,
     )
-    title = models.CharField("Назва бронювання", max_length=200)
     start_time = models.DateTimeField("Час початку")
     end_time = models.DateTimeField("Час завершення")
     status = models.CharField("Статус", max_length=15, choices=BookingStatus.choices, default=BookingStatus.ACTIVE)
@@ -183,9 +186,6 @@ class Booking(UUIDModel):
     updated_at = models.DateTimeField("Дата оновлення", auto_now=True)
 
     # Часові поля зберігаються окремо для перевірки перетинів на рівні БД.
-    # TODO (модель): Забезпечити узгодженість часу бронювання з часом заняття.
-    # TODO (модель): Переглянути потребу в полі title, оскільки назва
-    # дисципліни вже зберігається в пов'язаній моделі Lesson.
 
     class Meta:
         verbose_name = "Бронювання"
@@ -211,8 +211,22 @@ class Booking(UUIDModel):
             models.Index(fields=["user", "start_time"], name="booking_user_start_idx"),
         ]
 
+    # Автоматично синхронізуємо час бронювання з часом заняття перед збереженням
+    def save(self, *args, **kwargs):
+        if hasattr(self, "lesson") and self.lesson:
+            naive_start = datetime.combine(self.lesson.date, self.lesson.start_time)
+            naive_end = datetime.combine(self.lesson.date, self.lesson.end_time)
+
+            self.start_time = timezone.make_aware(naive_start)
+            self.end_time = timezone.make_aware(naive_end)
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.title} | {self.room} ({self.start_time:%d.%m.%Y %H:%M})"
+        subject = self.lesson.subject if hasattr(self, "lesson") and self.lesson else "Невідоме заняття"
+        if self.start_time:
+            return f"{subject} | {self.room} ({self.start_time:%d.%m.%Y %H:%M})"
+        return f"{subject} | {self.room}"
 
 
 class Conflict(UUIDModel):

@@ -15,9 +15,9 @@ import uuid
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, BasePermission
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from drf_spectacular.utils import extend_schema
-from .models import Room
+from .models import Room, Booking, SyncLog
 
 from .serializers import (
     RoomSerializer,
@@ -45,6 +45,14 @@ class IsTeacherOrDispatcher(BasePermission):
         return bool(user and user.is_authenticated and getattr(user, "role", None) in ("teacher", "dispatcher"))
 
 
+class IsDispatcher(BasePermission):
+    message = "Only dispatchers can access sync logs."
+
+    def has_permission(self, request, view):
+        user = request.user
+        return bool(user and user.is_authenticated and getattr(user, "role", None) == "dispatcher")
+
+
 # Допоміжна функція для генерації стандартної відповіді з помилкою
 def get_validation_error_response(errors):
     return {
@@ -62,7 +70,7 @@ class RoomListAPIView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
-        summary="Отримати список аудиторій (оновлено)",
+        summary="Отримати список аудиторій",
         parameters=[RoomQuerySerializer],
         responses={200: RoomSerializer(many=True), 400: ErrorResponseSerializer},
     )
@@ -153,7 +161,7 @@ class BookingDetailAPIView(APIView):
 
 
 class UserBookingsAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(
         summary="Бронювання поточного користувача",
@@ -165,22 +173,16 @@ class UserBookingsAPIView(APIView):
         if not query.is_valid():
             return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
 
-        mock_data = [
-            {
-                "id": uuid.uuid4(),
-                "room_id": uuid.uuid4(),
-                "lesson_id": uuid.uuid4(),
-                "start_time": "2026-10-02T10:00:00Z",
-                "end_time": "2026-10-02T11:30:00Z",
-                "title": "Зустріч SpaceOps",
-                "status": "active",
-            }
-        ]
-        return Response(mock_data, status=status.HTTP_200_OK)
+        bookings = Booking.objects.filter(user=request.user).order_by("-start_time")
+        limit = query.validated_data.get("limit", 10)
+        bookings = bookings[:limit]
+
+        serializer = BookingResponseSerializer(bookings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SyncLogListAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsDispatcher]
 
     @extend_schema(
         summary="Отримати історію синхронізацій",
@@ -188,36 +190,17 @@ class SyncLogListAPIView(APIView):
         responses={200: SyncLogSerializer(many=True)},
     )
     def get(self, request, format=None):
-        mock_logs = [
-            {
-                "id": uuid.uuid4(),
-                "started_at": "2026-10-15T08:00:00Z",
-                "finished_at": "2026-10-15T08:05:00Z",
-                "status": "success",
-                "trigger": "scheduled",
-                "error_message": None,
-            },
-            {
-                "id": uuid.uuid4(),
-                "started_at": "2026-10-15T09:10:00Z",
-                "finished_at": "2026-10-15T09:10:30Z",
-                "status": "failed",
-                "trigger": "manual",
-                "error_message": "Timeout 30s",
-            },
-        ]
-        serializer = SyncLogSerializer(mock_logs, many=True)
+        logs = SyncLog.objects.all().order_by("-started_at")
+        serializer = SyncLogSerializer(logs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SyncTriggerAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsDispatcher]
 
     @extend_schema(
         summary="Запустити імпорт розкладу",
-        description=(
-            "Ручний запуск синхронізації. У разі спрацьовування " "Circuit Breaker повертає 429 Too Many Requests."
-        ),
+        description="Ручний запуск синхронізації.",
         request=None,
         responses={201: SyncLogSerializer, 429: ErrorResponseSerializer},
     )

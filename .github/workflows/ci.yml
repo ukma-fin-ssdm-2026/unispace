@@ -93,8 +93,8 @@ jobs:
       run: python manage.py migrate --noinput
 
     # Тести (Backend/api/test_views.py і api/test_*.py) з покриттям гілок; налаштування - Backend/pyproject.toml.
-    - name: Run tests with coverage (pytest)
-      run: pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html
+    - name: Run tests with coverage and gate (pytest)
+      run: pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html --cov-fail-under=75
 
     # Code-First: специфікація генерується тільки з коду (drf-spectacular),
     # --validate перевіряє її на відповідність стандарту OpenAPI.

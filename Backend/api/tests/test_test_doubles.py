@@ -7,7 +7,6 @@ from api.serializers import RoomQuerySerializer, SyncLogSerializer
 from api.views import IsDispatcher, get_validation_error_response
 
 from unittest.mock import patch
-from rest_framework.test import APIRequestFactory
 
 from api.views import RoomListAPIView
 

@@ -13,7 +13,9 @@ api/views.py та api/serializers.py; перевірено запуском `pyt
 from unittest.mock import Mock
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APISimpleTestCase
+from rest_framework.test import APISimpleTestCase, APITestCase
+
+from api.models import Room
 
 ERROR_KEYS = {"code", "message", "details", "request_id", "documentation"}
 
@@ -31,18 +33,26 @@ class ErrorFormatMixin:
             self.assertIn(field, error_fields)
 
 
-class RoomListTests(ErrorFormatMixin, APISimpleTestCase):
+class RoomListTests(ErrorFormatMixin, APITestCase):
+    # Ендпоінт читає аудиторії з бази (feat/room-crud), тому потрібен APITestCase з тестовою БД.
     url = reverse("room-list")
+
+    def setUp(self):
+        Room.objects.create(building="1", number="1-225", capacity=20, projector_working=True)
+        Room.objects.create(building="1", number="1-226", capacity=50)
 
     def test_list_rooms_returns_200(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIsInstance(response.json(), list)
-        self.assertEqual(set(response.json()[0]), {"id", "name", "capacity", "has_projector"})
+        self.assertEqual(len(response.json()), 2)
+        self.assertEqual(
+            set(response.json()[0]), {"id", "building", "number", "capacity", "has_computers", "projector_working"}
+        )
 
     def test_valid_filters_return_200(self):
         response = self.client.get(self.url, {"limit": 5, "offset": 0, "capacity": 30})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual([room["number"] for room in response.json()], ["1-226"])
 
     def test_limit_zero_returns_400(self):
         self.assert_validation_error(self.client.get(self.url, {"limit": 0}), "limit")

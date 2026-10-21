@@ -4,11 +4,11 @@ TDD: перевірка перетину часових проміжків (ос
 Тести написано за циклом Red -> Green -> Refactor; історія - у комітах з тегами [RED]/[GREEN]/[REFACTOR].
 """
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from api.services.scheduling import intervals_overlap
+from api.services.scheduling import intervals_overlap, overlap_duration
 
 
 def t(hour, minute=0):
@@ -48,3 +48,15 @@ def test_time_without_timezone_is_rejected():
     # Act / Assert
     with pytest.raises(ValueError, match="часовим поясом"):
         intervals_overlap(naive_start, naive_end, *aware_interval)
+
+
+def test_overlap_duration_is_length_of_shared_time():
+    # Arrange: перша пара 10:00-11:30, друга 11:00-12:00, спільні 30 хвилин
+    first = (t(10), t(11, 30))
+    second = (t(11), t(12))
+
+    # Act
+    result = overlap_duration(*first, *second)
+
+    # Assert
+    assert result == timedelta(minutes=30)

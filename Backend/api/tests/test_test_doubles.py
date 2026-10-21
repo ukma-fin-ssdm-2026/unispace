@@ -128,7 +128,7 @@ def test_validation_error_response_has_correct_code():
     # Act
     result = get_validation_error_response(errors)
 
-    # Assert (вбиваємо мутанта строговою перевіркою коду)
+    # Assert
     assert result["error"]["code"] == "VALIDATION_ERROR"
 
 

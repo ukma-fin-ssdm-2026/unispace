@@ -9,3 +9,5 @@ pip-audit
 pytest
 pytest-django
 pytest-cov
+mutmut>=3
+hypothesis

@@ -12,7 +12,6 @@ extend-exclude = '''
 # --- Тести та покриття (Lab06) ---
 # Запуск з папки Backend/:
 #   pytest --cov=api --cov-branch --cov-report=term-missing --cov-report=html
-# HTML-звіт: Backend/htmlcov/index.html (не комітиться, див. .gitignore).
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "Backend.settings"
 python_files = ["tests.py", "test_*.py"]

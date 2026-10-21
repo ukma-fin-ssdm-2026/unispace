@@ -23,3 +23,15 @@ def test_intervals_that_share_time_overlap():
 
     # Assert
     assert result is True
+
+
+def test_intervals_that_only_touch_do_not_overlap():
+    # Arrange: граничний випадок - перша пара закінчується рівно тоді, коли починається друга
+    first = (t(10), t(11))
+    second = (t(11), t(12))
+
+    # Act
+    result = intervals_overlap(*first, *second)
+
+    # Assert
+    assert result is False

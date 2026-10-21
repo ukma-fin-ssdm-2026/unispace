@@ -14,3 +14,15 @@ def test_rooms_smaller_than_required_capacity_are_not_suggested():
     small, enough = make_room(1, capacity=20), make_room(2, capacity=30)
     result = suggest_rooms([small, enough], min_capacity=30)
     assert result == [enough]
+
+def test_busy_rooms_are_not_suggested():
+    busy = make_room(1, capacity=30)
+    free = make_room(2, capacity=30)
+    result = suggest_rooms([busy, free], min_capacity=10, busy_room_ids={busy.id})
+    assert result == [free]
+
+def test_rooms_marked_unavailable_are_not_suggested():
+    closed = make_room(1, capacity=30, is_available=False)
+    open_room = make_room(2, capacity=30)
+    result = suggest_rooms([closed, open_room], min_capacity=10)
+    assert result == [open_room]

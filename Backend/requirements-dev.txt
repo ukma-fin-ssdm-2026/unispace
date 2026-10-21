@@ -9,4 +9,3 @@ pip-audit
 pytest
 pytest-django
 pytest-cov
-hypothesis

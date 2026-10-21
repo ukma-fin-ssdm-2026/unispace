@@ -377,23 +377,35 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          readOnly: true
-        name:
           type: string
+          format: uuid
+          readOnly: true
+        building:
+          type: string
+          title: Корпус
+          maxLength: 20
+        number:
+          type: string
+          title: Номер аудиторії
           description: Назва або номер аудиторії (напр., 4-230)
-          maxLength: 50
+          maxLength: 30
         capacity:
           type: integer
-          minimum: 1
-          description: Місткість
-        has_projector:
+          maximum: 2147483647
+          minimum: 0
+          title: Місткість
+          description: Місткість (кількість посадкових місць)
+        has_computers:
           type: boolean
+          title: Наявність комп'ютерів
+        projector_working:
+          type: boolean
+          title: Справний проєктор
       required:
+      - building
       - capacity
-      - has_projector
       - id
-      - name
+      - number
     StatusEnum:
       enum:
       - in_progress

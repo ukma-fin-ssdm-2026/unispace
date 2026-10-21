@@ -57,9 +57,6 @@ def make_booking(teacher, group, room):
         return Booking.objects.create(
             lesson=lesson,
             room=booking_room or room,
-            title=f"Бронювання {n}",
-            start_time=start,
-            end_time=end,
             status=status,
         )
 

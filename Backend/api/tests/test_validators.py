@@ -12,3 +12,15 @@ def test_inverted_times_returns_false():
 
     # Assert
     assert result is False
+
+
+def test_duration_exceeds_limit_returns_false():
+    # Arrange: різниця 120 хвилин
+    start = time(10, 0)
+    end = time(12, 0)
+
+    # Act
+    result = is_valid_lesson_duration(start, end)
+
+    # Assert
+    assert result is False

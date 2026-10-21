@@ -6,6 +6,8 @@ CRUD-інтерфейсу під технічний стек нашого про
 Зокрема, інструмент допоміг із генерацією OpenAPI-анотацій (@extend_schema), структуруванням
 серіалізаторів та оформленням mock-даних згідно з вимогами підходу Code-First.
 Увесь код верифіковано, перевірено на відповідність стандартам REST-семантики та затверджено Backend Lead.
+
+Контракт оновлено під TDD (використання UUID та lesson_id).
 """
 
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
@@ -36,7 +38,7 @@ class ErrorSchemaSerializer(serializers.Serializer):
                 "error": {
                     "code": "VALIDATION_ERROR",
                     "message": "Запит містить невалідні поля",
-                    "details": [{"field": "start_time", "message": "Час початку має бути раніше часу закінчення."}],
+                    "details": [{"field": "lesson_id", "message": "Обов'язкове поле."}],
                     "request_id": "req_abc123",
                     "documentation": "https://api.unispace.com/docs/errors#validation",
                 }
@@ -61,7 +63,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class AvailableSlotsResponseSerializer(serializers.Serializer):
-    room_id = serializers.IntegerField()
+    room_id = serializers.UUIDField()
     date = serializers.DateField()
     available_slots = serializers.ListField(child=serializers.CharField())
 
@@ -74,7 +76,7 @@ class RoomQuerySerializer(serializers.Serializer):
 
 
 class AvailableSlotsQuerySerializer(serializers.Serializer):
-    room_id = serializers.IntegerField(min_value=1, required=True)
+    room_id = serializers.UUIDField(required=True)
     date = serializers.DateField(required=True)
 
 
@@ -89,33 +91,27 @@ class UserBookingsQuerySerializer(serializers.Serializer):
         OpenApiExample(
             "Приклад вхідних даних для бронювання",
             value={
-                "room_id": 1,
-                "start_time": "2026-10-02T10:00:00Z",
-                "end_time": "2026-10-02T11:30:00Z",
-                "title": "Зустріч команди SpaceOps",
+                "room_id": "123e4567-e89b-12d3-a456-426614174000",
+                "lesson_id": "987f6543-e21b-34c1-b567-112233445566",
             },
         )
     ]
 )
 class BookingCreateSerializer(serializers.Serializer):
-    room_id = serializers.IntegerField(min_value=1, help_text="ID аудиторії")
-    start_time = serializers.DateTimeField()
-    end_time = serializers.DateTimeField()
-    title = serializers.CharField(max_length=100, help_text="Тема або назва пари")
-
-    def validate(self, data):
-        if data["start_time"] >= data["end_time"]:
-            raise serializers.ValidationError("Час початку має бути раніше часу закінчення.")
-        return data
+    room_id = serializers.UUIDField(help_text="ID аудиторії")
+    lesson_id = serializers.UUIDField(help_text="ID заняття")
 
 
 class BookingResponseSerializer(BookingCreateSerializer):
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.UUIDField(read_only=True)
     status = serializers.CharField(default="booked")
+    title = serializers.CharField(source="lesson.subject", read_only=True, help_text="Назва дисципліни")
+    start_time = serializers.DateTimeField(read_only=True)
+    end_time = serializers.DateTimeField(read_only=True)
 
 
 class SyncLogSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.UUIDField(read_only=True)
     started_at = serializers.DateTimeField(help_text="Час початку синхронізації")
     finished_at = serializers.DateTimeField(required=False, allow_null=True, help_text="Час завершення синхронізації")
     status = serializers.ChoiceField(

@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from api.models import AuditLog
-from conftest import at
+from .conftest import at
 
 
 @pytest.mark.django_db

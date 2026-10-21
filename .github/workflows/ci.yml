@@ -19,7 +19,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
 
     # PostgreSQL для CI (ADR-002): та сама СУБД, що в Docker локально і на Render.
     # Потрібен, бо моделі використовують можливості лише PostgreSQL (ExclusionConstraint).
@@ -92,7 +92,7 @@ jobs:
     - name: Apply migrations (PostgreSQL)
       run: python manage.py migrate --noinput
 
-    # Тести (Backend/api/tests.py і api/test_*.py) з перевіркою порогу покриття (Coverage Gate Bonus); налаштування - Backend/pyproject.toml.
+    # Тести (Backend/api/test_views.py і api/test_*.py) з покриттям гілок; налаштування - Backend/pyproject.toml.
     - name: Run tests with coverage and gate (pytest)
       run: pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html --cov-fail-under=75
 
@@ -126,7 +126,7 @@ jobs:
 
   # Lab05: перевірки фронтенду (окремий Django-проєкт у Frontend/) після огляду іншої команди.
   frontend:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
 
     env:
       # Тільки для CI: ключ не є секретом і не використовується ніде, крім перевірок.

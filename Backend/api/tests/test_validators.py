@@ -1,3 +1,9 @@
+"""
+Тести для валідаторів (Lab06).
+Примітка щодо використання ШІ: базову структуру тестів для TDD-циклу
+(Arrange-Act-Assert) підготовлено з допомогою ШІ-асистента.
+"""
+
 from datetime import time
 from api.validators import is_valid_lesson_duration
 

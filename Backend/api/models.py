@@ -362,12 +362,20 @@ class SyncLog(UUIDModel):
     """Журнал результатів спроб синхронізації розкладу із САЗ."""
 
     class SyncStatus(models.TextChoices):
+        IN_PROGRESS = "in_progress", "У процесі"
         SUCCESS = "success", "Успішно"
         FAILED = "failed", "Помилка"
 
+    class SyncTrigger(models.TextChoices):  # Додано
+        MANUAL = "manual", "Ручний запуск"
+        SCHEDULED = "scheduled", "За розкладом"
+
     started_at = models.DateTimeField("Час початку", auto_now_add=True)
     finished_at = models.DateTimeField("Час завершення", null=True, blank=True)
-    status = models.CharField("Статус синхронізації", max_length=10, choices=SyncStatus.choices)
+    status = models.CharField("Статус синхронізації", max_length=15, choices=SyncStatus.choices)
+    trigger = models.CharField(
+        "Джерело запуску", max_length=15, choices=SyncTrigger.choices, default=SyncTrigger.MANUAL
+    )
     error_message = models.TextField("Повідомлення про помилку", blank=True, default="")
 
     class Meta:

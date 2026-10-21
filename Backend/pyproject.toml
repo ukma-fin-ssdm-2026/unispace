@@ -22,7 +22,7 @@ addopts = "-ra"
 [tool.coverage.run]
 branch = true
 source = ["api"]
-omit = ["*/migrations/*", "*/tests.py", "*/test_*.py"]
+omit = ["*/migrations/*", "*/tests/*", "*/tests.py", "*/test_*.py"]
 
 [tool.coverage.report]
 show_missing = true

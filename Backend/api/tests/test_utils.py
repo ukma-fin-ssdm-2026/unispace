@@ -14,3 +14,9 @@ def test_calculate_duration_start_after_end():
     end = datetime(2026, 10, 10, 10, 0)
     with pytest.raises(ValueError):
         calculate_booking_duration(start, end)
+
+
+def test_calculate_duration_zero_minutes():
+    start = datetime(2026, 10, 10, 10, 0)
+    with pytest.raises(ValueError):
+        calculate_booking_duration(start, start)

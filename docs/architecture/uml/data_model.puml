@@ -50,6 +50,9 @@ entity "Booking" as booking {
     --
     * lesson_id : UUID <<FK>>
     * room_id : UUID <<FK>>
+    user_id : UUID <<FK>>
+    * start_time : datetime
+    * end_time : datetime
     * status : enum
     * source : enum
     * created_at : datetime
@@ -107,6 +110,7 @@ user ||--o{ lesson : проводить
 
 lesson ||--o{ booking : має
 room ||--o{ booking : призначена
+user o|--o{ booking : створює
 
 lesson ||--o{ conflict : перше заняття
 lesson ||--o{ conflict : друге заняття

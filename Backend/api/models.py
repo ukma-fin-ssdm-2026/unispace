@@ -15,6 +15,7 @@ from django.contrib.postgres.fields import DateTimeRangeField, RangeBoundary, Ra
 
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.utils import timezone
 
 from django.db import models
 from django.db.models import F, Func, Q
@@ -213,8 +214,12 @@ class Booking(UUIDModel):
     # Автоматично синхронізуємо час бронювання з часом заняття перед збереженням
     def save(self, *args, **kwargs):
         if hasattr(self, "lesson") and self.lesson:
-            self.start_time = datetime.combine(self.lesson.date, self.lesson.start_time)
-            self.end_time = datetime.combine(self.lesson.date, self.lesson.end_time)
+            naive_start = datetime.combine(self.lesson.date, self.lesson.start_time)
+            naive_end = datetime.combine(self.lesson.date, self.lesson.end_time)
+
+            self.start_time = timezone.make_aware(naive_start)
+            self.end_time = timezone.make_aware(naive_end)
+
         super().save(*args, **kwargs)
 
     def __str__(self):

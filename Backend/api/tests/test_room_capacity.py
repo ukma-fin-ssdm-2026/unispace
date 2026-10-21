@@ -9,12 +9,10 @@ class RoomCapacityTests(SimpleTestCase):
 
         self.assertTrue(result)
 
-
     def test_room_has_insufficient_capacity(self):
         result = can_room_accommodate(20, 25)
 
         self.assertFalse(result)
-
 
     def test_zero_attendees_raises_error(self):
         with self.assertRaises(ValueError):

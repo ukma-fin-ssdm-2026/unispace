@@ -67,6 +67,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+mutants/
 
 # Translations
 *.mo
@@ -139,6 +140,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.venv-wsl/
 
 # Spyder project settings
 .spyderproject

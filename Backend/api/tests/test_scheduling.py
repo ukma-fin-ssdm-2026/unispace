@@ -60,3 +60,15 @@ def test_overlap_duration_is_length_of_shared_time():
 
     # Assert
     assert result == timedelta(minutes=30)
+
+
+def test_intervals_without_shared_time_have_zero_overlap_duration():
+    # Arrange: між парами година перерви, спільного часу немає
+    first = (t(10), t(11))
+    second = (t(12), t(13))
+
+    # Act
+    result = overlap_duration(*first, *second)
+
+    # Assert
+    assert result == timedelta(0)

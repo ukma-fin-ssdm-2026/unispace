@@ -12,7 +12,6 @@ extend-exclude = '''
 # --- Тести та покриття (Lab06) ---
 # Запуск з папки Backend/:
 #   pytest --cov=api --cov-branch --cov-report=term-missing --cov-report=html
-# HTML-звіт: Backend/htmlcov/index.html (не комітиться, див. .gitignore).
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "Backend.settings"
 python_files = ["tests.py", "test_*.py"]
@@ -22,7 +21,7 @@ addopts = "-ra"
 [tool.coverage.run]
 branch = true
 source = ["api"]
-omit = ["*/migrations/*", "*/tests.py", "*/test_*.py"]
+omit = ["*/migrations/*", "*/tests/*", "*/tests.py", "*/test_*.py"]
 
 [tool.coverage.report]
 show_missing = true
@@ -30,3 +29,8 @@ skip_covered = false
 
 [tool.coverage.html]
 directory = "htmlcov"
+
+[tool.mutmut]
+source_paths = ["api/booking_rules.py"]
+pytest_add_cli_args_test_selection = ["api/tests/test_booking_rules.py"]
+also_copy = ["Backend", "api", "manage.py", "pyproject.toml"]

@@ -1,3 +1,12 @@
+"""
+Примітка щодо використання ШІ:
+Цей модуль написано за допомогою ШІ (Claude).
+ШІ використовувався для гранулярної реалізації та рефакторингу
+коду відповідно до вимог TDD і виправлення помилки в межах налагодженя.
+Код верифіковано людиною (Тимохина Ксенія).
+"""
+
+
 def _is_candidate(room, min_capacity, busy_room_ids):
     return room.is_available and room.id not in busy_room_ids and room.capacity >= min_capacity
 

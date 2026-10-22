@@ -92,7 +92,7 @@ jobs:
     - name: Apply migrations (PostgreSQL)
       run: python manage.py migrate --noinput
 
-    # Тести (Backend/api/test_views.py і api/test_*.py) з покриттям гілок; налаштування - Backend/pyproject.toml.
+    # Тести (Backend/api/tests/test_*.py) з покриттям гілок; налаштування - Backend/pyproject.toml.
     - name: Run tests with coverage and gate (pytest)
       run: pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html --cov-fail-under=75
 

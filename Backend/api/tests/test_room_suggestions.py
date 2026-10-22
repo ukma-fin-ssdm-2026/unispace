@@ -42,3 +42,10 @@ def test_rooms_from_preferred_building_come_first():
     near_big = make_room(2, capacity=60, building="1")
     result = suggest_rooms([far_small, near_big], min_capacity=30, preferred_building="1")
     assert result == [near_big, far_small]
+
+
+def test_busy_rooms_given_as_generator_are_all_excluded():
+    rooms = [make_room(room_id, capacity=30) for room_id in range(1, 5)]
+    busy_ids = (room.id for room in rooms[1:3])
+    result = suggest_rooms(rooms, min_capacity=10, busy_room_ids=busy_ids)
+    assert result == [rooms[0], rooms[3]]

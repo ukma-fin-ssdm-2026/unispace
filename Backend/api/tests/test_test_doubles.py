@@ -121,6 +121,17 @@ def test_validation_error_response_contains_field_name():
     assert result["error"]["details"][0]["field"] == "limit"
 
 
+def test_validation_error_response_has_correct_code():
+    # Arrange
+    errors = {"limit": ["Має бути більше нуля."]}
+
+    # Act
+    result = get_validation_error_response(errors)
+
+    # Assert
+    assert result["error"]["code"] == "VALIDATION_ERROR"
+
+
 def test_room_list_uses_room_manager():
     # Arrange
     request = APIRequestFactory().get("/api/v1/rooms/")

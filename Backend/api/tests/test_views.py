@@ -159,6 +159,16 @@ class BookingSecurityTests(APITestCase):
         response = self.client.post(reverse("booking-list-create"), self.valid_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_anonymous_user_cannot_delete_booking(self):
+        response = self.client.delete(reverse("booking-detail", args=[self.test_booking_id]))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_student_cannot_delete_booking(self):
+        student = User.objects.create(email="student_del@ukma.edu.ua", role="student")
+        self.client.force_authenticate(user=student)
+        response = self.client.delete(reverse("booking-detail", args=[self.test_booking_id]))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class SyncLogSecurityTests(APITestCase):
     """Перевірка доступу до логів синхронізації."""

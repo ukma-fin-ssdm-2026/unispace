@@ -7,5 +7,6 @@ def _rank(room, preferred_building):
 
 
 def suggest_rooms(rooms, min_capacity, busy_room_ids=(), preferred_building=None):
+    busy_room_ids = frozenset(busy_room_ids)
     candidates = [room for room in rooms if _is_candidate(room, min_capacity, busy_room_ids)]
     return sorted(candidates, key=lambda room: _rank(room, preferred_building))

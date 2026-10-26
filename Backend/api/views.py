@@ -8,6 +8,10 @@ CRUD-інтерфейсу під технічний стек нашого про
 Увесь код верифіковано, перевірено на відповідність стандартам REST-семантики та затверджено Backend Lead.
 
 Контракт оновлено під TDD (використання UUID та lesson_id).
+
+CRUD аудиторій і бронювань дописано з допомогою ШІ (Claude) за docs/requirements
+(FR-008, FR-011, FR-012, FR-015, FR-017, FR-020); перевірено ревʼю та тестами
+test_rooms_crud.py і test_bookings_crud.py.
 """
 
 import uuid
@@ -84,6 +88,18 @@ class RoomListAPIView(APIView):
         capacity_filter = query.validated_data.get("capacity")
         if capacity_filter:
             rooms = rooms.filter(capacity__gte=capacity_filter)
+
+        building_filter = query.validated_data.get("building")
+        if building_filter:
+            rooms = rooms.filter(building=building_filter)
+
+        projector_filter = query.validated_data.get("projector_working")
+        if projector_filter is not None:
+            rooms = rooms.filter(projector_working=projector_filter)
+
+        computers_filter = query.validated_data.get("has_computers")
+        if computers_filter is not None:
+            rooms = rooms.filter(has_computers=computers_filter)
 
         offset = query.validated_data.get("offset", 0)
         limit = query.validated_data.get("limit", 20)

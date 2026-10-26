@@ -8,6 +8,10 @@ CRUD-інтерфейсу під технічний стек нашого про
 Увесь код верифіковано, перевірено на відповідність стандартам REST-семантики та затверджено Backend Lead.
 
 Контракт оновлено під TDD (використання UUID та lesson_id).
+
+CRUD аудиторій і бронювань дописано з допомогою ШІ (Claude) за docs/requirements
+(FR-008, FR-011, FR-012, FR-015, FR-017, FR-020); перевірено ревʼю та тестами
+test_rooms_crud.py і test_bookings_crud.py.
 """
 
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
@@ -73,6 +77,11 @@ class RoomQuerySerializer(serializers.Serializer):
     limit = serializers.IntegerField(min_value=1, default=20, help_text="Кількість записів")
     offset = serializers.IntegerField(min_value=0, default=0, help_text="Зсув")
     capacity = serializers.IntegerField(min_value=1, required=False, help_text="Мінімальна місткість")
+    building = serializers.CharField(required=False, help_text="Корпус")
+    projector_working = serializers.BooleanField(
+        required=False, allow_null=True, help_text="Лише аудиторії зі справним проєктором"
+    )
+    has_computers = serializers.BooleanField(required=False, allow_null=True, help_text="Лише аудиторії з комп'ютерами")
 
 
 class AvailableSlotsQuerySerializer(serializers.Serializer):

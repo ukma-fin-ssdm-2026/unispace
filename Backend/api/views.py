@@ -16,6 +16,7 @@ test_rooms_crud.py і test_bookings_crud.py.
 
 import uuid
 
+from django.db.models import ProtectedError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -69,6 +70,27 @@ def get_validation_error_response(errors):
             "documentation": "https://api.unispace.com/docs/errors#validation",
         }
     }
+
+
+# Допоміжна функція для відповідей з помилками, які не є помилками валідації (403, 404, 409)
+def get_error_response(code, message, anchor):
+    return {
+        "error": {
+            "code": code,
+            "message": message,
+            "request_id": "req_abc123",
+            "documentation": f"https://api.unispace.com/docs/errors#{anchor}",
+        }
+    }
+
+
+def not_found_response(entity, pk):
+    message = f"{entity} з ID {pk} не знайдено"
+    return Response(get_error_response("NOT_FOUND", message, "not-found"), status=status.HTTP_404_NOT_FOUND)
+
+
+def conflict_response(message):
+    return Response(get_error_response("CONFLICT", message, "conflict"), status=status.HTTP_409_CONFLICT)
 
 
 class RoomListAPIView(APIView):
@@ -125,6 +147,64 @@ class RoomListAPIView(APIView):
 
         room = serializer.save()
         return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
+
+
+class RoomDetailAPIView(APIView):
+    def get_permissions(self):
+        # Перегляд відкритий усім, редагування і видалення - лише диспетчеру (FR-008).
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsDispatcher()]
+
+    @extend_schema(
+        summary="Отримати аудиторію",
+        responses={200: RoomSerializer, 404: ErrorResponseSerializer},
+    )
+    def get(self, request, pk, format=None):
+        room = Room.objects.filter(pk=pk).first()
+        if room is None:
+            return not_found_response("Аудиторію", pk)
+
+        return Response(RoomSerializer(room).data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="Оновити аудиторію",
+        request=RoomWriteSerializer,
+        responses={
+            200: RoomSerializer,
+            400: ErrorResponseSerializer,
+            403: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    )
+    def patch(self, request, pk, format=None):
+        room = Room.objects.filter(pk=pk).first()
+        if room is None:
+            return not_found_response("Аудиторію", pk)
+
+        serializer = RoomWriteSerializer(room, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(get_validation_error_response(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        room = serializer.save()
+        return Response(RoomSerializer(room).data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="Видалити аудиторію",
+        description="Аудиторію з бронюваннями, конфліктами чи записами аудиту видалити не можна.",
+        responses={204: None, 403: ErrorResponseSerializer, 404: ErrorResponseSerializer, 409: ErrorResponseSerializer},
+    )
+    def delete(self, request, pk, format=None):
+        room = Room.objects.filter(pk=pk).first()
+        if room is None:
+            return not_found_response("Аудиторію", pk)
+
+        try:
+            room.delete()
+        except ProtectedError:
+            return conflict_response("Аудиторію не можна видалити: з нею повʼязані бронювання або записи аудиту")
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AvailableSlotsAPIView(APIView):

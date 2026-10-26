@@ -14,7 +14,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from api.models import AuditLog, Booking, Lesson, User
+from api.models import AuditLog, Booking, Lesson, User, Notification
 
 from .conftest import at
 
@@ -49,6 +49,11 @@ def other_teacher(db):
 def create_booking(client, lesson, room):
     payload = {"lesson_id": str(lesson.id), "room_id": str(room.id)}
     return client.post(reverse("booking-list-create"), payload, format="json")
+
+
+def change_room(client, booking, room, **extra):
+    payload = {"room_id": str(room.id), **extra}
+    return client.post(reverse("booking-change-room", args=[booking.id]), payload, format="json")
 
 
 def test_teacher_creates_booking_for_own_lesson(api_client, teacher, room, make_lesson):
@@ -246,3 +251,117 @@ def test_cancel_unknown_booking_returns_404(api_client, dispatcher):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["error"]["code"] == "NOT_FOUND"
+
+
+def test_teacher_changes_room_and_audit_record_is_written(api_client, teacher, room, other_room, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    response = change_room(api_client, booking, other_room, reason="Зламався проєктор")
+
+    booking.refresh_from_db()
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["room_id"] == str(other_room.id)
+    assert booking.room == other_room
+    record = AuditLog.objects.get(booking=booking)
+    assert record.action == "room_changed"
+    assert record.previous_room == room
+    assert record.new_room == other_room
+    assert record.reason == "Зламався проєктор"
+
+
+def test_change_room_frees_previous_room(api_client, teacher, room, other_room, make_booking, make_lesson):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+    change_room(api_client, booking, other_room)
+    new_lesson = make_lesson(at(10), at(11, 30))
+
+    response = create_booking(api_client, new_lesson, room)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_change_room_notifies_group_members(api_client, teacher, student, other_room, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    change_room(api_client, booking, other_room)
+
+    notification = Notification.objects.get(user=student)
+    assert notification.type == "room_changed"
+    assert "1-226" in notification.message
+    assert not notification.is_read
+
+
+def test_change_to_occupied_room_returns_409_and_keeps_booking(api_client, teacher, room, other_room, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    make_booking(at(10), at(11, 30), booking_room=other_room)
+    api_client.force_authenticate(user=teacher)
+
+    response = change_room(api_client, booking, other_room)
+
+    booking.refresh_from_db()
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert booking.room == room
+    assert not AuditLog.objects.filter(booking=booking).exists()
+
+
+def test_change_to_same_room_returns_400(api_client, teacher, room, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    response = change_room(api_client, booking, room)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert not AuditLog.objects.filter(booking=booking).exists()
+
+
+def test_change_to_unknown_room_returns_400(api_client, teacher, room, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+    payload = {"room_id": str(UNKNOWN_ID)}
+
+    response = api_client.post(reverse("booking-change-room", args=[booking.id]), payload, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["error"]["details"][0]["field"] == "room_id"
+
+
+def test_change_room_of_cancelled_booking_returns_409(api_client, teacher, other_room, make_booking):
+    booking = make_booking(at(10), at(11, 30), status=Booking.BookingStatus.CANCELLED)
+    api_client.force_authenticate(user=teacher)
+
+    response = change_room(api_client, booking, other_room)
+
+    assert response.status_code == status.HTTP_409_CONFLICT
+
+
+def test_student_cannot_change_room(api_client, student, other_room, make_booking, room):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=student)
+
+    response = change_room(api_client, booking, other_room)
+
+    booking.refresh_from_db()
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert booking.room == room
+
+
+def test_teacher_cannot_change_room_of_foreign_booking(api_client, other_teacher, other_room, make_booking, room):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=other_teacher)
+
+    response = change_room(api_client, booking, other_room)
+
+    booking.refresh_from_db()
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert booking.room == room
+
+
+def test_change_room_of_unknown_booking_returns_404(api_client, dispatcher, room):
+    api_client.force_authenticate(user=dispatcher)
+    payload = {"room_id": str(room.id)}
+
+    response = api_client.post(reverse("booking-change-room", args=[UNKNOWN_ID]), payload, format="json")
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND

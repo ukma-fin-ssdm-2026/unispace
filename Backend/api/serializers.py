@@ -124,6 +124,11 @@ class BookingCreateSerializer(serializers.Serializer):
     lesson_id = serializers.UUIDField(help_text="ID заняття")
 
 
+class BookingChangeRoomSerializer(serializers.Serializer):
+    room_id = serializers.UUIDField(help_text="ID нової аудиторії")
+    reason = serializers.CharField(required=False, allow_blank=True, default="", help_text="Причина зміни аудиторії")
+
+
 class BookingResponseSerializer(BookingCreateSerializer):
     id = serializers.UUIDField(read_only=True)
     status = serializers.ChoiceField(choices=["active", "cancelled"], read_only=True)

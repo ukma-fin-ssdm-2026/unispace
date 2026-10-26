@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from drf_spectacular.utils import extend_schema
-from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
+from .models import AuditLog, Room, Booking, Lesson, SyncLog, User, Notification
 
 from .serializers import (
     RoomSerializer,
@@ -36,6 +36,7 @@ from .serializers import (
     UserBookingsQuerySerializer,
     SyncLogSerializer,
     RoomWriteSerializer,
+    BookingChangeRoomSerializer,
 )
 
 
@@ -329,6 +330,79 @@ class BookingDetailAPIView(APIView):
                 )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BookingChangeRoomAPIView(APIView):
+    permission_classes = [IsTeacherOrDispatcher]
+
+    @extend_schema(
+        summary="Змінити аудиторію бронювання",
+        description="Переносить заняття в іншу аудиторію, пише запис в аудит і сповіщає групу.",
+        request=BookingChangeRoomSerializer,
+        responses={
+            200: BookingResponseSerializer,
+            400: ErrorResponseSerializer,
+            403: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+            409: ErrorResponseSerializer,
+        },
+    )
+    def post(self, request, pk, format=None):
+        booking = Booking.objects.select_related("lesson__group", "room").filter(pk=pk).first()
+        if booking is None:
+            return not_found_response("Бронювання", pk)
+
+        if not can_manage_lesson(request.user, booking.lesson):
+            return forbidden_response("Викладач може змінювати аудиторію лише власних занять")
+
+        serializer = BookingChangeRoomSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(get_validation_error_response(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        if booking.status != Booking.BookingStatus.ACTIVE:
+            return conflict_response("Скасоване бронювання змінити не можна")
+
+        new_room = Room.objects.filter(pk=serializer.validated_data["room_id"]).first()
+        if new_room is None:
+            return unknown_reference_response("room_id", "Аудиторію")
+
+        if new_room.pk == booking.room_id:
+            errors = {"room_id": ["Заняття вже призначене в цій аудиторії."]}
+            return Response(get_validation_error_response(errors), status=status.HTTP_400_BAD_REQUEST)
+
+        if not new_room.is_available:
+            return conflict_response("Аудиторія недоступна для використання")
+
+        previous_room = booking.room
+        try:
+            with transaction.atomic():
+                booking.room = new_room
+                booking.save(update_fields=["room", "updated_at"])
+                AuditLog.objects.create(
+                    booking=booking,
+                    user=request.user,
+                    action="room_changed",
+                    previous_room=previous_room,
+                    new_room=new_room,
+                    reason=serializer.validated_data["reason"],
+                )
+                self.notify_group(booking, previous_room, new_room)
+        except IntegrityError:
+            return conflict_response("Нова аудиторія вже заброньована на цей час")
+
+        return Response(BookingResponseSerializer(booking).data, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def notify_group(booking, previous_room, new_room):
+        """Створює сповіщення для кожного користувача академічної групи заняття (FR-015)."""
+        message = (
+            f"Заняття «{booking.lesson.subject}» ({booking.start_time:%d.%m.%Y %H:%M}) "
+            f"перенесено: {previous_room} → {new_room}"
+        )
+        recipients = User.objects.filter(group=booking.lesson.group)
+        Notification.objects.bulk_create(
+            [Notification(user=user, type="room_changed", message=message) for user in recipients]
+        )
 
 
 class UserBookingsAPIView(APIView):

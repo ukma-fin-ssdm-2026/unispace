@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from drf_spectacular.utils import extend_schema
-from .models import Room, Booking, Lesson, SyncLog, User
+from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
 
 from .serializers import (
     RoomSerializer,
@@ -290,22 +290,43 @@ class BookingDetailAPIView(APIView):
     permission_classes = [IsTeacherOrDispatcher]
 
     @extend_schema(
+        summary="Отримати бронювання",
+        responses={200: BookingResponseSerializer, 403: ErrorResponseSerializer, 404: ErrorResponseSerializer},
+    )
+    def get(self, request, pk, format=None):
+        booking = Booking.objects.select_related("lesson").filter(pk=pk).first()
+        if booking is None:
+            return not_found_response("Бронювання", pk)
+
+        if not can_manage_lesson(request.user, booking.lesson):
+            return forbidden_response("Викладач бачить лише бронювання власних занять")
+
+        return Response(BookingResponseSerializer(booking).data, status=status.HTTP_200_OK)
+
+    @extend_schema(
         summary="Скасувати бронювання",
+        description="Бронювання не видаляється: отримує статус cancelled, у журнал аудиту додається запис.",
         responses={204: None, 403: ErrorResponseSerializer, 404: ErrorResponseSerializer},
     )
     def delete(self, request, pk, format=None):
-        if str(pk) == "00000000-0000-0000-0000-000000000000":
-            return Response(
-                {
-                    "error": {
-                        "code": "NOT_FOUND",
-                        "message": f"Бронювання з ID {pk} не знайдено",
-                        "request_id": "req_abc123",
-                        "documentation": "https://api.unispace.com/docs/errors#not-found",
-                    }
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        booking = Booking.objects.select_related("lesson", "room").filter(pk=pk).first()
+        if booking is None:
+            return not_found_response("Бронювання", pk)
+
+        if not can_manage_lesson(request.user, booking.lesson):
+            return forbidden_response("Викладач може скасовувати лише бронювання власних занять")
+
+        # Повторне скасування нічого не змінює і не дублює запис аудиту.
+        if booking.status == Booking.BookingStatus.ACTIVE:
+            with transaction.atomic():
+                booking.status = Booking.BookingStatus.CANCELLED
+                booking.save(update_fields=["status", "updated_at"])
+                AuditLog.objects.create(
+                    booking=booking,
+                    user=request.user,
+                    action="cancelled",
+                    previous_room=booking.room,
+                )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

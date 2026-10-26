@@ -81,23 +81,6 @@ class AvailableSlotsTests(ErrorFormatMixin, APITestCase):
         )
 
 
-class BookingDeleteTests(APITestCase):
-    def setUp(self):
-        self.dispatcher = User.objects.create(email="disp1@ukma.edu.ua", role="dispatcher")
-        self.client.force_authenticate(user=self.dispatcher)
-
-        self.test_booking_id = str(uuid.uuid4())
-        self.unknown_booking_id = "00000000-0000-0000-0000-000000000000"
-
-    def test_delete_existing_booking_returns_204(self):
-        response = self.client.delete(reverse("booking-detail", args=[self.test_booking_id]))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-    def test_delete_unknown_booking_returns_404(self):
-        response = self.client.delete(reverse("booking-detail", args=[self.unknown_booking_id]))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-
 class UserBookingsTests(ErrorFormatMixin, APITestCase):
     url = reverse("user-bookings")
 

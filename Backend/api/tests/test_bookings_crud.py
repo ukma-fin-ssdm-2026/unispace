@@ -14,7 +14,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from api.models import Booking, Lesson, User
+from api.models import AuditLog, Booking, Lesson, User
 
 from .conftest import at
 
@@ -160,3 +160,89 @@ def test_booking_unavailable_room_returns_409(api_client, teacher, room, make_le
 
     assert response.status_code == status.HTTP_409_CONFLICT
     assert not Booking.objects.filter(lesson=lesson).exists()
+
+
+def test_teacher_retrieves_own_booking(api_client, teacher, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    response = api_client.get(reverse("booking-detail", args=[booking.id]))
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["id"] == str(booking.id)
+    assert response.json()["title"] == "Програмна інженерія"
+
+
+def test_teacher_cannot_retrieve_foreign_booking(api_client, other_teacher, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=other_teacher)
+
+    response = api_client.get(reverse("booking-detail", args=[booking.id]))
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_retrieve_unknown_booking_returns_404(api_client, dispatcher):
+    api_client.force_authenticate(user=dispatcher)
+
+    response = api_client.get(reverse("booking-detail", args=[UNKNOWN_ID]))
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_teacher_cancels_own_booking_and_audit_record_is_written(api_client, teacher, room, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    response = api_client.delete(reverse("booking-detail", args=[booking.id]))
+
+    booking.refresh_from_db()
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert booking.status == Booking.BookingStatus.CANCELLED
+    record = AuditLog.objects.get(booking=booking)
+    assert record.action == "cancelled"
+    assert record.user == teacher
+    assert record.previous_room == room
+
+
+def test_cancel_twice_does_not_duplicate_audit_record(api_client, teacher, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    api_client.delete(reverse("booking-detail", args=[booking.id]))
+    response = api_client.delete(reverse("booking-detail", args=[booking.id]))
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert AuditLog.objects.filter(booking=booking).count() == 1
+
+
+def test_cancelled_booking_frees_the_slot(api_client, teacher, room, make_booking, make_lesson):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+    api_client.delete(reverse("booking-detail", args=[booking.id]))
+    new_lesson = make_lesson(at(10), at(11, 30))
+
+    response = create_booking(api_client, new_lesson, room)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_teacher_cannot_cancel_foreign_booking(api_client, other_teacher, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=other_teacher)
+
+    response = api_client.delete(reverse("booking-detail", args=[booking.id]))
+
+    booking.refresh_from_db()
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert booking.status == Booking.BookingStatus.ACTIVE
+    assert not AuditLog.objects.filter(booking=booking).exists()
+
+
+def test_cancel_unknown_booking_returns_404(api_client, dispatcher):
+    api_client.force_authenticate(user=dispatcher)
+
+    response = api_client.delete(reverse("booking-detail", args=[UNKNOWN_ID]))
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json()["error"]["code"] == "NOT_FOUND"

@@ -36,6 +36,11 @@ def teacher(db):
 
 
 @pytest.fixture
+def dispatcher(db):
+    return User.objects.create(email="dispatcher@ukma.edu.ua", full_name="Тестовий Диспетчер", role="dispatcher")
+
+
+@pytest.fixture
 def api_client():
     return APIClient()
 

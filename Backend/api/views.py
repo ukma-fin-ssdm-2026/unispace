@@ -33,6 +33,7 @@ from .serializers import (
     AvailableSlotsQuerySerializer,
     UserBookingsQuerySerializer,
     SyncLogSerializer,
+    RoomWriteSerializer,
 )
 
 
@@ -42,7 +43,7 @@ class IsTeacherOrDispatcher(BasePermission):
     can create or delete bookings.
     """
 
-    message = "Only teachers and dispatchers can manage bookings."
+    message = "Only dispatchers can perform this action."
 
     def has_permission(self, request, view):
         user = request.user
@@ -71,7 +72,11 @@ def get_validation_error_response(errors):
 
 
 class RoomListAPIView(APIView):
-    permission_classes = [AllowAny]
+    def get_permissions(self):
+        # Перегляд аудиторій відкритий усім, створення - лише диспетчеру (FR-008).
+        if self.request.method == "POST":
+            return [IsDispatcher()]
+        return [AllowAny()]
 
     @extend_schema(
         summary="Отримати список аудиторій",
@@ -107,6 +112,19 @@ class RoomListAPIView(APIView):
 
         serializer = RoomSerializer(rooms, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="Створити аудиторію",
+        request=RoomWriteSerializer,
+        responses={201: RoomSerializer, 400: ErrorResponseSerializer, 403: ErrorResponseSerializer},
+    )
+    def post(self, request, format=None):
+        serializer = RoomWriteSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(get_validation_error_response(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        room = serializer.save()
+        return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
 
 
 class AvailableSlotsAPIView(APIView):

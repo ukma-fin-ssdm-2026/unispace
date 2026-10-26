@@ -58,11 +58,24 @@ class ErrorResponseSerializer(serializers.Serializer):
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ["id", "building", "number", "capacity", "has_computers", "projector_working"]
+        fields = ["id", "building", "number", "capacity", "has_computers", "projector_working", "is_available"]
 
         extra_kwargs = {
             "number": {"help_text": "Назва або номер аудиторії (напр., 4-230)"},
             "capacity": {"help_text": "Місткість (кількість посадкових місць)"},
+        }
+
+
+class RoomWriteSerializer(serializers.ModelSerializer):
+    """Вхідні дані для створення й редагування аудиторії диспетчером (FR-008)."""
+
+    class Meta:
+        model = Room
+        fields = ["building", "number", "capacity", "board_type", "projector_working", "has_computers", "is_available"]
+
+        extra_kwargs = {
+            "number": {"help_text": "Назва або номер аудиторії (напр., 4-230)"},
+            "capacity": {"min_value": 1, "help_text": "Місткість (кількість посадкових місць)"},
         }
 
 

@@ -36,6 +36,11 @@ def teacher(db):
 
 
 @pytest.fixture
+def student(db, group):
+    return User.objects.create(email="student@ukma.edu.ua", full_name="Тестовий Студент", role="student", group=group)
+
+
+@pytest.fixture
 def dispatcher(db):
     return User.objects.create(email="dispatcher@ukma.edu.ua", full_name="Тестовий Диспетчер", role="dispatcher")
 

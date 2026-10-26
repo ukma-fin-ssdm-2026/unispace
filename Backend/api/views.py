@@ -16,13 +16,14 @@ test_rooms_crud.py і test_bookings_crud.py.
 
 import uuid
 
+from django.db import IntegrityError, transaction
 from django.db.models import ProtectedError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from drf_spectacular.utils import extend_schema
-from .models import Room, Booking, SyncLog
+from .models import Room, Booking, Lesson, SyncLog, User
 
 from .serializers import (
     RoomSerializer,
@@ -91,6 +92,21 @@ def not_found_response(entity, pk):
 
 def conflict_response(message):
     return Response(get_error_response("CONFLICT", message, "conflict"), status=status.HTTP_409_CONFLICT)
+
+
+def forbidden_response(message):
+    return Response(get_error_response("FORBIDDEN", message, "forbidden"), status=status.HTTP_403_FORBIDDEN)
+
+
+def unknown_reference_response(field, entity):
+    """400 для ID у тілі запиту, за яким у базі нічого немає."""
+    errors = {field: [f"{entity} з таким ID не знайдено."]}
+    return Response(get_validation_error_response(errors), status=status.HTTP_400_BAD_REQUEST)
+
+
+def can_manage_lesson(user, lesson):
+    """Диспетчер керує будь-якими заняттями, викладач - лише власними."""
+    return user.role == User.RoleChoices.DISPATCHER or lesson.teacher_id == user.id
 
 
 class RoomListAPIView(APIView):
@@ -234,20 +250,40 @@ class BookingListCreateAPIView(APIView):
     @extend_schema(
         summary="Створити бронювання",
         request=BookingCreateSerializer,
-        responses={201: BookingResponseSerializer, 400: ErrorResponseSerializer, 409: ErrorResponseSerializer},
+        responses={
+            201: BookingResponseSerializer,
+            400: ErrorResponseSerializer,
+            403: ErrorResponseSerializer,
+            409: ErrorResponseSerializer,
+        },
     )
     def post(self, request, format=None):
         serializer = BookingCreateSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(get_validation_error_response(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
-        response_data = serializer.validated_data.copy()
-        response_data["id"] = uuid.uuid4()
-        response_data["status"] = "booked"
-        response_data["title"] = "Mock Subject"
-        response_data["start_time"] = "2026-10-20T10:00:00Z"
-        response_data["end_time"] = "2026-10-20T11:30:00Z"
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        lesson = Lesson.objects.filter(pk=serializer.validated_data["lesson_id"]).first()
+        if lesson is None:
+            return unknown_reference_response("lesson_id", "Заняття")
+
+        room = Room.objects.filter(pk=serializer.validated_data["room_id"]).first()
+        if room is None:
+            return unknown_reference_response("room_id", "Аудиторію")
+
+        if not can_manage_lesson(request.user, lesson):
+            return forbidden_response("Викладач може бронювати аудиторії лише для власних занять")
+
+        if not room.is_available:
+            return conflict_response("Аудиторія недоступна для використання")
+
+        # Накладки та друге активне бронювання заняття відсікає БД (ExclusionConstraint, UniqueConstraint).
+        try:
+            with transaction.atomic():
+                booking = Booking.objects.create(lesson=lesson, room=room, user=request.user)
+        except IntegrityError:
+            return conflict_response("Аудиторія вже заброньована на цей час або заняття вже має активне бронювання")
+
+        return Response(BookingResponseSerializer(booking).data, status=status.HTTP_201_CREATED)
 
 
 class BookingDetailAPIView(APIView):

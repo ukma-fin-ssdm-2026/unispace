@@ -126,7 +126,7 @@ class BookingCreateSerializer(serializers.Serializer):
 
 class BookingResponseSerializer(BookingCreateSerializer):
     id = serializers.UUIDField(read_only=True)
-    status = serializers.CharField(default="booked")
+    status = serializers.ChoiceField(choices=["active", "cancelled"], read_only=True)
     title = serializers.CharField(source="lesson.subject", read_only=True, help_text="Назва дисципліни")
     start_time = serializers.DateTimeField(read_only=True)
     end_time = serializers.DateTimeField(read_only=True)

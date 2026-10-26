@@ -10,6 +10,9 @@ APISimpleTestCase: тестова база не створюється, і те�
 api/views.py та api/serializers.py; перевірено запуском `python manage.py test` локально і в CI.
 
 Контракт оновлено під TDD (використання UUID та lesson_id).
+
+Тести створення й скасування бронювань (колись на заглушках) перенесено в test_bookings_crud.py,
+де вони працюють із реальними даними.
 """
 
 import uuid
@@ -76,27 +79,6 @@ class AvailableSlotsTests(ErrorFormatMixin, APITestCase):
         self.assert_validation_error(
             self.client.get(self.url, {"room_id": "not-a-uuid", "date": "2026-10-20"}), "room_id"
         )
-
-
-class BookingCreateTests(ErrorFormatMixin, APITestCase):
-    url = reverse("booking-list-create")
-
-    def setUp(self):
-        self.teacher = User.objects.create(email="teacher1@ukma.edu.ua", role="teacher")
-        self.client.force_authenticate(user=self.teacher)
-
-        self.valid_payload = {
-            "room_id": str(uuid.uuid4()),
-            "lesson_id": str(uuid.uuid4()),
-        }
-
-    def test_create_booking_returns_201(self):
-        response = self.client.post(self.url, self.valid_payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def test_missing_lesson_id_returns_400(self):
-        payload = {"room_id": self.valid_payload["room_id"]}
-        self.assert_validation_error(self.client.post(self.url, payload, format="json"), "lesson_id")
 
 
 class BookingDeleteTests(APITestCase):

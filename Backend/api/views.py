@@ -203,18 +203,18 @@ def build_schedule_item(lesson):
     if booking:
         change_times = [change.created_at for change in booking.room_changes]
         room_changed = is_recently_changed(change_times, booking.start_time)
-        return {
-            "lesson_id": lesson.id,
-            "subject": lesson.subject,
-            "date": lesson.date,
-            "start_time": lesson.start_time,
-            "end_time": lesson.end_time,
-            "group": lesson.group.name,
-            "teacher": str(lesson.teacher),
-            "room": room,
-            "room_assigned": room is not None,
-            "room_changed": room_changed,
-        }
+    return {
+        "lesson_id": lesson.id,
+        "subject": lesson.subject,
+        "date": lesson.date,
+        "start_time": lesson.start_time,
+        "end_time": lesson.end_time,
+        "group": lesson.group.name,
+        "teacher": str(lesson.teacher),
+        "room": room,
+        "room_assigned": room is not None,
+        "room_changed": room_changed,
+    }
 
 
 class ScheduleAPIView(APIView):

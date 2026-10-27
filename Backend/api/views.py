@@ -18,7 +18,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from drf_spectacular.utils import extend_schema
-from .models import Room, Booking, SyncLog, User, Lesson
+from .booking_rules import is_recently_changed
+from .models import Room, Booking, SyncLog, User, Lesson, AuditLog
 
 from .serializers import (
     RoomSerializer,
@@ -198,17 +199,22 @@ def limit_lessons_to_user(lessons, user, group_id):
 def build_schedule_item(lesson):
     booking = lesson.active_bookings[0] if lesson.active_bookings else None
     room = booking.room if booking else None
-    return {
-        "lesson_id": lesson.id,
-        "subject": lesson.subject,
-        "date": lesson.date,
-        "start_time": lesson.start_time,
-        "end_time": lesson.end_time,
-        "group": lesson.group.name,
-        "teacher": str(lesson.teacher),
-        "room": room,
-        "room_assigned": room is not None,
-    }
+    room_changed = False
+    if booking:
+        change_times = [change.created_at for change in booking.room_changes]
+        room_changed = is_recently_changed(change_times, booking.start_time)
+        return {
+            "lesson_id": lesson.id,
+            "subject": lesson.subject,
+            "date": lesson.date,
+            "start_time": lesson.start_time,
+            "end_time": lesson.end_time,
+            "group": lesson.group.name,
+            "teacher": str(lesson.teacher),
+            "room": room,
+            "room_assigned": room is not None,
+            "room_changed": room_changed,
+        }
 
 
 class ScheduleAPIView(APIView):
@@ -228,7 +234,12 @@ class ScheduleAPIView(APIView):
         if not query.is_valid():
             return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
 
-        active_bookings = Booking.objects.filter(status=Booking.BookingStatus.ACTIVE).select_related("room")
+        room_changes = AuditLog.objects.filter(action="room_changed")
+        active_bookings = (
+            Booking.objects.filter(status=Booking.BookingStatus.ACTIVE)
+            .select_related("room")
+            .prefetch_related(Prefetch("audit_logs", queryset=room_changes, to_attr="room_changes"))
+        )
         lessons = Lesson.objects.select_related("group", "teacher").prefetch_related(
             Prefetch("bookings", queryset=active_bookings, to_attr="active_bookings")
         )

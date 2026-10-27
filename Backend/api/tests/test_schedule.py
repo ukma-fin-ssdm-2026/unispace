@@ -10,11 +10,13 @@
 
 from datetime import date
 
+from unittest.mock import patch
+
 import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from api.models import AcademicGroup, Booking
+from api.models import AcademicGroup, Booking, AuditLog
 
 from .conftest import at
 
@@ -24,6 +26,18 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture
 def other_group(db):
     return AcademicGroup.objects.create(name="ІПЗ-4", source_key="group-ipz-4")
+
+
+def log_room_change(booking, user, previous_room, new_room, when):
+    """Запис аудиту із заданим часом: created_at проставляється автоматично, тому підміняємо поточний час."""
+    with patch("django.utils.timezone.now", return_value=when):
+        return AuditLog.objects.create(
+            booking=booking,
+            user=user,
+            action="room_changed",
+            previous_room=previous_room,
+            new_room=new_room,
+        )
 
 
 def get_schedule(client, **params):
@@ -121,6 +135,7 @@ def test_schedule_item_contains_lesson_and_room_details(api_client, student, roo
     assert item["teacher"] == "Тестовий Викладач"
     assert item["room"] == {"id": str(room.id), "building": "1", "number": "1-225"}
     assert item["room_assigned"] is True
+    assert item["room_changed"] is False
 
 
 def test_schedule_shows_new_room_after_change(api_client, student, other_room, make_booking):
@@ -207,3 +222,34 @@ def test_limit_zero_returns_400(api_client, student):
     response = get_schedule(api_client, limit=0)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_room_changed_marker_is_set_when_changed_within_24_hours_before_start(
+    api_client, student, teacher, room, other_room, make_booking
+):
+    booking = make_booking(at(10), at(11, 30))
+    log_room_change(booking, teacher, room, other_room, at(12, day=date(2026, 10, 19)))
+    api_client.force_authenticate(user=student)
+
+    item = get_schedule(api_client).json()[0]
+
+    assert item["room_changed"] is True
+
+
+def test_room_changed_marker_is_not_set_for_old_change(api_client, student, teacher, room, other_room, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    log_room_change(booking, teacher, room, other_room, at(12, day=date(2026, 10, 15)))
+    api_client.force_authenticate(user=student)
+
+    item = get_schedule(api_client).json()[0]
+
+    assert item["room_changed"] is False
+
+
+def test_room_changed_marker_is_not_set_without_changes(api_client, student, make_booking):
+    make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=student)
+
+    item = get_schedule(api_client).json()[0]
+
+    assert item["room_changed"] is False

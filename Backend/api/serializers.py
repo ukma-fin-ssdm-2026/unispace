@@ -157,3 +157,6 @@ class ScheduleItemSerializer(serializers.Serializer):
     teacher = serializers.CharField(help_text="Імʼя викладача")
     room = ScheduleRoomSerializer(allow_null=True, help_text="Призначена аудиторія або null")
     room_assigned = serializers.BooleanField(help_text="false, якщо бронювання скасовано або його немає")
+    room_changed = serializers.BooleanField(
+        help_text="Маркер «Змінено»: аудиторію змінено менш ніж за 24 години до початку заняття"
+    )

@@ -11,12 +11,13 @@
 Мітка може стояти на функції, класі (для unittest-класів) або в pytestmark модуля чи класу.
 
 Запуск з папки Backend:  python scripts/check_traceability.py
+Шляхи до файлів зафіксовано в коді і не приймаються з командного рядка, щоб скрипт не можна було
+змусити прочитати довільний файл (SonarCloud: path injection).
 
 Примітка щодо використання ШІ: скрипт згенеровано ШІ (Claude) за вимогами бонусу Lab07;
 поведінку перевіряють тести scripts/tests/test_check_traceability.py.
 """
 
-import argparse
 import ast
 import re
 import sys
@@ -182,16 +183,11 @@ def format_summary(report, requirement_exceptions):
     return "\n".join(lines)
 
 
-def main(argv=None):
-    parser = argparse.ArgumentParser(description="Перевірка простежуваності вимог RTM до тестів")
-    parser.add_argument("--rtm", default=DEFAULT_RTM)
-    parser.add_argument("--tests", default=DEFAULT_TESTS)
-    parser.add_argument("--exceptions", default=DEFAULT_EXCEPTIONS)
-    args = parser.parse_args(argv)
-
-    requirements = read_requirement_ids(args.rtm)
-    tests = collect_test_marks(args.tests)
-    requirement_exceptions, test_exceptions = read_exceptions(args.exceptions)
+def run(rtm_path, tests_dir, exceptions_path):
+    """Перевіряє простежуваність для заданих файлів; повертає код виходу (0 - гаразд, 1 - є дірки)."""
+    requirements = read_requirement_ids(rtm_path)
+    tests = collect_test_marks(tests_dir)
+    requirement_exceptions, test_exceptions = read_exceptions(exceptions_path)
     report = check(requirements, tests, requirement_exceptions, test_exceptions)
 
     print(format_summary(report, requirement_exceptions))
@@ -202,6 +198,10 @@ def main(argv=None):
         return 1
     print("\nПростежуваність у порядку: кожна вимога має тест або обґрунтований виняток, кожен тест - вимогу.")
     return 0
+
+
+def main():
+    return run(DEFAULT_RTM, DEFAULT_TESTS, DEFAULT_EXCEPTIONS)
 
 
 if __name__ == "__main__":

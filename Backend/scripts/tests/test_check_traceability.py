@@ -6,7 +6,7 @@
 
 import textwrap
 
-from scripts.check_traceability import check, collect_test_marks, main, read_requirement_ids
+from scripts.check_traceability import check, collect_test_marks, read_requirement_ids, run
 
 RTM = """
 | ID | Опис |
@@ -28,7 +28,7 @@ def make_project(tmp_path, test_source, exceptions=""):
     tests_dir.mkdir(parents=True)
     write(tests_dir / "test_sample.py", test_source)
     exceptions_file = write(tmp_path / "traceability.toml", exceptions)
-    return ["--rtm", str(rtm), "--tests", str(tests_dir), "--exceptions", str(exceptions_file)]
+    return rtm, tests_dir, exceptions_file
 
 
 def test_requirement_ids_are_read_from_bold_first_column(tmp_path):
@@ -127,7 +127,7 @@ def test_stale_and_dangling_test_exceptions_are_reported():
     ]
 
 
-def test_main_fails_when_gap_is_found_and_passes_when_closed(tmp_path, capsys):
+def test_run_fails_when_gap_is_found_and_passes_when_closed(tmp_path, capsys):
     # Arrange
     untraced = make_project(tmp_path / "red", "def test_a():\n    pass\n")
     traced = make_project(
@@ -142,6 +142,6 @@ def test_main_fails_when_gap_is_found_and_passes_when_closed(tmp_path, capsys):
     )
 
     # Act / Assert
-    assert main(untraced) == 1
+    assert run(*untraced) == 1
     assert "**ДІРКА**" in capsys.readouterr().out
-    assert main(traced) == 0
+    assert run(*traced) == 0

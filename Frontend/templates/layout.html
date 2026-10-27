@@ -1,0 +1,127 @@
+<!--
+  Примітка щодо використання ШІ:
+  Цей макет та фронтенд-компоненти (адаптивний сайдбар, плавні анімації,
+  скляний ефект / glassmorphism, спливаючі підказки та інтерактивні модальні вікна)
+  було створено та адаптовано за допомогою ШІ у межах
+  реалізації UI/UX дизайну SaaS-панелі UniSpace.
+-->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UniSpace{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- Сайдбар -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-layer-group" style="color: var(--color-primary);"></i>
+                <span>UniSpace</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'home' %}" class="nav-item active" data-tooltip="Головна">
+                    <i class="fa-solid fa-house"></i> <span>Головна</span>
+                </a>
+                <a href="#" class="nav-item" data-tooltip="Розклад">
+                    <i class="fa-regular fa-calendar-days"></i> <span>Розклад</span>
+                </a>
+                <a href="#" class="nav-item" data-tooltip="Аудиторії">
+                    <i class="fa-solid fa-door-open"></i> <span>Аудиторії</span>
+                </a>
+
+                {% if user_role == 'teacher' or user_role == 'dispatcher' %}
+                <a href="#" class="nav-item" data-tooltip="Мої бронювання">
+                    <i class="fa-solid fa-bookmark"></i> <span>Мої бронювання</span>
+                </a>
+                {% endif %}
+
+                {% if user_role == 'dispatcher' %}
+                <div class="sidebar-heading">Адміністрування</div>
+
+                <a href="#" class="nav-item" data-tooltip="Конфлікти">
+                    <i class="fa-solid fa-triangle-exclamation"></i> <span>Конфлікти</span>
+                </a>
+                <a href="#" class="nav-item" data-tooltip="Імпорт із САЗ">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> <span>Імпорт із САЗ</span>
+                </a>
+                <a href="#" class="nav-item" data-tooltip="Журнал аудиту">
+                    <i class="fa-solid fa-clipboard-list"></i> <span>Журнал аудиту</span>
+                </a>
+                <a href="#" class="nav-item" data-tooltip="Користувачі">
+                    <i class="fa-solid fa-users-gear"></i> <span>Користувачі</span>
+                </a>
+                {% endif %}
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+
+            <!-- Верхня панель -->
+            <header class="topbar">
+                <button id="sidebar-toggle" class="btn-icon" aria-label="Згорнути меню">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+                <div class="user-info">
+                    <div class="user-profile">
+                        <i class="fa-solid fa-circle-user" style="font-size: 1.5rem; color: var(--color-primary);"></i>
+                        Викладач
+                    </div>
+                    <button class="btn-logout js-logout-trigger">
+                        Вийти <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Основний контент -->
+            <main class="content-area">
+                {% block content %}
+                {% endblock %}
+            </main>
+
+            <!-- Футер -->
+            <footer class="app-footer">
+                <span>© 2026 UniSpace · Система керування аудиторним фондом</span>
+                <div class="footer-links">
+                    <a href="#">Підтримка</a>
+                    <a href="#">Документація</a>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+    <!-- Модальне вікно виходу -->
+    <div id="global-logout-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="font-size: 3rem; color: var(--color-danger); margin-bottom: 1rem;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </div>
+            <h3 style="margin-bottom: 10px; font-size: 1.5rem;">Вихід з системи</h3>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5;">
+                Ви впевнені, що бажаєте завершити сесію? Вам доведеться вводити дані знову.
+            </p>
+            <div>
+                <button id="btn-global-cancel" class="modal-btn btn-grey">Залишитись</button>
+                <button id="btn-global-confirm" class="modal-btn btn-danger">Так, вийти</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

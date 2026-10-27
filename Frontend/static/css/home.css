@@ -1,0 +1,122 @@
+/* --- Анімації --- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px) rotate(-5deg); }
+    50% { transform: translateY(-8px) rotate(-5deg); }
+    100% { transform: translateY(0px) rotate(-5deg); }
+}
+
+/* --- Стилі головної картки --- */
+.home-hero-card {
+    max-width: 720px;
+    margin: 3rem auto;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-glow {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(74, 119, 168, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* --- Іконка-логотип --- */
+.hero-icon-wrapper {
+    width: 88px;
+    height: 88px;
+    background: linear-gradient(135deg, var(--c-blue-100) 0%, var(--c-blue-50) 100%);
+    border-radius: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 8px 16px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: float 4s ease-in-out infinite;
+}
+
+.hero-icon-wrapper i {
+    font-size: 2.2rem;
+    color: var(--color-primary);
+    transform: rotate(5deg);
+}
+
+/* --- Типографіка --- */
+.hero-title {
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--c-blue-900);
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Кнопки --- */
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-primary-pill, .btn-secondary-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary-pill {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(74, 119, 168, 0.3);
+}
+
+.btn-primary-pill:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 119, 168, 0.4);
+}
+
+.btn-secondary-pill {
+    background-color: #ffffff;
+    color: var(--text-main);
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary-pill:hover {
+    background-color: var(--c-blue-50);
+    border-color: rgba(15, 23, 42, 0.2);
+    transform: translateY(-2px);
+}

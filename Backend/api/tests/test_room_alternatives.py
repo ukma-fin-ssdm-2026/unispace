@@ -19,7 +19,7 @@ from api.models import Booking, Room, User
 
 from .conftest import at
 
-pytestmark = pytest.mark.django_db
+pytestmark = [pytest.mark.django_db, pytest.mark.req("US-10")]
 
 UNKNOWN_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
 _numbers = itertools.count(300)

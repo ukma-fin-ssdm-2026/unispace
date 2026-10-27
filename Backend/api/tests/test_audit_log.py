@@ -17,6 +17,8 @@ from django.db import models
 from api.models import AuditLog
 from .conftest import at
 
+pytestmark = pytest.mark.req("US-04", "SEC-003")
+
 
 @pytest.mark.django_db
 def test_new_audit_record_with_all_fields_is_saved(make_booking, teacher, room, other_room):

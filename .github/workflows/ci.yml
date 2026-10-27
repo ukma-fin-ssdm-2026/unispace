@@ -124,6 +124,36 @@ jobs:
         name: coverage-html
         path: Backend/htmlcov/
 
+  # Lab07 (бонус): автоматична перевірка простежуваності. Скрипт зіставляє ID вимог з docs/requirements/rtm.md
+  # з мітками @pytest.mark.req у тестах і валить збірку, якщо вимога без тесту або тест без вимоги.
+  # Свідомі винятки (ще не реалізовані вимоги тощо) з поясненнями - у Backend/traceability.toml.
+  # Додано з допомогою ШІ (Claude).
+  traceability:
+    runs-on: [self-hosted, linux]
+
+    defaults:
+      run:
+        working-directory: ./Backend
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # Скрипту достатньо стандартної бібліотеки; pytest - лише для тестів самого скрипта.
+    - name: Install pytest
+      run: python -m pip install pytest
+
+    - name: Test the traceability script
+      run: python -m pytest scripts/tests -q -o addopts=""
+
+    - name: Check requirements traceability (RTM <-> tests)
+      run: python scripts/check_traceability.py
+
   # Lab05: перевірки фронтенду (окремий Django-проєкт у Frontend/) після огляду іншої команди.
   frontend:
     runs-on: [self-hosted, linux]

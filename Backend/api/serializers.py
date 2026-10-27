@@ -123,3 +123,37 @@ class SyncLogSerializer(serializers.Serializer):
     error_message = serializers.CharField(
         required=False, allow_null=True, help_text="Текст помилки парсингу або мережі, якщо статус failed"
     )
+
+
+# --- Ресурс: Розклад (Schedule) ---
+class ScheduleQuerySerializer(serializers.Serializer):
+    date_from = serializers.DateField(required=False, help_text="Початок періоду (включно)")
+    date_to = serializers.DateField(required=False, help_text="Кінець періоду (включно)")
+    group_id = serializers.UUIDField(required=False, help_text="Група (лише для диспетчера)")
+    limit = serializers.IntegerField(min_value=1, max_value=200, default=50, help_text="Кількість записів")
+    offset = serializers.IntegerField(min_value=0, default=0, help_text="Зсув")
+
+    def validate(self, attrs):
+        date_from = attrs.get("date_from")
+        date_to = attrs.get("date_to")
+        if date_from and date_to and date_from > date_to:
+            raise serializers.ValidationError("Початок періоду не може бути пізніше за його кінець.")
+        return attrs
+
+
+class ScheduleRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = ["id", "building", "number"]
+
+
+class ScheduleItemSerializer(serializers.Serializer):
+    lesson_id = serializers.UUIDField()
+    subject = serializers.CharField(help_text="Назва дисципліни")
+    date = serializers.DateField()
+    start_time = serializers.TimeField()
+    end_time = serializers.TimeField()
+    group = serializers.CharField(help_text="Назва академічної групи")
+    teacher = serializers.CharField(help_text="Імʼя викладача")
+    room = ScheduleRoomSerializer(allow_null=True, help_text="Призначена аудиторія або null")
+    room_assigned = serializers.BooleanField(help_text="false, якщо бронювання скасовано або його немає")

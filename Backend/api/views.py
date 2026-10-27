@@ -12,12 +12,13 @@ CRUD-інтерфейсу під технічний стек нашого про
 
 import uuid
 
+from django.db.models import Prefetch
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from drf_spectacular.utils import extend_schema
-from .models import Room, Booking, SyncLog
+from .models import Room, Booking, SyncLog, User, Lesson
 
 from .serializers import (
     RoomSerializer,
@@ -29,6 +30,8 @@ from .serializers import (
     AvailableSlotsQuerySerializer,
     UserBookingsQuerySerializer,
     SyncLogSerializer,
+    ScheduleItemSerializer,
+    ScheduleQuerySerializer,
 )
 
 
@@ -178,6 +181,72 @@ class UserBookingsAPIView(APIView):
         bookings = bookings[:limit]
 
         serializer = BookingResponseSerializer(bookings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def limit_lessons_to_user(lessons, user, group_id):
+    """Студент бачить розклад своєї групи, викладач - власні заняття, диспетчер - будь-які (FR-006, FR-007)."""
+    if user.role == User.RoleChoices.STUDENT:
+        return lessons.filter(group_id=user.group_id)
+    if user.role == User.RoleChoices.TEACHER:
+        return lessons.filter(teacher=user)
+    if group_id:
+        return lessons.filter(group_id=group_id)
+    return lessons
+
+
+def build_schedule_item(lesson):
+    booking = lesson.active_bookings[0] if lesson.active_bookings else None
+    room = booking.room if booking else None
+    return {
+        "lesson_id": lesson.id,
+        "subject": lesson.subject,
+        "date": lesson.date,
+        "start_time": lesson.start_time,
+        "end_time": lesson.end_time,
+        "group": lesson.group.name,
+        "teacher": str(lesson.teacher),
+        "room": room,
+        "room_assigned": room is not None,
+    }
+
+
+class ScheduleAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        summary="Розклад занять",
+        description=(
+            "Студент бачить розклад своєї групи, викладач - власні заняття, диспетчер - будь-які "
+            "(з можливістю відфільтрувати за групою). Тільки для читання."
+        ),
+        parameters=[ScheduleQuerySerializer],
+        responses={200: ScheduleItemSerializer(many=True), 400: ErrorResponseSerializer},
+    )
+    def get(self, request, format=None):
+        query = ScheduleQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        active_bookings = Booking.objects.filter(status=Booking.BookingStatus.ACTIVE).select_related("room")
+        lessons = Lesson.objects.select_related("group", "teacher").prefetch_related(
+            Prefetch("bookings", queryset=active_bookings, to_attr="active_bookings")
+        )
+        lessons = limit_lessons_to_user(lessons, request.user, query.validated_data.get("group_id"))
+
+        date_from = query.validated_data.get("date_from")
+        if date_from:
+            lessons = lessons.filter(date__gte=date_from)
+
+        date_to = query.validated_data.get("date_to")
+        if date_to:
+            lessons = lessons.filter(date__lte=date_to)
+
+        offset = query.validated_data["offset"]
+        limit = query.validated_data["limit"]
+        lessons = lessons[offset : offset + limit]
+
+        serializer = ScheduleItemSerializer([build_schedule_item(lesson) for lesson in lessons], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

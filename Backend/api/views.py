@@ -12,6 +12,9 @@ CRUD-інтерфейсу під технічний стек нашого про
 CRUD аудиторій і бронювань дописано з допомогою ШІ (Claude) за docs/requirements
 (FR-008, FR-011, FR-012, FR-015, FR-017, FR-020); перевірено ревʼю та тестами
 test_rooms_crud.py і test_bookings_crud.py.
+
+Підбір вільних аудиторій (BookingAlternativesAPIView) згенеровано ШІ (Claude) за тестами
+test_room_alternatives.py, які закомічено раніше за реалізацію.
 """
 
 import uuid
@@ -24,6 +27,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from .models import AuditLog, Room, Booking, Lesson, SyncLog, User, Notification
+from .room_suggestions import suggest_rooms
 
 from .serializers import (
     RoomSerializer,
@@ -37,6 +41,7 @@ from .serializers import (
     SyncLogSerializer,
     RoomWriteSerializer,
     BookingChangeRoomSerializer,
+    RoomAlternativesQuerySerializer,
 )
 
 
@@ -330,6 +335,60 @@ class BookingDetailAPIView(APIView):
                 )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BookingAlternativesAPIView(APIView):
+    permission_classes = [IsTeacherOrDispatcher]
+
+    @extend_schema(
+        summary="Підібрати вільні аудиторії для заміни",
+        description=(
+            "Аудиторії, вільні на час заняття: доступні, не менші за потрібну місткість і без активних бронювань, "
+            "що перетинаються з заняттям. Спершу аудиторії бажаного корпусу, далі - за найменшою достатньою місткістю."
+        ),
+        parameters=[RoomAlternativesQuerySerializer],
+        responses={
+            200: RoomSerializer(many=True),
+            400: ErrorResponseSerializer,
+            403: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+            409: ErrorResponseSerializer,
+        },
+    )
+    def get(self, request, pk, format=None):
+        booking = Booking.objects.select_related("lesson", "room").filter(pk=pk).first()
+        if booking is None:
+            return not_found_response("Бронювання", pk)
+
+        if not can_manage_lesson(request.user, booking.lesson):
+            return forbidden_response("Викладач може підбирати аудиторії лише для власних занять")
+
+        query = RoomAlternativesQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        if booking.status != Booking.BookingStatus.ACTIVE:
+            return conflict_response("Для скасованого бронювання аудиторію не підбирають")
+
+        # Півінтервали [start, end): пара, що закінчується рівно на початку заняття, аудиторію не займає.
+        busy_room_ids = set(
+            Booking.objects.filter(
+                status=Booking.BookingStatus.ACTIVE,
+                start_time__lt=booking.end_time,
+                end_time__gt=booking.start_time,
+            )
+            .exclude(pk=booking.pk)
+            .values_list("room_id", flat=True)
+        )
+        busy_room_ids.add(booking.room_id)
+
+        rooms = suggest_rooms(
+            Room.objects.all(),
+            min_capacity=query.validated_data.get("min_capacity", booking.room.capacity),
+            busy_room_ids=busy_room_ids,
+            preferred_building=query.validated_data.get("building", booking.room.building),
+        )
+        return Response(RoomSerializer(rooms, many=True).data, status=status.HTTP_200_OK)
 
 
 class BookingChangeRoomAPIView(APIView):

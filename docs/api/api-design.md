@@ -61,6 +61,7 @@
 | **DELETE** | `/api/v1/bookings/{id}/` | Скасувати бронювання за ідентифікатором | `204 No Content` | `403 Forbidden`, `404 Not Found` |
 | **GET** | `/api/v1/bookings/{id}/` | Отримати бронювання (викладач — лише власні, диспетчер — будь-які) | `200 OK` | `403 Forbidden`, `404 Not Found` |
 | **POST** | `/api/v1/bookings/{id}/change/` | Змінити аудиторію бронювання (запис в аудит + сповіщення групі) | `200 OK` | `400 Bad Request`, `403 Forbidden`, `404 Not Found`, `409 Conflict` |
+| **GET** | `/api/v1/bookings/{id}/alternatives/` | Підібрати вільні аудиторії для заміни (параметри `min_capacity`, `building`; спершу бажаний корпус, далі найменша достатня місткість) | `200 OK` | `400 Bad Request`, `403 Forbidden`, `404 Not Found`, `409 Conflict` |
 | **POST** | `/api/v1/rooms/` | Створити аудиторію (диспетчер) | `201 Created` | `400 Bad Request`, `403 Forbidden` |
 | **GET** | `/api/v1/rooms/{id}/` | Отримати аудиторію | `200 OK` | `404 Not Found` |
 | **PATCH** | `/api/v1/rooms/{id}/` | Частково оновити аудиторію (диспетчер) | `200 OK` | `400 Bad Request`, `403 Forbidden`, `404 Not Found` |

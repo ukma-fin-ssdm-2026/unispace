@@ -102,6 +102,17 @@ class AvailableSlotsQuerySerializer(serializers.Serializer):
     date = serializers.DateField(required=True)
 
 
+class RoomAlternativesQuerySerializer(serializers.Serializer):
+    """Параметри підбору вільних аудиторій для заміни (FR-010)."""
+
+    min_capacity = serializers.IntegerField(
+        min_value=1, required=False, help_text="Мінімальна місткість; за замовчуванням - місткість поточної аудиторії"
+    )
+    building = serializers.CharField(
+        max_length=20, required=False, help_text="Бажаний корпус; за замовчуванням - корпус поточної аудиторії"
+    )
+
+
 class UserBookingsQuerySerializer(serializers.Serializer):
     limit = serializers.IntegerField(min_value=1, default=10)
     next_cursor = serializers.CharField(required=False, help_text="Пагінація за курсором")

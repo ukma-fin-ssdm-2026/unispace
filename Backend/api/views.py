@@ -46,7 +46,7 @@ class IsTeacherOrDispatcher(BasePermission):
     can create or delete bookings.
     """
 
-    message = "Only dispatchers can perform this action."
+    message = "Only teachers and dispatchers can manage bookings."
 
     def has_permission(self, request, view):
         user = request.user

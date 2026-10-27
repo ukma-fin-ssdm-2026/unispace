@@ -6,6 +6,9 @@
 
 import textwrap
 
+import pytest
+
+from scripts import check_traceability
 from scripts.check_traceability import check, collect_test_marks, read_requirement_ids, run
 
 RTM = """
@@ -14,6 +17,12 @@ RTM = """
 | **US-01** | Фільтрація аудиторій |
 | **SEC-001** | Заборона для студентів |
 """
+
+
+@pytest.fixture(autouse=True)
+def allow_tmp_path(tmp_path, monkeypatch):
+    """Тимчасові файли тестів лежать поза репозиторієм, тож дозволяємо скрипту читати саме tmp_path."""
+    monkeypatch.setattr(check_traceability, "ALLOWED_ROOT", tmp_path)
 
 
 def write(path, text):
@@ -145,3 +154,15 @@ def test_run_fails_when_gap_is_found_and_passes_when_closed(tmp_path, capsys):
     assert run(*untraced) == 1
     assert "**ДІРКА**" in capsys.readouterr().out
     assert run(*traced) == 0
+
+
+def test_path_outside_allowed_root_is_rejected(tmp_path, monkeypatch):
+    # Arrange: дозволено лише підтеку, а файл лежить поруч із нею
+    allowed = tmp_path / "repo"
+    allowed.mkdir()
+    outside = write(tmp_path / "secret.md", RTM)
+    monkeypatch.setattr(check_traceability, "ALLOWED_ROOT", allowed)
+
+    # Act / Assert
+    with pytest.raises(ValueError, match="поза репозиторієм"):
+        read_requirement_ids(outside)

@@ -29,6 +29,8 @@ BACKEND_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_RTM = BACKEND_DIR.parent / "docs" / "requirements" / "rtm.md"
 DEFAULT_TESTS = BACKEND_DIR / "api" / "tests"
 DEFAULT_EXCEPTIONS = BACKEND_DIR / "traceability.toml"
+# Скрипт читає файли лише всередині репозиторію: шлях поза ним відхиляється (захист від path traversal).
+ALLOWED_ROOT = BACKEND_DIR.parent
 
 RTM_ROW_ID = re.compile(r"^\|\s*\*\*([A-Z]+-\d+)\*\*\s*\|")
 
@@ -43,10 +45,18 @@ class Report:
         return sorted(test for test, ids in self.tests.items() if requirement in ids)
 
 
+def safe_path(path):
+    """Повертає абсолютний шлях, якщо він усередині ALLOWED_ROOT; інакше - ValueError."""
+    resolved = Path(path).resolve()
+    if not resolved.is_relative_to(ALLOWED_ROOT.resolve()):
+        raise ValueError(f"Шлях поза репозиторієм заборонено: {resolved}")
+    return resolved
+
+
 def read_requirement_ids(rtm_path):
     """ID вимог - перший стовпець рядків RTM, позначений жирним: | **US-01** | ..."""
     ids = []
-    for line in Path(rtm_path).read_text(encoding="utf-8").splitlines():
+    for line in safe_path(rtm_path).read_text(encoding="utf-8").splitlines():
         match = RTM_ROW_ID.match(line.strip())
         if match:
             ids.append(match.group(1))
@@ -102,7 +112,7 @@ def collect_test_marks(tests_dir, base_dir=None):
     Повертає {"api/tests/test_x.py::Class::test_y": {"US-01", ...}} для всіх тестів у теці.
     Шляхи рахуються від base_dir; за замовчуванням - тека на два рівні вище (Backend для api/tests).
     """
-    tests_dir = Path(tests_dir).resolve()
+    tests_dir = safe_path(tests_dir)
     base_dir = Path(base_dir).resolve() if base_dir else tests_dir.parent.parent
     tests = {}
     for path in sorted(tests_dir.glob("test_*.py")):
@@ -122,9 +132,10 @@ def collect_test_marks(tests_dir, base_dir=None):
 
 
 def read_exceptions(path):
-    if not Path(path).exists():
+    path = safe_path(path)
+    if not path.exists():
         return {}, {}
-    data = tomllib.loads(Path(path).read_text(encoding="utf-8"))
+    data = tomllib.loads(path.read_text(encoding="utf-8"))
     return data.get("requirements_without_tests", {}), data.get("tests_without_requirements", {})
 
 

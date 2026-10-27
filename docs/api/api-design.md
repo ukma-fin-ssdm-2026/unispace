@@ -59,6 +59,12 @@
 | **GET** | `/api/v1/rooms/available-slots/` | Пошук вільних слотів для конкретної аудиторії на дату | `200 OK` | `400 Bad Request` |
 | **POST** | `/api/v1/bookings/` | Створити нове бронювання | `201 Created` | `400 Bad Request`, `409 Conflict` |
 | **DELETE** | `/api/v1/bookings/{id}/` | Скасувати бронювання за ідентифікатором | `204 No Content` | `403 Forbidden`, `404 Not Found` |
+| **GET** | `/api/v1/bookings/{id}/` | Отримати бронювання (викладач — лише власні, диспетчер — будь-які) | `200 OK` | `403 Forbidden`, `404 Not Found` |
+| **POST** | `/api/v1/bookings/{id}/change/` | Змінити аудиторію бронювання (запис в аудит + сповіщення групі) | `200 OK` | `400 Bad Request`, `403 Forbidden`, `404 Not Found`, `409 Conflict` |
+| **POST** | `/api/v1/rooms/` | Створити аудиторію (диспетчер) | `201 Created` | `400 Bad Request`, `403 Forbidden` |
+| **GET** | `/api/v1/rooms/{id}/` | Отримати аудиторію | `200 OK` | `404 Not Found` |
+| **PATCH** | `/api/v1/rooms/{id}/` | Частково оновити аудиторію (диспетчер) | `200 OK` | `400 Bad Request`, `403 Forbidden`, `404 Not Found` |
+| **DELETE** | `/api/v1/rooms/{id}/` | Видалити аудиторію без бронювань (диспетчер) | `204 No Content` | `403 Forbidden`, `404 Not Found`, `409 Conflict` |
 | **GET** | `/api/v1/users/me/bookings/` | Отримати список бронювань поточного користувача | `200 OK` | `400 Bad Request` |
 | **POST** | `/api/v1/sync/` | Запустити синхронізацію із САЗ | Залежить від реалізації | Залежить від реалізації |
 | **GET** | `/api/v1/sync-logs/` | Отримати журнали синхронізації | Залежить від реалізації | Залежить від реалізації |

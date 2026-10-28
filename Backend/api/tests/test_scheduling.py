@@ -59,7 +59,7 @@ def test_time_without_timezone_is_rejected():
     aware_interval = (t(10, 30), t(12))
 
     # Act / Assert
-    with pytest.raises(ValueError, match="часовим поясом"):
+    with pytest.raises(ValueError, match="Час бронювання має містити часовий пояс."):
         intervals_overlap(naive_start, naive_end, *aware_interval)
 
     # ==========================================

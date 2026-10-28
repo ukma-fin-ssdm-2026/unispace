@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 def _require_timezone(*moments: datetime) -> None:
     """Відмовляє в часі без часового поясу: для Києва різниця з UTC - 2-3 години, і вгадувати не можна."""
     if any(moment.tzinfo is None for moment in moments):
-        raise ValueError("Час має бути з часовим поясом")
+        raise ValueError("Час бронювання має містити часовий пояс.")
 
     # ==========================================
     # Розрахунок перетинів часу

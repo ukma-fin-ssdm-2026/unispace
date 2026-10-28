@@ -15,6 +15,7 @@ api/views.py та api/serializers.py; перевірено запуском `pyt
 де вони працюють із реальними даними.
 """
 
+import pytest
 import uuid
 from django.urls import reverse
 from rest_framework import status
@@ -40,6 +41,7 @@ class ErrorFormatMixin:
             self.assertIn(field, error_fields)
 
 
+@pytest.mark.req("US-06", "USAB-001")
 class RoomListTests(ErrorFormatMixin, APITestCase):
     url = reverse("room-list")
 
@@ -62,6 +64,7 @@ class RoomListTests(ErrorFormatMixin, APITestCase):
         self.assert_validation_error(self.client.get(self.url, {"capacity": "abc"}), "capacity")
 
 
+@pytest.mark.req("USAB-001")
 class AvailableSlotsTests(ErrorFormatMixin, APITestCase):
     url = reverse("available-slots")
 
@@ -81,6 +84,7 @@ class AvailableSlotsTests(ErrorFormatMixin, APITestCase):
         )
 
 
+@pytest.mark.req("US-08")
 class UserBookingsTests(ErrorFormatMixin, APITestCase):
     url = reverse("user-bookings")
 
@@ -100,6 +104,7 @@ class OpenApiSchemaTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+@pytest.mark.req("SEC-001")
 class BookingSecurityTests(APITestCase):
     """Regression tests for unauthorized operations."""
 

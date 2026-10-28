@@ -14,36 +14,13 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from api.models import AuditLog, Booking, Lesson, User, Notification
+from api.models import AuditLog, Booking, Notification
 
 from .conftest import at
 
 pytestmark = pytest.mark.django_db
 
 UNKNOWN_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
-
-
-@pytest.fixture
-def make_lesson(teacher, group):
-    """Фабрика: заняття без бронювання (потрібне для перевірки створення бронювання)."""
-
-    def _make_lesson(start, end, *, lesson_teacher=None):
-        return Lesson.objects.create(
-            source_key=f"lesson-{uuid.uuid4()}",
-            subject="Програмна інженерія",
-            date=start.date(),
-            start_time=start.time(),
-            end_time=end.time(),
-            teacher=lesson_teacher or teacher,
-            group=group,
-        )
-
-    return _make_lesson
-
-
-@pytest.fixture
-def other_teacher(db):
-    return User.objects.create(email="teacher2@ukma.edu.ua", full_name="Інший Викладач", role="teacher")
 
 
 def create_booking(client, lesson, room):
@@ -56,6 +33,7 @@ def change_room(client, booking, room, **extra):
     return client.post(reverse("booking-change-room", args=[booking.id]), payload, format="json")
 
 
+@pytest.mark.req("US-03")
 def test_teacher_creates_booking_for_own_lesson(api_client, teacher, room, make_lesson):
     lesson = make_lesson(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -71,6 +49,7 @@ def test_teacher_creates_booking_for_own_lesson(api_client, teacher, room, make_
     assert booking.source == Booking.BookingSource.MANUAL
 
 
+@pytest.mark.req("US-03")
 def test_dispatcher_creates_booking_for_any_lesson(api_client, dispatcher, room, make_lesson):
     lesson = make_lesson(at(10), at(11, 30))
     api_client.force_authenticate(user=dispatcher)
@@ -80,6 +59,7 @@ def test_dispatcher_creates_booking_for_any_lesson(api_client, dispatcher, room,
     assert response.status_code == status.HTTP_201_CREATED
 
 
+@pytest.mark.req("SEC-001")
 def test_teacher_cannot_book_foreign_lesson(api_client, other_teacher, room, make_lesson):
     lesson = make_lesson(at(10), at(11, 30))
     api_client.force_authenticate(user=other_teacher)
@@ -90,6 +70,7 @@ def test_teacher_cannot_book_foreign_lesson(api_client, other_teacher, room, mak
     assert not Booking.objects.filter(lesson=lesson).exists()
 
 
+@pytest.mark.req("SEC-001")
 def test_student_cannot_create_booking(api_client, student, room, make_lesson):
     lesson = make_lesson(at(10), at(11, 30))
     api_client.force_authenticate(user=student)
@@ -100,6 +81,7 @@ def test_student_cannot_create_booking(api_client, student, room, make_lesson):
     assert not Booking.objects.filter(lesson=lesson).exists()
 
 
+@pytest.mark.req("US-03")
 def test_booking_with_unknown_lesson_is_rejected(api_client, teacher, room):
     api_client.force_authenticate(user=teacher)
     payload = {"lesson_id": str(UNKNOWN_ID), "room_id": str(room.id)}
@@ -110,6 +92,7 @@ def test_booking_with_unknown_lesson_is_rejected(api_client, teacher, room):
     assert response.json()["error"]["details"][0]["field"] == "lesson_id"
 
 
+@pytest.mark.req("US-03")
 def test_booking_with_unknown_room_is_rejected(api_client, teacher, make_lesson):
     lesson = make_lesson(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -121,6 +104,7 @@ def test_booking_with_unknown_room_is_rejected(api_client, teacher, make_lesson)
     assert response.json()["error"]["details"][0]["field"] == "room_id"
 
 
+@pytest.mark.req("US-03")
 def test_overlapping_booking_in_same_room_returns_409(api_client, teacher, room, make_booking, make_lesson):
     make_booking(at(10), at(11, 30))
     overlapping_lesson = make_lesson(at(11), at(12, 30))
@@ -134,6 +118,7 @@ def test_overlapping_booking_in_same_room_returns_409(api_client, teacher, room,
     assert Booking.objects.filter(room=room, status=Booking.BookingStatus.ACTIVE).count() == 1
 
 
+@pytest.mark.req("US-03")
 def test_back_to_back_booking_in_same_room_is_allowed(api_client, teacher, room, make_booking, make_lesson):
     make_booking(at(10), at(11))
     next_lesson = make_lesson(at(11), at(12))
@@ -144,6 +129,7 @@ def test_back_to_back_booking_in_same_room_is_allowed(api_client, teacher, room,
     assert response.status_code == status.HTTP_201_CREATED
 
 
+@pytest.mark.req("US-03")
 def test_second_active_booking_for_same_lesson_returns_409(api_client, teacher, room, other_room, make_lesson):
     lesson = make_lesson(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -155,6 +141,7 @@ def test_second_active_booking_for_same_lesson_returns_409(api_client, teacher, 
     assert Booking.objects.filter(lesson=lesson).count() == 1
 
 
+@pytest.mark.req("US-03")
 def test_booking_unavailable_room_returns_409(api_client, teacher, room, make_lesson):
     room.is_available = False
     room.save()
@@ -167,6 +154,7 @@ def test_booking_unavailable_room_returns_409(api_client, teacher, room, make_le
     assert not Booking.objects.filter(lesson=lesson).exists()
 
 
+@pytest.mark.req("US-08")
 def test_teacher_retrieves_own_booking(api_client, teacher, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -178,6 +166,7 @@ def test_teacher_retrieves_own_booking(api_client, teacher, make_booking):
     assert response.json()["title"] == "Програмна інженерія"
 
 
+@pytest.mark.req("US-08")
 def test_teacher_cannot_retrieve_foreign_booking(api_client, other_teacher, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=other_teacher)
@@ -187,6 +176,7 @@ def test_teacher_cannot_retrieve_foreign_booking(api_client, other_teacher, make
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
+@pytest.mark.req("US-08")
 def test_retrieve_unknown_booking_returns_404(api_client, dispatcher):
     api_client.force_authenticate(user=dispatcher)
 
@@ -195,6 +185,7 @@ def test_retrieve_unknown_booking_returns_404(api_client, dispatcher):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+@pytest.mark.req("US-08", "US-04")
 def test_teacher_cancels_own_booking_and_audit_record_is_written(api_client, teacher, room, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -210,6 +201,7 @@ def test_teacher_cancels_own_booking_and_audit_record_is_written(api_client, tea
     assert record.previous_room == room
 
 
+@pytest.mark.req("US-08", "US-04")
 def test_cancel_twice_does_not_duplicate_audit_record(api_client, teacher, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -221,6 +213,7 @@ def test_cancel_twice_does_not_duplicate_audit_record(api_client, teacher, make_
     assert AuditLog.objects.filter(booking=booking).count() == 1
 
 
+@pytest.mark.req("US-08")
 def test_cancelled_booking_frees_the_slot(api_client, teacher, room, make_booking, make_lesson):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -232,6 +225,7 @@ def test_cancelled_booking_frees_the_slot(api_client, teacher, room, make_bookin
     assert response.status_code == status.HTTP_201_CREATED
 
 
+@pytest.mark.req("US-08")
 def test_teacher_cannot_cancel_foreign_booking(api_client, other_teacher, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=other_teacher)
@@ -244,6 +238,7 @@ def test_teacher_cannot_cancel_foreign_booking(api_client, other_teacher, make_b
     assert not AuditLog.objects.filter(booking=booking).exists()
 
 
+@pytest.mark.req("US-08")
 def test_cancel_unknown_booking_returns_404(api_client, dispatcher):
     api_client.force_authenticate(user=dispatcher)
 
@@ -253,6 +248,7 @@ def test_cancel_unknown_booking_returns_404(api_client, dispatcher):
     assert response.json()["error"]["code"] == "NOT_FOUND"
 
 
+@pytest.mark.req("US-03", "US-04")
 def test_teacher_changes_room_and_audit_record_is_written(api_client, teacher, room, other_room, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -270,6 +266,7 @@ def test_teacher_changes_room_and_audit_record_is_written(api_client, teacher, r
     assert record.reason == "Зламався проєктор"
 
 
+@pytest.mark.req("US-03")
 def test_change_room_frees_previous_room(api_client, teacher, room, other_room, make_booking, make_lesson):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -281,6 +278,7 @@ def test_change_room_frees_previous_room(api_client, teacher, room, other_room, 
     assert response.status_code == status.HTTP_201_CREATED
 
 
+@pytest.mark.req("US-07")
 def test_change_room_notifies_group_members(api_client, teacher, student, other_room, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -293,6 +291,7 @@ def test_change_room_notifies_group_members(api_client, teacher, student, other_
     assert not notification.is_read
 
 
+@pytest.mark.req("US-03")
 def test_change_to_occupied_room_returns_409_and_keeps_booking(api_client, teacher, room, other_room, make_booking):
     booking = make_booking(at(10), at(11, 30))
     make_booking(at(10), at(11, 30), booking_room=other_room)
@@ -306,6 +305,7 @@ def test_change_to_occupied_room_returns_409_and_keeps_booking(api_client, teach
     assert not AuditLog.objects.filter(booking=booking).exists()
 
 
+@pytest.mark.req("US-03")
 def test_change_to_same_room_returns_400(api_client, teacher, room, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -316,6 +316,7 @@ def test_change_to_same_room_returns_400(api_client, teacher, room, make_booking
     assert not AuditLog.objects.filter(booking=booking).exists()
 
 
+@pytest.mark.req("US-03")
 def test_change_to_unknown_room_returns_400(api_client, teacher, room, make_booking):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -327,6 +328,7 @@ def test_change_to_unknown_room_returns_400(api_client, teacher, room, make_book
     assert response.json()["error"]["details"][0]["field"] == "room_id"
 
 
+@pytest.mark.req("US-03")
 def test_change_room_of_cancelled_booking_returns_409(api_client, teacher, other_room, make_booking):
     booking = make_booking(at(10), at(11, 30), status=Booking.BookingStatus.CANCELLED)
     api_client.force_authenticate(user=teacher)
@@ -336,6 +338,7 @@ def test_change_room_of_cancelled_booking_returns_409(api_client, teacher, other
     assert response.status_code == status.HTTP_409_CONFLICT
 
 
+@pytest.mark.req("SEC-001")
 def test_student_cannot_change_room(api_client, student, other_room, make_booking, room):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=student)
@@ -347,6 +350,7 @@ def test_student_cannot_change_room(api_client, student, other_room, make_bookin
     assert booking.room == room
 
 
+@pytest.mark.req("US-03")
 def test_teacher_cannot_change_room_of_foreign_booking(api_client, other_teacher, other_room, make_booking, room):
     booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=other_teacher)
@@ -358,6 +362,7 @@ def test_teacher_cannot_change_room_of_foreign_booking(api_client, other_teacher
     assert booking.room == room
 
 
+@pytest.mark.req("US-03")
 def test_change_room_of_unknown_booking_returns_404(api_client, dispatcher, room):
     api_client.force_authenticate(user=dispatcher)
     payload = {"room_id": str(room.id)}

@@ -6,8 +6,11 @@
 Код верифіковано людиною (Тимохина Ксенія).
 """
 
+import pytest
 from unittest.mock import Mock
 from api.room_suggestions import suggest_rooms
+
+pytestmark = pytest.mark.req("US-10")
 
 
 def make_room(room_id, capacity, building="1", is_available=True):

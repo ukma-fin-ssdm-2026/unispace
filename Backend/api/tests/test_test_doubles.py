@@ -19,6 +19,7 @@ def dispatcher_request():
     return request
 
 
+@pytest.mark.req("USAB-001")
 @pytest.mark.parametrize(
     "limit,valid",
     [
@@ -39,6 +40,7 @@ def test_room_limit_boundaries(limit, valid):
     assert result is valid
 
 
+@pytest.mark.req("USAB-001")
 @pytest.mark.parametrize(
     "capacity,valid",
     [
@@ -110,6 +112,7 @@ def test_other_roles_cannot_access_sync_logs(role):
     assert result is False
 
 
+@pytest.mark.req("USAB-001")
 def test_validation_error_response_contains_field_name():
     # Arrange
     errors = {"limit": ["Має бути більше нуля."]}
@@ -121,6 +124,7 @@ def test_validation_error_response_contains_field_name():
     assert result["error"]["details"][0]["field"] == "limit"
 
 
+@pytest.mark.req("USAB-001")
 def test_validation_error_response_has_correct_code():
     # Arrange
     errors = {"limit": ["Має бути більше нуля."]}
@@ -132,6 +136,7 @@ def test_validation_error_response_has_correct_code():
     assert result["error"]["code"] == "VALIDATION_ERROR"
 
 
+@pytest.mark.req("US-06")
 def test_room_list_uses_room_manager():
     # Arrange
     request = APIRequestFactory().get("/api/v1/rooms/")

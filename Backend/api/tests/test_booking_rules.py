@@ -1,9 +1,24 @@
+"""
+Тести доменних правил бронювання, перевірок тривалості та місткості.
+Цей модуль об'єднує тести для консолідованої бізнес-логіки.
+
+Примітка щодо використання ШІ: модуль утворено шляхом рефакторингу та
+об'єднання розпорошених тестів (з test_utils.py, test_validators.py та
+старого test_booking_rules.py) в єдиний тестовий шар за допомогою ШІ-асистента.
+"""
+
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, time
 
 import pytest
 
-from api.booking_rules import BookingRuleError, booking_duration, is_recently_changed, validate_attendees_fit_room
+from api.services.booking_rules import (
+    BookingRuleError,
+    booking_duration,
+    is_recently_changed,
+    validate_attendees_fit_room,
+    is_valid_lesson_duration,
+)
 
 UTC = timezone.utc
 
@@ -19,29 +34,9 @@ def assert_raises_message(message, func, *args):
     with pytest.raises(BookingRuleError, match=f"^{re.escape(message)}$"):
         func(*args)
 
-
-@pytest.mark.req("US-10")
-@pytest.mark.parametrize("attendees,capacity", [(30, 30), (29, 30), (1, 1), (1, 30)])
-def test_attendees_within_capacity_are_accepted(attendees, capacity):
-    validate_attendees_fit_room(attendees, capacity)  # 30 з 30 вбиває мутант `>` -> `>=`
-
-
-@pytest.mark.req("US-10")
-@pytest.mark.parametrize("attendees,capacity", [(31, 30), (2, 1)])
-def test_attendees_over_capacity_are_rejected(attendees, capacity):
-    assert_raises_message(MSG_OVER_CAPACITY, validate_attendees_fit_room, attendees, capacity)
-
-
-@pytest.mark.req("US-10")
-@pytest.mark.parametrize("attendees", [0, -1])
-def test_attendees_below_one_are_rejected(attendees):
-    assert_raises_message(MSG_ATTENDEES_MIN, validate_attendees_fit_room, attendees, 30)
-
-
-@pytest.mark.req("US-10")
-@pytest.mark.parametrize("capacity", [0, -5])
-def test_capacity_below_one_is_rejected(capacity):
-    assert_raises_message(MSG_CAPACITY_MIN, validate_attendees_fit_room, 1, capacity)
+    # ==========================================
+    # Тести тривалості (booking_duration)
+    # ==========================================
 
 
 @pytest.mark.req("US-03")
@@ -88,6 +83,28 @@ def test_duration_uses_real_elapsed_time_across_dst_change():
     end = datetime(2026, 10, 25, 6, 0, tzinfo=kyiv)
     assert booking_duration(start, end) == timedelta(hours=8)
 
+    # ==========================================
+    # Тести тривалості пари (is_valid_lesson_duration) - З test_validators.py
+    # ==========================================
+
+
+@pytest.mark.req("US-03")
+def test_inverted_times_returns_false():
+    start = time(10, 30)
+    end = time(9, 0)
+    assert is_valid_lesson_duration(start, end) is False
+
+
+@pytest.mark.req("US-03")
+def test_duration_exceeds_limit_returns_false():
+    start = time(10, 0)
+    end = time(12, 0)
+    assert is_valid_lesson_duration(start, end) is False
+
+    # ==========================================
+    # Тести нещодавніх змін (is_recently_changed)
+    # ==========================================
+
 
 LESSON_START = datetime(2026, 10, 21, 10, 0, tzinfo=UTC)
 
@@ -131,3 +148,31 @@ def test_one_recent_change_among_old_ones_is_recent():
 @pytest.mark.req("US-05")
 def test_recent_change_rejects_naive_lesson_start():
     assert_raises_message(MSG_NAIVE, is_recently_changed, [], datetime(2026, 10, 21, 10, 0))
+
+    # ==========================================
+    # Тести місткості (validate_attendees_fit_room)
+    # ==========================================
+
+
+@pytest.mark.req("US-10")
+@pytest.mark.parametrize("attendees,capacity", [(30, 30), (29, 30), (1, 1), (1, 30)])
+def test_attendees_within_capacity_are_accepted(attendees, capacity):
+    validate_attendees_fit_room(attendees, capacity)  # 30 з 30 вбиває мутант `>` -> `>=`
+
+
+@pytest.mark.req("US-10")
+@pytest.mark.parametrize("attendees,capacity", [(31, 30), (2, 1)])
+def test_attendees_over_capacity_are_rejected(attendees, capacity):
+    assert_raises_message(MSG_OVER_CAPACITY, validate_attendees_fit_room, attendees, capacity)
+
+
+@pytest.mark.req("US-10")
+@pytest.mark.parametrize("attendees", [0, -1])
+def test_attendees_below_one_are_rejected(attendees):
+    assert_raises_message(MSG_ATTENDEES_MIN, validate_attendees_fit_room, attendees, 30)
+
+
+@pytest.mark.req("US-10")
+@pytest.mark.parametrize("capacity", [0, -5])
+def test_capacity_below_one_is_rejected(capacity):
+    assert_raises_message(MSG_CAPACITY_MIN, validate_attendees_fit_room, 1, capacity)

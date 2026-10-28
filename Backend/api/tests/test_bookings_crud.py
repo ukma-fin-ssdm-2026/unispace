@@ -22,6 +22,10 @@ pytestmark = pytest.mark.django_db
 
 UNKNOWN_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
 
+# ==========================================
+# Хелпери (Допоміжні функції)
+# ==========================================
+
 
 def create_booking(client, lesson, room):
     payload = {"lesson_id": str(lesson.id), "room_id": str(room.id)}
@@ -31,6 +35,10 @@ def create_booking(client, lesson, room):
 def change_room(client, booking, room, **extra):
     payload = {"room_id": str(room.id), **extra}
     return client.post(reverse("booking-change-room", args=[booking.id]), payload, format="json")
+
+    # ==========================================
+    # Створення бронювань (POST)
+    # ==========================================
 
 
 @pytest.mark.req("US-03")
@@ -153,6 +161,10 @@ def test_booking_unavailable_room_returns_409(api_client, teacher, room, make_le
     assert response.status_code == status.HTTP_409_CONFLICT
     assert not Booking.objects.filter(lesson=lesson).exists()
 
+    # ==========================================
+    # Перегляд бронювань (GET)
+    # ==========================================
+
 
 @pytest.mark.req("US-08")
 def test_teacher_retrieves_own_booking(api_client, teacher, make_booking):
@@ -183,6 +195,10 @@ def test_retrieve_unknown_booking_returns_404(api_client, dispatcher):
     response = api_client.get(reverse("booking-detail", args=[UNKNOWN_ID]))
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    # ==========================================
+    # Скасування бронювань (DELETE)
+    # ==========================================
 
 
 @pytest.mark.req("US-08", "US-04")
@@ -246,6 +262,10 @@ def test_cancel_unknown_booking_returns_404(api_client, dispatcher):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["error"]["code"] == "NOT_FOUND"
+
+    # ==========================================
+    # Зміна аудиторії (POST .../change-room)
+    # ==========================================
 
 
 @pytest.mark.req("US-03", "US-04")

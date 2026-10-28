@@ -1,3 +1,10 @@
+"""
+Тести властивостей (Property-based tests) для правил бронювання за допомогою Hypothesis (US-03, US-10).
+
+Примітка щодо використання ШІ: тести згенеровано ШІ (Claude) для перевірки інваріантів
+тривалості та місткості; перевірено локальним запуском pytest.
+"""
+
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -5,7 +12,11 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from api.booking_rules import BookingRuleError, booking_duration, validate_attendees_fit_room
+from api.services.booking_rules import BookingRuleError, booking_duration, validate_attendees_fit_room
+
+# ==========================================
+# Базові налаштування та стратегії Hypothesis
+# ==========================================
 
 ZONES = [ZoneInfo(name) for name in ("UTC", "Europe/Kyiv", "America/New_York", "Asia/Tokyo", "Australia/Lord_Howe")]
 
@@ -16,6 +27,10 @@ aware_datetimes = st.datetimes(
     timezones=st.sampled_from(ZONES),
 )
 positive_gaps = st.timedeltas(min_value=timedelta(seconds=1), max_value=timedelta(days=2))
+
+# ==========================================
+# Властивості тривалості бронювання (booking_duration)
+# ==========================================
 
 
 @pytest.mark.req("US-03")
@@ -49,6 +64,10 @@ def test_duration_is_additive(start, gap):
     middle = start.astimezone(timezone.utc) + gap
     end = middle + gap
     assert booking_duration(start, end) == booking_duration(start, middle) + booking_duration(middle, end)
+
+    # ==========================================
+    # Властивості місткості (validate_attendees_fit_room)
+    # ==========================================
 
 
 @pytest.mark.req("US-10")

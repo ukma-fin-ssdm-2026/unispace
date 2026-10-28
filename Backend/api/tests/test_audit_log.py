@@ -19,6 +19,10 @@ from .conftest import at
 
 pytestmark = pytest.mark.req("US-04", "SEC-003")
 
+# ==========================================
+# Успішне створення (Append)
+# ==========================================
+
 
 @pytest.mark.django_db
 def test_new_audit_record_with_all_fields_is_saved(make_booking, teacher, room, other_room):
@@ -56,6 +60,10 @@ def test_audit_record_with_only_required_fields_is_saved(make_booking, teacher):
     assert saved.new_room is None
     assert saved.reason == ""
 
+    # ==========================================
+    # Заборона змін та видалення (Окремі записи)
+    # ==========================================
+
 
 @pytest.mark.django_db
 def test_changing_saved_audit_record_is_forbidden_and_keeps_original_data(audit_log):
@@ -83,6 +91,10 @@ def test_deleting_audit_record_is_forbidden_and_keeps_record(audit_log):
     # Assert
     assert AuditLog.objects.filter(pk=record_id).exists()
 
+    # ==========================================
+    # Заборона масових операцій (QuerySet)
+    # ==========================================
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -105,6 +117,10 @@ def test_bulk_operation_on_audit_log_is_forbidden(audit_log, operation, kwargs, 
     audit_log.refresh_from_db()
     assert AuditLog.objects.count() == 1
     assert audit_log.reason == "Зламався проєктор"
+
+    # ==========================================
+    # Ізольовані перевірки (Mocks)
+    # ==========================================
 
 
 def test_saving_existing_audit_record_is_rejected_before_reaching_database():

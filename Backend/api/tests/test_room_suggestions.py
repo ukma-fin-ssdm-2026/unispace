@@ -8,9 +8,13 @@
 
 import pytest
 from unittest.mock import Mock
-from api.room_suggestions import suggest_rooms
+from api.services.room_suggestions import suggest_rooms
 
 pytestmark = pytest.mark.req("US-10")
+
+# ==========================================
+# Фікстури та Допоміжні функції
+# ==========================================
 
 
 def make_room(room_id, capacity, building="1", is_available=True):
@@ -20,6 +24,10 @@ def make_room(room_id, capacity, building="1", is_available=True):
         building=building,
         is_available=is_available,
     )
+
+    # ==========================================
+    # Фільтрація (Відсіювання непідходящих)
+    # ==========================================
 
 
 def test_rooms_smaller_than_required_capacity_are_not_suggested():
@@ -46,6 +54,10 @@ def test_rooms_are_sorted_from_smallest_sufficient_capacity():
     huge, snug, medium = make_room(1, capacity=100), make_room(2, capacity=30), make_room(3, capacity=50)
     result = suggest_rooms([huge, snug, medium], min_capacity=30)
     assert result == [snug, medium, huge]
+
+    # ==========================================
+    # Ранжування (Сортування підходящих)
+    # ==========================================
 
 
 def test_rooms_from_preferred_building_come_first():

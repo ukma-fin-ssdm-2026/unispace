@@ -94,10 +94,21 @@ jobs:
 
     # Тести (Backend/api/tests/test_*.py) з покриттям гілок; налаштування - Backend/pyproject.toml.
     - name: Run tests with coverage and gate (pytest)
-      run: pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html --cov-fail-under=75
+      run: >-
+        pytest -v --cov=api --cov-branch --cov-report=term-missing --cov-report=html
+        --cov-report=json:coverage.json --junitxml=test-results.xml --cov-fail-under=75
 
-    # Lab07: тести скрипта перевірки простежуваності (сам скрипт запускає job traceability).
-    - name: Test the traceability script
+    # Відпрацювання Lab07: підсумок тестів і покриття на сторінці прогону (Summary).
+    # if: always() - щоб підсумок був і тоді, коли тести впали.
+    # Скрипт - Backend/scripts/ci_summary.py (додано з допомогою ШІ, Claude).
+    - name: Write test and coverage summary
+      if: always()
+      env:
+        COVERAGE_THRESHOLD: 75
+      run: python scripts/ci_summary.py >> "$GITHUB_STEP_SUMMARY"
+
+    # Lab07: тести скриптів CI - перевірки простежуваності (її запускає job traceability) і підсумку прогону.
+    - name: Test the CI scripts (traceability, summary)
       run: python -m pytest scripts/tests -q -o addopts=""
 
     # Code-First: специфікація генерується тільки з коду (drf-spectacular),
@@ -150,8 +161,10 @@ jobs:
 
     # Скрипту достатньо стандартної бібліотеки, тож тут нічого не встановлюється.
     # Тести самого скрипта запускаються в job build-and-test, де pytest уже є.
+    # Таблиця "вимога -> тести" також потрапляє на сторінку прогону (Summary); pipefail зберігає код виходу скрипта.
     - name: Check requirements traceability (RTM <-> tests)
-      run: python scripts/check_traceability.py
+      shell: bash
+      run: python scripts/check_traceability.py | tee -a "$GITHUB_STEP_SUMMARY"
 
   # Lab05: перевірки фронтенду (окремий Django-проєкт у Frontend/) після огляду іншої команди.
   frontend:

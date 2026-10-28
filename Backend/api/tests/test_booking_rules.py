@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from api.booking_rules import BookingRuleError, booking_duration, validate_attendees_fit_room
+from api.booking_rules import BookingRuleError, booking_duration, is_recently_changed, validate_attendees_fit_room
 
 UTC = timezone.utc
 
@@ -87,3 +87,39 @@ def test_duration_uses_real_elapsed_time_across_dst_change():
     start = datetime(2026, 10, 24, 23, 0, tzinfo=kyiv)
     end = datetime(2026, 10, 25, 6, 0, tzinfo=kyiv)
     assert booking_duration(start, end) == timedelta(hours=8)
+
+
+LESSON_START = datetime(2026, 10, 21, 10, 0, tzinfo=UTC)
+
+
+def test_change_within_24_hours_before_start_is_recent():
+    assert is_recently_changed([LESSON_START - timedelta(hours=23, minutes=59)], LESSON_START) is True
+
+
+def test_change_exactly_24_hours_before_start_is_not_recent():
+    assert is_recently_changed([LESSON_START - timedelta(hours=24)], LESSON_START) is False
+
+
+def test_change_earlier_than_24_hours_is_not_recent():
+    assert is_recently_changed([LESSON_START - timedelta(days=3)], LESSON_START) is False
+
+
+def test_change_at_lesson_start_is_recent():
+    assert is_recently_changed([LESSON_START], LESSON_START) is True
+
+
+def test_change_after_lesson_start_is_not_recent():
+    assert is_recently_changed([LESSON_START + timedelta(minutes=1)], LESSON_START) is False
+
+
+def test_no_changes_is_not_recent():
+    assert is_recently_changed([], LESSON_START) is False
+
+
+def test_one_recent_change_among_old_ones_is_recent():
+    changes = [LESSON_START - timedelta(days=5), LESSON_START - timedelta(hours=2)]
+    assert is_recently_changed(changes, LESSON_START) is True
+
+
+def test_recent_change_rejects_naive_lesson_start():
+    assert_raises_message(MSG_NAIVE, is_recently_changed, [], datetime(2026, 10, 21, 10, 0))

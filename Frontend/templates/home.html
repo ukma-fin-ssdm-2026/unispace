@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card home-hero-card">
+
+    <!-- Декоративний градієнтний відблиск -->
+    <div class="hero-glow"></div>
+
+    <!-- Іконка з левітацією -->
+    <div class="hero-icon-wrapper">
+        <i class="fa-solid fa-layer-group"></i>
+    </div>
+
+    <h1 class="hero-title">
+        {{ welcome_message }}
+    </h1>
+
+    <p class="hero-subtitle">
+        Сучасний простір для керування аудиторним фондом. Переглядайте розклад, знаходьте кабінети та запобігайте накладкам пар без жодних зусиль.
+    </p>
+
+    <!-- Кнопки дій -->
+    <div class="hero-actions">
+        <a href="#" class="btn-primary-pill">
+            <i class="fa-solid fa-calendar-check"></i> Розклад занять
+        </a>
+        <a href="#" class="btn-secondary-pill">
+            <i class="fa-solid fa-magnifying-glass"></i> Знайти аудиторію
+        </a>
+    </div>
+
+</div> <!-- Закриваємо картку ТУТ -->
+{% endblock %} <!-- Закриваємо content ТУТ -->
+
+<!-- ТЕПЕР блок скриптів стоїть окремо і вставиться в кінець сторінки -->
+{% block extra_js %}
+    <script src="{% static 'js/layout.js' %}"></script>
+{% endblock %}

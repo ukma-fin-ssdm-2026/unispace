@@ -9,17 +9,26 @@ from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect, JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from drf_spectacular.utils import extend_schema
+
 from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from . import microsoft_auth
+from api.services import microsoft_auth
 from .models import User
+
+# ==========================================
+# Допоміжні функції
+# ==========================================
 
 
 def _error(code, message, http_status):
     return JsonResponse({"error": {"code": code, "message": message}}, status=http_status)
+
+    # ==========================================
+    # Вхід та вихід (Authentication)
+    # ==========================================
 
 
 @require_GET
@@ -57,6 +66,10 @@ def microsoft_callback(request):
 def logout_view(request):
     logout(request)
     return JsonResponse({}, status=200)
+
+    # ==========================================
+    # Профіль користувача (API)
+    # ==========================================
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):

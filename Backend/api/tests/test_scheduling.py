@@ -2,6 +2,9 @@
 TDD: перевірка перетину часових проміжків (основа пошуку вільних аудиторій, FR-010).
 
 Тести написано за циклом Red -> Green -> Refactor; історія - у комітах з тегами [RED]/[GREEN]/[REFACTOR].
+
+Примітка щодо використання ШІ: модуль розроблено та доповнено за допомогою ШІ-асистента
+в межах TDD-підходу для верифікації логіки часових інтервалів; перевірено локальним запуском pytest.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -12,9 +15,17 @@ from api.services.scheduling import intervals_overlap, overlap_duration
 
 pytestmark = pytest.mark.req("US-03")
 
+# ==========================================
+# Допоміжні функції
+# ==========================================
+
 
 def t(hour, minute=0):
     return datetime(2026, 10, 20, hour, minute, tzinfo=timezone.utc)
+
+    # ==========================================
+    # Перевірка факту перетину (intervals_overlap)
+    # ==========================================
 
 
 def test_intervals_that_share_time_overlap():
@@ -48,8 +59,12 @@ def test_time_without_timezone_is_rejected():
     aware_interval = (t(10, 30), t(12))
 
     # Act / Assert
-    with pytest.raises(ValueError, match="часовим поясом"):
+    with pytest.raises(ValueError, match="Час бронювання має містити часовий пояс."):
         intervals_overlap(naive_start, naive_end, *aware_interval)
+
+    # ==========================================
+    # Тривалість перетину (overlap_duration)
+    # ==========================================
 
 
 def test_overlap_duration_is_length_of_shared_time():

@@ -11,7 +11,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from api.microsoft_auth import SESSION_FLOW_KEY, MicrosoftLoginError, user_from_claims
+from api.services.microsoft_auth import SESSION_FLOW_KEY, MicrosoftLoginError, user_from_claims
 from api.models import User
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("SEC-002")]
@@ -21,6 +21,10 @@ OTHER_TENANT = "22222222-2222-2222-2222-222222222222"
 OID = "aaaaaaaa-0000-0000-0000-000000000001"
 AUTH_URI = "https://login.microsoftonline.com/fake/authorize"
 FAKE_CREDENTIAL = "not-a-real-credential"  # змінна, а не літерал: bandit B105 реагує на присвоєння рядка "секрету"
+
+# ==========================================
+# Фікстури та Моки MSAL
+# ==========================================
 
 
 @pytest.fixture(autouse=True)
@@ -44,7 +48,7 @@ def fake_msal():
     app = Mock()
     app.initiate_auth_code_flow.return_value = {"auth_uri": AUTH_URI, "state": "xyz"}
     app.acquire_token_by_auth_code_flow.return_value = {"id_token_claims": make_claims()}
-    with patch("api.microsoft_auth.build_msal_app", return_value=app):
+    with patch("api.services.microsoft_auth.build_msal_app", return_value=app):
         yield app
 
 
@@ -55,8 +59,9 @@ def start_login(client):
 def callback(client):
     return client.get(reverse("microsoft-callback"), {"code": "abc", "state": "xyz"})
 
-
-# --- Зіставлення користувача з акаунтом Microsoft ---
+    # ==========================================
+    # Зіставлення користувача з акаунтом Microsoft
+    # ==========================================
 
 
 def test_new_user_is_created_as_student_with_lowercase_email():
@@ -121,8 +126,9 @@ def test_claims_without_id_or_email_are_rejected(missing):
     with pytest.raises(MicrosoftLoginError):
         user_from_claims(claims)
 
-
-# --- Ендпоінти входу ---
+    # ==========================================
+    # Ендпоінти входу (HTTP Flows)
+    # ==========================================
 
 
 def test_login_redirects_to_microsoft_and_remembers_flow(client, fake_msal):

@@ -19,10 +19,18 @@ from .conftest import at
 pytestmark = [pytest.mark.django_db, pytest.mark.req("US-06")]
 UNKNOWN_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
 
+# ==========================================
+# Фікстури
+# ==========================================
+
 
 @pytest.fixture
 def room_payload():
     return {"building": "2", "number": "2-101", "capacity": 50, "projector_working": True}
+
+    # ==========================================
+    # Створення аудиторії (POST)
+    # ==========================================
 
 
 def test_dispatcher_creates_room_and_gets_201(api_client, dispatcher, room_payload):
@@ -70,6 +78,10 @@ def test_duplicate_room_number_in_building_is_rejected(api_client, dispatcher, r
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert Room.objects.filter(building=room.building, number=room.number).count() == 1
 
+    # ==========================================
+    # Перегляд та Фільтрація (GET)
+    # ==========================================
+
 
 def test_list_without_filters_returns_all_rooms(api_client, room, other_room):
     response = api_client.get(reverse("room-list"))
@@ -115,6 +127,10 @@ def test_retrieve_unknown_room_returns_404(api_client):
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["error"]["code"] == "NOT_FOUND"
 
+    # ==========================================
+    # Оновлення аудиторії (PATCH)
+    # ==========================================
+
 
 def test_dispatcher_updates_room_partially(api_client, dispatcher, room):
     api_client.force_authenticate(user=dispatcher)
@@ -153,6 +169,10 @@ def test_update_with_invalid_capacity_returns_400(api_client, dispatcher, room):
     room.refresh_from_db()
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert room.capacity == 30
+
+    # ==========================================
+    # Видалення аудиторії (DELETE)
+    # ==========================================
 
 
 def test_dispatcher_deletes_unused_room(api_client, dispatcher, room):

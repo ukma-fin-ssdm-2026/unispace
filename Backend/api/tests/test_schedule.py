@@ -22,6 +22,10 @@ from .conftest import at
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("US-05")]
 
+# ==========================================
+# Фікстури та Хелпери
+# ==========================================
+
 
 @pytest.fixture
 def other_group(db):
@@ -47,6 +51,10 @@ def get_schedule(client, **params):
 def lesson_ids(response):
     return {item["lesson_id"] for item in response.json()}
 
+    # ==========================================
+    # Видимість розкладу за ролями (Permissions)
+    # ==========================================
+
 
 def test_student_sees_lessons_of_own_group(api_client, student, make_lesson):
     own_lesson = make_lesson(at(10), at(11, 30))
@@ -65,16 +73,6 @@ def test_student_does_not_see_lessons_of_other_group(api_client, student, make_l
     response = get_schedule(api_client)
 
     assert response.json() == []
-
-
-def test_student_ignores_group_filter(api_client, student, make_lesson, other_group):
-    own_lesson = make_lesson(at(10), at(11, 30))
-    make_lesson(at(12), at(13, 30), lesson_group=other_group)
-    api_client.force_authenticate(user=student)
-
-    response = get_schedule(api_client, group_id=other_group.id)
-
-    assert lesson_ids(response) == {str(own_lesson.id)}
 
 
 def test_teacher_sees_only_own_lessons(api_client, teacher, other_teacher, make_lesson):
@@ -97,16 +95,6 @@ def test_dispatcher_sees_all_lessons(api_client, dispatcher, other_teacher, make
     assert lesson_ids(response) == {str(first.id), str(second.id)}
 
 
-def test_dispatcher_filters_schedule_by_group(api_client, dispatcher, make_lesson, other_group):
-    make_lesson(at(10), at(11, 30))
-    other_lesson = make_lesson(at(12), at(13, 30), lesson_group=other_group)
-    api_client.force_authenticate(user=dispatcher)
-
-    response = get_schedule(api_client, group_id=other_group.id)
-
-    assert lesson_ids(response) == {str(other_lesson.id)}
-
-
 def test_anonymous_cannot_view_schedule(api_client):
     response = get_schedule(api_client)
 
@@ -120,53 +108,29 @@ def test_schedule_is_read_only_for_students(api_client, student):
 
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
+    # ==========================================
+    # Фільтрація, Сортування та Пагінація
+    # ==========================================
 
-def test_schedule_item_contains_lesson_and_room_details(api_client, student, room, make_booking):
-    make_booking(at(10), at(11, 30))
+
+def test_student_ignores_group_filter(api_client, student, make_lesson, other_group):
+    own_lesson = make_lesson(at(10), at(11, 30))
+    make_lesson(at(12), at(13, 30), lesson_group=other_group)
     api_client.force_authenticate(user=student)
 
-    item = get_schedule(api_client).json()[0]
+    response = get_schedule(api_client, group_id=other_group.id)
 
-    assert item["subject"] == "Програмна інженерія"
-    assert item["date"] == "2026-10-20"
-    assert item["start_time"] == "10:00:00"
-    assert item["end_time"] == "11:30:00"
-    assert item["group"] == "ІПЗ-3"
-    assert item["teacher"] == "Тестовий Викладач"
-    assert item["room"] == {"id": str(room.id), "building": "1", "number": "1-225"}
-    assert item["room_assigned"] is True
-    assert item["room_changed"] is False
+    assert lesson_ids(response) == {str(own_lesson.id)}
 
 
-def test_schedule_shows_new_room_after_change(api_client, student, other_room, make_booking):
-    booking = make_booking(at(10), at(11, 30))
-    booking.room = other_room
-    booking.save()
-    api_client.force_authenticate(user=student)
-
-    item = get_schedule(api_client).json()[0]
-
-    assert item["room"]["number"] == "1-226"
-
-
-def test_cancelled_booking_keeps_lesson_without_room(api_client, student, make_booking):
-    make_booking(at(10), at(11, 30), status=Booking.BookingStatus.CANCELLED)
-    api_client.force_authenticate(user=student)
-
-    item = get_schedule(api_client).json()[0]
-
-    assert item["room"] is None
-    assert item["room_assigned"] is False
-
-
-def test_lesson_without_booking_has_no_room(api_client, student, make_lesson):
+def test_dispatcher_filters_schedule_by_group(api_client, dispatcher, make_lesson, other_group):
     make_lesson(at(10), at(11, 30))
-    api_client.force_authenticate(user=student)
+    other_lesson = make_lesson(at(12), at(13, 30), lesson_group=other_group)
+    api_client.force_authenticate(user=dispatcher)
 
-    item = get_schedule(api_client).json()[0]
+    response = get_schedule(api_client, group_id=other_group.id)
 
-    assert item["room"] is None
-    assert item["room_assigned"] is False
+    assert lesson_ids(response) == {str(other_lesson.id)}
 
 
 def test_schedule_is_filtered_by_date_range(api_client, student, make_lesson):
@@ -222,6 +186,58 @@ def test_limit_zero_returns_400(api_client, student):
     response = get_schedule(api_client, limit=0)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    # ==========================================
+    # Формат відповіді та Маркери змін
+    # ==========================================
+
+
+def test_schedule_item_contains_lesson_and_room_details(api_client, student, room, make_booking):
+    make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=student)
+
+    item = get_schedule(api_client).json()[0]
+
+    assert item["subject"] == "Програмна інженерія"
+    assert item["date"] == "2026-10-20"
+    assert item["start_time"] == "10:00:00"
+    assert item["end_time"] == "11:30:00"
+    assert item["group"] == "ІПЗ-3"
+    assert item["teacher"] == "Тестовий Викладач"
+    assert item["room"] == {"id": str(room.id), "building": "1", "number": "1-225"}
+    assert item["room_assigned"] is True
+    assert item["room_changed"] is False
+
+
+def test_schedule_shows_new_room_after_change(api_client, student, other_room, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    booking.room = other_room
+    booking.save()
+    api_client.force_authenticate(user=student)
+
+    item = get_schedule(api_client).json()[0]
+
+    assert item["room"]["number"] == "1-226"
+
+
+def test_cancelled_booking_keeps_lesson_without_room(api_client, student, make_booking):
+    make_booking(at(10), at(11, 30), status=Booking.BookingStatus.CANCELLED)
+    api_client.force_authenticate(user=student)
+
+    item = get_schedule(api_client).json()[0]
+
+    assert item["room"] is None
+    assert item["room_assigned"] is False
+
+
+def test_lesson_without_booking_has_no_room(api_client, student, make_lesson):
+    make_lesson(at(10), at(11, 30))
+    api_client.force_authenticate(user=student)
+
+    item = get_schedule(api_client).json()[0]
+
+    assert item["room"] is None
+    assert item["room_assigned"] is False
 
 
 def test_room_changed_marker_is_set_when_changed_within_24_hours_before_start(

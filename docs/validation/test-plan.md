@@ -16,38 +16,26 @@
 
 ### Таблиця тест-кейсів
 
-| № | Компонент/функція | Рівень тесту | Тип | Очікуваний результат / критерій прийняття | Власник | Вимога (ID з rtm.md) |
-|---|---|---|---|---|---|---|
-| TP-01 | **Notification Service** | Модульний | Позитивний | Шаблон листа генерується коректно, підставляючи правильний `room_id` та назву дисципліни з об'єкта `Booking`. | Дар'я Мельник | FR-015 |
-| TP-02 | **Notification Service** | Інтеграційний | Позитивний | Успішна зміна аудиторії (`POST /bookings/{id}/change`) автоматично створює відповідний запис `Notification` у базі даних для групи. | Ольга Михайлик | FR-015 |
-| TP-03 | **Booking Service** | Модульний | Позитивний | Функція отримання попередньої пари повертає коректний об'єкт `Booking`, якщо час його кінця збігається з часом початку поточного. | Ксенія Тимохина | FR-019 |
-| TP-04 | **Booking Service** | Інтеграційний | Негативний | Спроба забронювати аудиторію на час, що вже перетинається з існуючим `Booking`, викликає відкат транзакції (Rollback) через `ExclusionConstraint`. | Дар'я Спіріна | FR-012 |
-| TP-05 | **Classroom Directory** | Інтеграційний | Позитивний | Запит GET `/api/v1/rooms/?capacity=30&projector_working=true` коректно фільтрує БД і повертає лише аудиторії, що відповідають обом умовам. | Анастасія Трекурова | FR-010 |
-| TP-06 | **Booking Service** | Системний | Позитивний | Зміна аудиторії викладачем (`POST /bookings/{id}/change`) звільняє попередню кімнату, займає нову та повертає HTTP 200 без помилок логіки. | Ольга Михайлик | FR-011 |
-| TP-07 | **Performance (NFR)** | Системний | Позитивний | Замір часу від події зміни аудиторії до передачі листа на SMTP-сервер становить **< 120 секунд** (імітація асинхронності). | Ксенія Тимохина | PERF-002 |
-| TP-08 | **Reliability (NFR)** | Системний | Негативний | При **10 паралельних запитах** на бронювання одного слота успішним є лише 1 (HTTP 201), інші 9 отримують HTTP 409 Conflict. | Дар'я Спіріна | REL-001 |
-| TP-09 | **Classroom Directory** | Модульний | Негативний | Аудиторії з недостатньою місткістю, зайняті на слот або позначені недоступними не потрапляють у пропозиції; решта відсортована від найменшої достатньої місткості. | Анастасія Трекурова | FR-010 |
-| TP-10 | **Booking Service** | Модульний | Негативний | 	Інтервал із кінцем не пізніше початку або з перевищенням ліміту тривалості відхиляється; граничні значення (1 секунда, рівно ліміт) обробляються коректно. | Ксенія Тимохина | FR-011 | 
-| TP-11 | **Audit Log** | Модульний | Негативний | 	Зміна, видалення та масові операції (bulk update/delete) над збереженим записом AuditLog заборонені, дані запису не змінюються. | Ольга Михайлик | FR-017, SEC-003 |
-| TP-12 | **Booking API** | Інтеграційний | Негативний | Анонім і студент отримують HTTP 403 на POST /bookings/ і DELETE /bookings/{id}/; бронювання не створюється і не видаляється. | Дар'я Мельник | FR-002, FR-020, SEC-001 |
-
-> Рівні представлені так: Notification (TP-01, 02), Booking (TP-03, 04, 06, 10), Classroom Directory (TP-05, 09), Audit Log (TP-11), Access > control (TP-12); нефункціональні — TP-07 (PERF-002, поріг 120 с) і TP-08 (REL-001, 10 паралельних запитів). Пороги взято з NFR-вимог Лаб 2.
-
-### Зв'язок плану з наявними автотестами
-
-| ID | Статус | Де реалізовано/що робити |
-| TP-01, TP-02 | Планується | Notification Service ще не реалізовано |
-| TP-03 | Планується | 	Логіка «попередня пара» ще не реалізована |
-| TP-04 | Планується | ExclusionConstraint є в БД, автотесту на відкат немає |
-| TP-05 | Частково | 	test_views.py::RoomListTests (фільтр за місткістю); фільтра за проєктором в API ще немає |
-| TP-06 | Планується | Ендпоінт зміни аудиторії ще не реалізовано |
-| TP-07 | Планується | Залежить від TP-01/02 |
-| TP-08 | Планується | Потрібен тест із паралельними запитами (NFR-2 з AGENTS.md) |
-| TP-09 | Реалізовано | test_room_suggestions.py |
-| TP-10 | Реалізовано | test_validators.py, test_booking_rules.py, test_booking_properties.py |
-| TP-11 | Реалізовано | test_audit_log.py |
-| TP-12 | Реалізовано | test_views.py::BookingSecurityTests |
-
+| ID | Компонент/функція | Рівень | Тип | Очікуваний результат / критерій прийняття | Власник | Вимога (rtm.md) | Статус | Реалізовані тести |
+|---|---|---|---|---|---|---|---|---|
+| TP-01 | **Notification Service** | Модульний | Позитивний | Текст сповіщення містить назву дисципліни, час і аудиторії «було → стало». Email-шаблон (з `room_id`) — після появи розсилки. | Дар'я Мельник | FR-015 | 🟡 Частково | `test_bookings_crud.py::test_change_room_notifies_group_members` (текст внутрішнього сповіщення). Email-шаблона ще немає |
+| TP-02 | **Notification Service** | Інтеграційний | Позитивний | Успішна зміна аудиторії (`POST /api/v1/bookings/{id}/change/`) створює запис `Notification` для кожного користувача групи заняття. | Ольга Михайлик | FR-015 | ✅ Реалізовано | `test_bookings_crud.py::test_change_room_notifies_group_members` |
+| TP-03 | **Booking Service** | Модульний | Позитивний | Функція отримання попередньої пари повертає коректний `Booking`, якщо його кінець збігається з початком поточного. | Ксенія Тимохина | FR-019 | ⏳ Планується | Логіку «попередня пара» ще не реалізовано |
+| TP-04 | **Booking Service** | Інтеграційний | Негативний | Бронювання на час, що перетинається з активним бронюванням тієї ж аудиторії, повертає HTTP 409, нове бронювання не створюється. Пари «впритул» дозволені. | Дар'я Спіріна | FR-012 | ✅ Реалізовано | `test_bookings_crud.py::test_overlapping_booking_in_same_room_returns_409`, `::test_back_to_back_booking_in_same_room_is_allowed`, `::test_second_active_booking_for_same_lesson_returns_409`, `::test_change_to_occupied_room_returns_409_and_keeps_booking`; `test_scheduling.py` (перетин інтервалів) |
+| TP-05 | **Classroom Directory** | Інтеграційний | Позитивний | `GET /api/v1/rooms/?capacity=30&projector_working=true` повертає лише аудиторії, що відповідають обом умовам. | Анастасія Трекурова | FR-010, FR-018 | ✅ Реалізовано | `test_rooms_crud.py::test_list_filters_by_projector`, `::test_list_filters_by_capacity_and_projector_together`, `::test_list_filters_by_building`, `::test_list_without_filters_returns_all_rooms`; `test_views.py::RoomListTests` |
+| TP-06 | **Booking Service** | Системний | Позитивний | Зміна аудиторії викладачем (`POST /api/v1/bookings/{id}/change/`) звільняє попередню аудиторію, займає нову, пише запис в `AuditLog`, повертає HTTP 200. | Ольга Михайлик | FR-011, FR-017 | ✅ Реалізовано | `test_bookings_crud.py::test_teacher_changes_room_and_audit_record_is_written`, `::test_change_room_frees_previous_room`; негативні: `::test_change_to_same_room_returns_400`, `::test_change_to_unknown_room_returns_400`, `::test_change_room_of_cancelled_booking_returns_409`, `::test_change_room_of_unknown_booking_returns_404` |
+| TP-07 | **Performance (NFR)** | Системний | Позитивний | Від події зміни аудиторії до передачі листа на SMTP минає **< 120 с** (імітація асинхронності). | Ксенія Тимохина | PERF-002 | ⏳ Планується | Email-розсилки ще немає (залежить від TP-01) |
+| TP-08 | **Reliability (NFR)** | Системний | Негативний | При **10 паралельних запитах** на бронювання одного слота успішним є лише 1 (HTTP 201), решта 9 отримують HTTP 409. | Дар'я Спіріна | REL-001 | ⏳ Планується | Тесту з паралельними запитами немає. Послідовний сценарій накладки покрито в TP-04 |
+| TP-09 | **Classroom Directory** | Модульний | Негативний | Аудиторії з недостатньою місткістю, зайняті на слот або недоступні не потрапляють у пропозиції; решта відсортована від найменшої достатньої місткості. | Анастасія Трекурова | FR-010 | ✅ Реалізовано | `test_room_suggestions.py`, `test_room_capacity.py` |
+| TP-10 | **Booking Service** | Модульний | Негативний | Інтервал із кінцем не пізніше початку або з перевищенням ліміту тривалості відхиляється; граничні значення (1 секунда, рівно ліміт) обробляються коректно. | Ксенія Тимохина | FR-011 | ✅ Реалізовано | `test_validators.py`, `test_booking_rules.py`, `test_booking_properties.py` (hypothesis), `test_utils.py` |
+| TP-11 | **Audit Log** | Модульний | Негативний | Зміна, видалення та масові операції (bulk update/delete) над записом `AuditLog` заборонені, дані запису не змінюються. | Ольга Михайлик | FR-017, SEC-003 | ✅ Реалізовано | `test_audit_log.py` (захист лише на рівні ORM, тригера в PostgreSQL ще немає) |
+| TP-12 | **Booking API** | Інтеграційний | Негативний | Анонім і студент отримують HTTP 403 на `POST /bookings/`, `DELETE /bookings/{id}/` і `POST /bookings/{id}/change/`; бронювання не створюється, не видаляється і не змінюється. | Дар'я Мельник | FR-002, FR-020, SEC-001 | ✅ Реалізовано | `test_views.py::BookingSecurityTests`; `test_bookings_crud.py::test_student_cannot_create_booking`, `::test_student_cannot_change_room`, `::test_teacher_cannot_cancel_foreign_booking`, `::test_teacher_cannot_book_foreign_lesson` |
+| TP-13 | **Booking Service** | Інтеграційний | Позитивний / негативний | Скасування бронювання переводить його в `cancelled`, пише запис в `AuditLog` (без дублю при повторі) і звільняє слот; чуже або неіснуюче бронювання — 403 / 404. | Анастасія Трекурова | FR-020, FR-017 | ✅ Реалізовано | `test_bookings_crud.py::test_teacher_cancels_own_booking_and_audit_record_is_written`, `::test_cancel_twice_does_not_duplicate_audit_record`, `::test_cancelled_booking_frees_the_slot`, `::test_cancel_unknown_booking_returns_404` |
+| TP-14 | **Classroom Directory** | Інтеграційний | Позитивний / негативний | CRUD аудиторій доступний лише диспетчеру (викладач і анонім — 403); місткість < 1 і дубль «корпус + номер» відхиляються; аудиторію з бронюваннями видалити не можна. | Анастасія Трекурова | FR-008 | ✅ Реалізовано | `test_rooms_crud.py` (dispatcher/teacher/anonymous create, update, delete; `::test_room_with_zero_capacity_is_rejected`, `::test_duplicate_room_number_in_building_is_rejected`, `::test_room_with_bookings_cannot_be_deleted`) |
+| TP-15 | **Booking Service** | Інтеграційний | Позитивний / негативний | `GET /api/v1/bookings/{id}/alternatives/` повертає вільні аудиторії: спершу той самий корпус, потім найменша достатня місткість; скасоване бронювання — 409; чуже для викладача — 403; студент/анонім — 403. | Ольга Михайлик | FR-010 | ✅ Реалізовано | `test_room_alternatives.py` (15 тестів) |
+| TP-16 | **Schedule API** | Інтеграційний | Позитивний / негативний | `GET /api/v1/schedule/`: студент бачить лише розклад своєї групи, викладач — лише свої заняття, диспетчер — усі; фільтри за датою, пагінація, 400 на невалідні параметри; позначка «аудиторію змінено за 24 год». | Анастасія Трекурова | FR-006, FR-007, US-05 | 🔀 У гілці `feat/schedule` | `test_schedule.py` (21 тест). |
+| TP-17 | **Auth & User Service** | Інтеграційний | Позитивний / негативний | Вхід через Microsoft: новий користувач стає студентом, наявний зв'язується за email, чужий tenant і розбіжність `state` відхиляються, неактивний користувач не входить; `GET /api/v1/auth/me/`, вихід. | Ольга Михайлик | FR-001, SEC-002 | 🔀 У гілці `feat/microsoft-login` | `test_microsoft_auth.py` (16 тестів, MSAL замінено заглушкою `fake_msal`) |
+| TP-18 | **CI / простежуваність** | Модульний | Позитивний / негативний | Скрипт `check_traceability.py` падає, якщо вимога з RTM без тесту, тест без вимоги або виняток у `traceability.toml` застарів. | Ольга Михайлик | процес (Lab07) | 🔀 У гілці `feat/ci-traceability-check` | `Backend/scripts/tests/test_check_traceability.py` (14 тестів) |
 
 ### Прогалини простежуваності (виявлені під час складання плану)
 

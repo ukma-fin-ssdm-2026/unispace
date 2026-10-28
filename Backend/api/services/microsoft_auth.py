@@ -8,14 +8,15 @@
 Роль Microsoft не повідомляє, тому її визначає наша база: викладачі приходять з розкладу САЗ,
 диспетчера призначає адміністратор, а новий користувач за замовчуванням - студент.
 
-Примітка щодо використання ШІ: модуль згенеровано ШІ (Claude); логіку зіставлення користувачів
-узгоджено з командою, поведінку перевіряють тести test_microsoft_auth.py з підміною MSAL.
+Примітка щодо використання ШІ: модуль згенеровано ШІ (Claude); логіку
+зіставлення користувачів узгоджено з командою, поведінку перевіряють
+тести test_microsoft_auth.py з підміною MSAL.
 """
 
 import msal
 from django.conf import settings
 
-from .models import User
+from api.models import User
 
 LOGIN_SCOPES = ["User.Read"]
 SESSION_FLOW_KEY = "microsoft_auth_flow"
@@ -23,6 +24,10 @@ SESSION_FLOW_KEY = "microsoft_auth_flow"
 
 class MicrosoftLoginError(Exception):
     """Вхід не вдався: відповідь Microsoft невалідна або користувача не можна пустити."""
+
+    # ==========================================
+    # Налаштування та конфігурація MSAL
+    # ==========================================
 
 
 def is_configured():
@@ -35,6 +40,10 @@ def build_msal_app():
         authority=f"https://login.microsoftonline.com/{settings.MS_TENANT_ID}",
         client_credential=settings.MS_CLIENT_SECRET,
     )
+
+    # ==========================================
+    # Потік авторизації (Auth Code Flow)
+    # ==========================================
 
 
 def start_login():
@@ -56,6 +65,10 @@ def finish_login(flow, query_params):
     if not claims:
         raise MicrosoftLoginError("Microsoft не повернув id_token")
     return claims
+
+    # ==========================================
+    # Зіставлення користувачів (БД)
+    # ==========================================
 
 
 def user_from_claims(claims):

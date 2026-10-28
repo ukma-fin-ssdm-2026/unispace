@@ -23,6 +23,19 @@ from rest_framework.test import APIClient
 
 _counter = itertools.count(1)
 
+# ==========================================
+# Базові клієнти
+# ==========================================
+
+
+@pytest.fixture
+def api_client():
+    return APIClient()
+
+    # ==========================================
+    # Користувачі та Групи
+    # ==========================================
+
 
 @pytest.fixture
 def group(db):
@@ -36,6 +49,11 @@ def teacher(db):
 
 
 @pytest.fixture
+def other_teacher(db):
+    return User.objects.create(email="teacher2@ukma.edu.ua", full_name="Інший Викладач", role="teacher")
+
+
+@pytest.fixture
 def student(db, group):
     return User.objects.create(email="student@ukma.edu.ua", full_name="Тестовий Студент", role="student", group=group)
 
@@ -44,15 +62,24 @@ def student(db, group):
 def dispatcher(db):
     return User.objects.create(email="dispatcher@ukma.edu.ua", full_name="Тестовий Диспетчер", role="dispatcher")
 
-
-@pytest.fixture
-def api_client():
-    return APIClient()
+    # ==========================================
+    # Аудиторії
+    # ==========================================
 
 
 @pytest.fixture
 def room(db):
     return Room.objects.create(building="1", number="1-225", capacity=30, projector_working=True)
+
+
+@pytest.fixture
+def other_room(db):
+    return Room.objects.create(building="1", number="1-226", capacity=40)
+
+
+# ==========================================
+# Фабрики (Генератори складних об'єктів)
+# ==========================================
 
 
 @pytest.fixture
@@ -80,11 +107,6 @@ def make_booking(teacher, group, room):
 
 
 @pytest.fixture
-def other_teacher(db):
-    return User.objects.create(email="teacher2@ukma.edu.ua", full_name="Інший Викладач", role="teacher")
-
-
-@pytest.fixture
 def make_lesson(teacher, group):
     """Фабрика: заняття без бронювання (за замовчуванням - викладача й групи з фікстур)."""
 
@@ -103,11 +125,6 @@ def make_lesson(teacher, group):
 
 
 @pytest.fixture
-def other_room(db):
-    return Room.objects.create(building="1", number="1-226", capacity=40)
-
-
-@pytest.fixture
 def audit_log(make_booking, teacher, room, other_room):
     """Збережений запис аудиту: викладач переніс заняття з room в other_room."""
     booking = make_booking(at(10), at(11, 30))
@@ -119,6 +136,10 @@ def audit_log(make_booking, teacher, room, other_room):
         new_room=other_room,
         reason="Зламався проєктор",
     )
+
+    # ==========================================
+    # Допоміжні утиліти
+    # ==========================================
 
 
 def at(hour, minute=0, day=date(2026, 10, 20)):

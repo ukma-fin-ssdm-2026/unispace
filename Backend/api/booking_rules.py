@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
+RECENT_CHANGE_HOURS = 24
+
 
 class BookingRuleError(ValueError):
     """Порушено бізнес-правило бронювання."""
@@ -22,3 +24,12 @@ def validate_attendees_fit_room(attendees: int, capacity: int) -> None:
         raise BookingRuleError("Місткість аудиторії має бути не меншою за 1.")
     if attendees > capacity:
         raise BookingRuleError("Кількість учасників перевищує місткість аудиторії.")
+
+
+def is_recently_changed(change_times: list[datetime], lesson_start: datetime) -> bool:
+    """Чи змінювали аудиторію менш ніж за 24 години до початку заняття (маркер «Змінено», FR-006)."""
+    if lesson_start.tzinfo is None:
+        raise BookingRuleError("Час бронювання має містити часовий пояс.")
+
+    threshold = lesson_start - timedelta(hours=RECENT_CHANGE_HOURS)
+    return any(threshold < changed_at <= lesson_start for changed_at in change_times)

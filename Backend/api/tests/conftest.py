@@ -80,6 +80,29 @@ def make_booking(teacher, group, room):
 
 
 @pytest.fixture
+def other_teacher(db):
+    return User.objects.create(email="teacher2@ukma.edu.ua", full_name="Інший Викладач", role="teacher")
+
+
+@pytest.fixture
+def make_lesson(teacher, group):
+    """Фабрика: заняття без бронювання (за замовчуванням - викладача й групи з фікстур)."""
+
+    def _make_lesson(start, end, *, lesson_teacher=None, lesson_group=None):
+        return Lesson.objects.create(
+            source_key=f"lesson-{next(_counter)}",
+            subject="Програмна інженерія",
+            date=start.date(),
+            start_time=start.time(),
+            end_time=end.time(),
+            teacher=lesson_teacher or teacher,
+            group=lesson_group or group,
+        )
+
+    return _make_lesson
+
+
+@pytest.fixture
 def other_room(db):
     return Room.objects.create(building="1", number="1-226", capacity=40)
 

@@ -35,6 +35,14 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(","
 
 AUTH_USER_MODEL = "api.User"
 
+# Вхід через університетський акаунт Microsoft (NFR-4). Значення - лише в .env, секрет ніколи не комітиться.
+MS_TENANT_ID = os.environ.get("MS_TENANT_ID", "")
+MS_CLIENT_ID = os.environ.get("MS_CLIENT_ID", "")
+MS_CLIENT_SECRET = os.environ.get("MS_CLIENT_SECRET", "")
+MS_REDIRECT_URI = os.environ.get("MS_REDIRECT_URI", "http://localhost:8000/auth/microsoft/callback/")
+# Куди повертати користувача після входу (поки фронтенду немає - Swagger UI).
+LOGIN_REDIRECT_URL = os.environ.get("LOGIN_REDIRECT_URL", "/api/docs/")
+
 # Application definition
 
 INSTALLED_APPS = [

@@ -14,36 +14,13 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from api.models import AuditLog, Booking, Lesson, User, Notification
+from api.models import AuditLog, Booking, Notification
 
 from .conftest import at
 
 pytestmark = pytest.mark.django_db
 
 UNKNOWN_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
-
-
-@pytest.fixture
-def make_lesson(teacher, group):
-    """Фабрика: заняття без бронювання (потрібне для перевірки створення бронювання)."""
-
-    def _make_lesson(start, end, *, lesson_teacher=None):
-        return Lesson.objects.create(
-            source_key=f"lesson-{uuid.uuid4()}",
-            subject="Програмна інженерія",
-            date=start.date(),
-            start_time=start.time(),
-            end_time=end.time(),
-            teacher=lesson_teacher or teacher,
-            group=group,
-        )
-
-    return _make_lesson
-
-
-@pytest.fixture
-def other_teacher(db):
-    return User.objects.create(email="teacher2@ukma.edu.ua", full_name="Інший Викладач", role="teacher")
 
 
 def create_booking(client, lesson, room):

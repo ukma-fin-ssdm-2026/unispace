@@ -4,6 +4,22 @@ info:
   version: 1.0.0
   description: API для системи керування аудиторним фондом UniSpace
 paths:
+  /api/v1/auth/me/:
+    get:
+      operationId: v1_auth_me_retrieve
+      summary: Поточний користувач
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUser'
+          description: ''
   /api/v1/bookings/:
     post:
       operationId: v1_bookings_create
@@ -525,6 +541,66 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+  /api/v1/schedule/:
+    get:
+      operationId: v1_schedule_list
+      description: Студент бачить розклад своєї групи, викладач - власні заняття,
+        диспетчер - будь-які (з можливістю відфільтрувати за групою). Тільки для читання.
+      summary: Розклад занять
+      parameters:
+      - in: query
+        name: date_from
+        schema:
+          type: string
+          format: date
+        description: Початок періоду (включно)
+      - in: query
+        name: date_to
+        schema:
+          type: string
+          format: date
+        description: Кінець періоду (включно)
+      - in: query
+        name: group_id
+        schema:
+          type: string
+          format: uuid
+        description: Група (лише для диспетчера)
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+        description: Кількість записів
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: Зсув
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduleItem'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /api/v1/sync/:
     post:
       operationId: v1_sync_create
@@ -703,6 +779,29 @@ components:
       description: |-
         * `active` - active
         * `cancelled` - cancelled
+    CurrentUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Університетська електронна пошта
+          maxLength: 254
+        full_name:
+          type: string
+          title: Повне ім'я
+          maxLength: 255
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          title: Роль
+      required:
+      - email
+      - id
     ErrorDetail:
       type: object
       properties:
@@ -776,6 +875,16 @@ components:
         is_available:
           type: boolean
           title: Доступна для використання
+    RoleEnum:
+      enum:
+      - student
+      - teacher
+      - dispatcher
+      type: string
+      description: |-
+        * `student` - Студент
+        * `teacher` - Викладач
+        * `dispatcher` - Диспетчер
     Room:
       type: object
       properties:
@@ -847,6 +956,72 @@ components:
       required:
       - building
       - capacity
+      - number
+    ScheduleItem:
+      type: object
+      properties:
+        lesson_id:
+          type: string
+          format: uuid
+        subject:
+          type: string
+          description: Назва дисципліни
+        date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        end_time:
+          type: string
+          format: time
+        group:
+          type: string
+          description: Назва академічної групи
+        teacher:
+          type: string
+          description: Імʼя викладача
+        room:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleRoom'
+          nullable: true
+          description: Призначена аудиторія або null
+        room_assigned:
+          type: boolean
+          description: false, якщо бронювання скасовано або його немає
+        room_changed:
+          type: boolean
+          description: 'Маркер «Змінено»: аудиторію змінено менш ніж за 24 години
+            до початку заняття'
+      required:
+      - date
+      - end_time
+      - group
+      - lesson_id
+      - room
+      - room_assigned
+      - room_changed
+      - start_time
+      - subject
+      - teacher
+    ScheduleRoom:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        building:
+          type: string
+          title: Корпус
+          maxLength: 20
+        number:
+          type: string
+          title: Номер аудиторії
+          maxLength: 30
+      required:
+      - building
+      - id
       - number
     SyncLog:
       type: object

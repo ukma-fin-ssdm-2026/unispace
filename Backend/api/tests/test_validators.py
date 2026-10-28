@@ -4,8 +4,11 @@
 (Arrange-Act-Assert) підготовлено з допомогою ШІ-асистента.
 """
 
+import pytest
 from datetime import time
 from api.validators import is_valid_lesson_duration
+
+pytestmark = pytest.mark.req("US-03")
 
 
 def test_inverted_times_returns_false():

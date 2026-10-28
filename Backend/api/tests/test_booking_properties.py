@@ -18,6 +18,7 @@ aware_datetimes = st.datetimes(
 positive_gaps = st.timedeltas(min_value=timedelta(seconds=1), max_value=timedelta(days=2))
 
 
+@pytest.mark.req("US-03")
 @settings(max_examples=300)
 @given(start=aware_datetimes, gap=positive_gaps, end_zone=st.sampled_from(ZONES))
 def test_duration_is_always_positive_and_equals_real_elapsed_time(start, gap, end_zone):
@@ -30,6 +31,7 @@ def test_duration_is_always_positive_and_equals_real_elapsed_time(start, gap, en
     assert duration == gap
 
 
+@pytest.mark.req("US-03")
 @settings(max_examples=200)
 @given(start=aware_datetimes, gap=positive_gaps)
 def test_reversed_interval_is_always_rejected(start, gap):
@@ -39,6 +41,7 @@ def test_reversed_interval_is_always_rejected(start, gap):
         booking_duration(end, start)
 
 
+@pytest.mark.req("US-03")
 @settings(max_examples=200)
 @given(start=aware_datetimes, gap=positive_gaps)
 def test_duration_is_additive(start, gap):
@@ -48,12 +51,14 @@ def test_duration_is_additive(start, gap):
     assert booking_duration(start, end) == booking_duration(start, middle) + booking_duration(middle, end)
 
 
+@pytest.mark.req("US-10")
 @given(capacity=st.integers(min_value=1, max_value=10_000), data=st.data())
 def test_attendees_up_to_capacity_always_fit(capacity, data):
     attendees = data.draw(st.integers(min_value=1, max_value=capacity))
     validate_attendees_fit_room(attendees, capacity)
 
 
+@pytest.mark.req("US-10")
 @given(capacity=st.integers(min_value=1, max_value=10_000), extra=st.integers(min_value=1, max_value=10_000))
 def test_attendees_over_capacity_never_fit(capacity, extra):
     with pytest.raises(BookingRuleError):

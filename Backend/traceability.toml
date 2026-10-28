@@ -1,0 +1,19 @@
+# Свідомі винятки для перевірки простежуваності (scripts/check_traceability.py, CI job "traceability").
+# Кожен рядок - обґрунтування, чому дірка поки допустима. Скрипт валить збірку, якщо виняток застарів:
+# щойно для вимоги з'явиться тест (або тест отримає мітку), рядок треба прибрати.
+
+[requirements_without_tests]
+"US-02" = "Логіку «попередня пара» ще не реалізовано (TP-03)"
+"US-09" = "Звіт конфліктів імпорту ще не реалізовано: немає парсера САЗ"
+"PERF-001" = "Розклад (US-05) уже є, але навантажувального тесту (<= 500 мс при 100 користувачах) ще немає"
+"PERF-002" = "Відправку email ще не реалізовано (TP-07)"
+"REL-001" = "Тест 10 паралельних запитів заплановано (TP-08); накладки зараз відсікає ExclusionConstraint"
+"REL-002" = "Синхронізацію з САЗ ще не реалізовано, тож немає знімка даних для перевірки"
+
+[tests_without_requirements]
+"api/tests/test_views.py::OpenApiSchemaTests" = "Перевіряє QA-05 (актуальність OpenAPI) з quality-attributes.md; рядка в RTM немає"
+"api/tests/test_views.py::SyncLogSecurityTests" = "Загроза TM-10 з threat-model.md (журнал синхронізації лише для диспетчера); рядка в RTM немає"
+"api/tests/test_test_doubles.py::test_sync_status_choices" = "Статуси SyncLog (ADR-003); рядка в RTM немає"
+"api/tests/test_test_doubles.py::test_dispatcher_can_access_sync_logs" = "Загроза TM-10; рядка в RTM немає"
+"api/tests/test_test_doubles.py::test_other_roles_cannot_access_sync_logs" = "Загроза TM-10; рядка в RTM немає"
+"api/tests/test_test_doubles.py::test_unauthenticated_user_cannot_access_sync_logs" = "Загроза TM-10; рядка в RTM немає"

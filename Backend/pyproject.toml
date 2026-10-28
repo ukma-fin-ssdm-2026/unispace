@@ -17,6 +17,9 @@ DJANGO_SETTINGS_MODULE = "Backend.settings"
 python_files = ["tests.py", "test_*.py"]
 testpaths = ["api"]
 addopts = "-ra"
+markers = [
+    "req(*ids): ID вимог з docs/requirements/rtm.md, які перевіряє тест (перевірка: scripts/check_traceability.py)",
+]
 
 [tool.coverage.run]
 branch = true

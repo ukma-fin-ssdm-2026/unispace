@@ -16,7 +16,7 @@ from rest_framework import status
 from api.models import Room
 from .conftest import at
 
-pytestmark = pytest.mark.django_db
+pytestmark = [pytest.mark.django_db, pytest.mark.req("US-06")]
 UNKNOWN_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
 
 
@@ -78,6 +78,7 @@ def test_list_without_filters_returns_all_rooms(api_client, room, other_room):
     assert len(response.json()) == 2
 
 
+@pytest.mark.req("US-01")
 def test_list_filters_by_projector(api_client, room, other_room):
     # room має справний проєктор, other_room - ні.
     response = api_client.get(reverse("room-list"), {"projector_working": "true"})
@@ -85,6 +86,7 @@ def test_list_filters_by_projector(api_client, room, other_room):
     assert [item["id"] for item in response.json()] == [str(room.id)]
 
 
+@pytest.mark.req("US-01")
 def test_list_filters_by_capacity_and_projector_together(api_client, room, other_room):
     response = api_client.get(reverse("room-list"), {"capacity": 35, "projector_working": "true"})
 

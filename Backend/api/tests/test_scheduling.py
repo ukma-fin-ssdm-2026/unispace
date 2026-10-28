@@ -10,6 +10,8 @@ import pytest
 
 from api.services.scheduling import intervals_overlap, overlap_duration
 
+pytestmark = pytest.mark.req("US-03")
+
 
 def t(hour, minute=0):
     return datetime(2026, 10, 20, hour, minute, tzinfo=timezone.utc)

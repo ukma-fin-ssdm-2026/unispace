@@ -2,6 +2,8 @@ from datetime import datetime
 from api.utils import calculate_booking_duration
 import pytest
 
+pytestmark = pytest.mark.req("US-03")
+
 
 def test_calculate_duration_basic():
     start = datetime(2026, 10, 10, 10, 0)

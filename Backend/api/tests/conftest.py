@@ -19,6 +19,7 @@ from datetime import date, datetime, time, timezone
 import pytest
 
 from api.models import AcademicGroup, AuditLog, Booking, Lesson, Room, User
+from rest_framework.test import APIClient
 
 _counter = itertools.count(1)
 
@@ -32,6 +33,21 @@ def group(db):
 def teacher(db):
     # User.objects.create, а не create_user: у моделі User ще немає власного менеджера для входу через email.
     return User.objects.create(email="teacher@ukma.edu.ua", full_name="Тестовий Викладач", role="teacher")
+
+
+@pytest.fixture
+def student(db, group):
+    return User.objects.create(email="student@ukma.edu.ua", full_name="Тестовий Студент", role="student", group=group)
+
+
+@pytest.fixture
+def dispatcher(db):
+    return User.objects.create(email="dispatcher@ukma.edu.ua", full_name="Тестовий Диспетчер", role="dispatcher")
+
+
+@pytest.fixture
+def api_client():
+    return APIClient()
 
 
 @pytest.fixture

@@ -50,6 +50,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
         '409':
           content:
             application/json:
@@ -57,8 +63,50 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
   /api/v1/bookings/{id}/:
+    get:
+      operationId: v1_bookings_retrieve
+      summary: Отримати бронювання
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+              examples:
+                ПрикладВхіднихДанихДляБронювання:
+                  value:
+                    room_id: 123e4567-e89b-12d3-a456-426614174000
+                    lesson_id: 987f6543-e21b-34c1-b567-112233445566
+                  summary: Приклад вхідних даних для бронювання
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
     delete:
       operationId: v1_bookings_destroy
+      description: 'Бронювання не видаляється: отримує статус cancelled, у журнал
+        аудиту додається запис.'
       summary: Скасувати бронювання
       parameters:
       - in: path
@@ -87,17 +135,161 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+  /api/v1/bookings/{id}/alternatives/:
+    get:
+      operationId: v1_bookings_alternatives_list
+      description: 'Аудиторії, вільні на час заняття: доступні, не менші за потрібну
+        місткість і без активних бронювань, що перетинаються з заняттям. Спершу аудиторії
+        бажаного корпусу, далі - за найменшою достатньою місткістю.'
+      summary: Підібрати вільні аудиторії для заміни
+      parameters:
+      - in: query
+        name: building
+        schema:
+          type: string
+          maxLength: 20
+          minLength: 1
+        description: Бажаний корпус; за замовчуванням - корпус поточної аудиторії
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: query
+        name: min_capacity
+        schema:
+          type: integer
+          minimum: 1
+        description: Мінімальна місткість; за замовчуванням - місткість поточної аудиторії
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/bookings/{id}/change/:
+    post:
+      operationId: v1_bookings_change_create
+      description: Переносить заняття в іншу аудиторію, пише запис в аудит і сповіщає
+        групу.
+      summary: Змінити аудиторію бронювання
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingChangeRoom'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BookingChangeRoom'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BookingChangeRoom'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+              examples:
+                ПрикладВхіднихДанихДляБронювання:
+                  value:
+                    room_id: 123e4567-e89b-12d3-a456-426614174000
+                    lesson_id: 987f6543-e21b-34c1-b567-112233445566
+                  summary: Приклад вхідних даних для бронювання
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /api/v1/rooms/:
     get:
       operationId: v1_rooms_list
       summary: Отримати список аудиторій
       parameters:
       - in: query
+        name: building
+        schema:
+          type: string
+          minLength: 1
+        description: Корпус
+      - in: query
         name: capacity
         schema:
           type: integer
           minimum: 1
         description: Мінімальна місткість
+      - in: query
+        name: has_computers
+        schema:
+          type: boolean
+          nullable: true
+        description: Лише аудиторії з комп'ютерами
       - in: query
         name: limit
         schema:
@@ -112,6 +304,12 @@ paths:
           minimum: 0
           default: 0
         description: Зсув
+      - in: query
+        name: projector_working
+        schema:
+          type: boolean
+          nullable: true
+        description: Лише аудиторії зі справним проєктором
       tags:
       - v1
       security:
@@ -128,6 +326,164 @@ paths:
                   $ref: '#/components/schemas/Room'
           description: ''
         '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    post:
+      operationId: v1_rooms_create
+      summary: Створити аудиторію
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RoomWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RoomWrite'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/rooms/{id}/:
+    get:
+      operationId: v1_rooms_retrieve
+      summary: Отримати аудиторію
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    patch:
+      operationId: v1_rooms_partial_update
+      summary: Оновити аудиторію
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRoomWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRoomWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRoomWrite'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    delete:
+      operationId: v1_rooms_destroy
+      description: Аудиторію з бронюваннями, конфліктами чи записами аудиту видалити
+        не можна.
+      summary: Видалити аудиторію
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
           content:
             application/json:
               schema:
@@ -333,6 +689,19 @@ components:
       - available_slots
       - date
       - room_id
+    BookingChangeRoom:
+      type: object
+      properties:
+        room_id:
+          type: string
+          format: uuid
+          description: ID нової аудиторії
+        reason:
+          type: string
+          default: ''
+          description: Причина зміни аудиторії
+      required:
+      - room_id
     BookingCreate:
       type: object
       properties:
@@ -363,8 +732,9 @@ components:
           format: uuid
           readOnly: true
         status:
-          type: string
-          default: booked
+          allOf:
+          - $ref: '#/components/schemas/BookingResponseStatusEnum'
+          readOnly: true
         title:
           type: string
           readOnly: true
@@ -383,7 +753,16 @@ components:
       - lesson_id
       - room_id
       - start_time
+      - status
       - title
+    BookingResponseStatusEnum:
+      enum:
+      - active
+      - cancelled
+      type: string
+      description: |-
+        * `active` - active
+        * `cancelled` - cancelled
     ErrorDetail:
       type: object
       properties:
@@ -425,6 +804,38 @@ components:
       required:
       - documentation
       - message
+    PatchedRoomWrite:
+      type: object
+      description: Вхідні дані для створення й редагування аудиторії диспетчером (FR-008).
+      properties:
+        building:
+          type: string
+          title: Корпус
+          maxLength: 20
+        number:
+          type: string
+          title: Номер аудиторії
+          description: Назва або номер аудиторії (напр., 4-230)
+          maxLength: 30
+        capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Місткість
+          description: Місткість (кількість посадкових місць)
+        board_type:
+          type: string
+          title: Тип дошки
+          maxLength: 50
+        projector_working:
+          type: boolean
+          title: Справний проєктор
+        has_computers:
+          type: boolean
+          title: Наявність комп'ютерів
+        is_available:
+          type: boolean
+          title: Доступна для використання
     Room:
       type: object
       properties:
@@ -453,10 +864,49 @@ components:
         projector_working:
           type: boolean
           title: Справний проєктор
+        is_available:
+          type: boolean
+          title: Доступна для використання
       required:
       - building
       - capacity
       - id
+      - number
+    RoomWrite:
+      type: object
+      description: Вхідні дані для створення й редагування аудиторії диспетчером (FR-008).
+      properties:
+        building:
+          type: string
+          title: Корпус
+          maxLength: 20
+        number:
+          type: string
+          title: Номер аудиторії
+          description: Назва або номер аудиторії (напр., 4-230)
+          maxLength: 30
+        capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Місткість
+          description: Місткість (кількість посадкових місць)
+        board_type:
+          type: string
+          title: Тип дошки
+          maxLength: 50
+        projector_working:
+          type: boolean
+          title: Справний проєктор
+        has_computers:
+          type: boolean
+          title: Наявність комп'ютерів
+        is_available:
+          type: boolean
+          title: Доступна для використання
+      required:
+      - building
+      - capacity
       - number
     ScheduleItem:
       type: object
@@ -524,16 +974,6 @@ components:
       - building
       - id
       - number
-    StatusEnum:
-      enum:
-      - in_progress
-      - success
-      - failed
-      type: string
-      description: |-
-        * `in_progress` - in_progress
-        * `success` - success
-        * `failed` - failed
     SyncLog:
       type: object
       properties:
@@ -552,7 +992,7 @@ components:
           description: Час завершення синхронізації
         status:
           allOf:
-          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/SyncLogStatusEnum'
           description: |-
             Поточний статус синхронізації
 
@@ -576,6 +1016,16 @@ components:
       - started_at
       - status
       - trigger
+    SyncLogStatusEnum:
+      enum:
+      - in_progress
+      - success
+      - failed
+      type: string
+      description: |-
+        * `in_progress` - in_progress
+        * `success` - success
+        * `failed` - failed
     TriggerEnum:
       enum:
       - manual

@@ -8,6 +8,10 @@ CRUD-інтерфейсу під технічний стек нашого про
 Увесь код верифіковано, перевірено на відповідність стандартам REST-семантики та затверджено Backend Lead.
 
 Контракт оновлено під TDD (використання UUID та lesson_id).
+
+CRUD аудиторій і бронювань дописано з допомогою ШІ (Claude) за docs/requirements
+(FR-008, FR-011, FR-012, FR-015, FR-017, FR-020); перевірено ревʼю та тестами
+test_rooms_crud.py і test_bookings_crud.py.
 """
 
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
@@ -54,11 +58,24 @@ class ErrorResponseSerializer(serializers.Serializer):
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ["id", "building", "number", "capacity", "has_computers", "projector_working"]
+        fields = ["id", "building", "number", "capacity", "has_computers", "projector_working", "is_available"]
 
         extra_kwargs = {
             "number": {"help_text": "Назва або номер аудиторії (напр., 4-230)"},
             "capacity": {"help_text": "Місткість (кількість посадкових місць)"},
+        }
+
+
+class RoomWriteSerializer(serializers.ModelSerializer):
+    """Вхідні дані для створення й редагування аудиторії диспетчером (FR-008)."""
+
+    class Meta:
+        model = Room
+        fields = ["building", "number", "capacity", "board_type", "projector_working", "has_computers", "is_available"]
+
+        extra_kwargs = {
+            "number": {"help_text": "Назва або номер аудиторії (напр., 4-230)"},
+            "capacity": {"min_value": 1, "help_text": "Місткість (кількість посадкових місць)"},
         }
 
 
@@ -73,11 +90,27 @@ class RoomQuerySerializer(serializers.Serializer):
     limit = serializers.IntegerField(min_value=1, default=20, help_text="Кількість записів")
     offset = serializers.IntegerField(min_value=0, default=0, help_text="Зсув")
     capacity = serializers.IntegerField(min_value=1, required=False, help_text="Мінімальна місткість")
+    building = serializers.CharField(required=False, help_text="Корпус")
+    projector_working = serializers.BooleanField(
+        required=False, allow_null=True, help_text="Лише аудиторії зі справним проєктором"
+    )
+    has_computers = serializers.BooleanField(required=False, allow_null=True, help_text="Лише аудиторії з комп'ютерами")
 
 
 class AvailableSlotsQuerySerializer(serializers.Serializer):
     room_id = serializers.UUIDField(required=True)
     date = serializers.DateField(required=True)
+
+
+class RoomAlternativesQuerySerializer(serializers.Serializer):
+    """Параметри підбору вільних аудиторій для заміни (FR-010)."""
+
+    min_capacity = serializers.IntegerField(
+        min_value=1, required=False, help_text="Мінімальна місткість; за замовчуванням - місткість поточної аудиторії"
+    )
+    building = serializers.CharField(
+        max_length=20, required=False, help_text="Бажаний корпус; за замовчуванням - корпус поточної аудиторії"
+    )
 
 
 class UserBookingsQuerySerializer(serializers.Serializer):
@@ -102,9 +135,14 @@ class BookingCreateSerializer(serializers.Serializer):
     lesson_id = serializers.UUIDField(help_text="ID заняття")
 
 
+class BookingChangeRoomSerializer(serializers.Serializer):
+    room_id = serializers.UUIDField(help_text="ID нової аудиторії")
+    reason = serializers.CharField(required=False, allow_blank=True, default="", help_text="Причина зміни аудиторії")
+
+
 class BookingResponseSerializer(BookingCreateSerializer):
     id = serializers.UUIDField(read_only=True)
-    status = serializers.CharField(default="booked")
+    status = serializers.ChoiceField(choices=["active", "cancelled"], read_only=True)
     title = serializers.CharField(source="lesson.subject", read_only=True, help_text="Назва дисципліни")
     start_time = serializers.DateTimeField(read_only=True)
     end_time = serializers.DateTimeField(read_only=True)

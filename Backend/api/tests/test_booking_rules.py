@@ -92,34 +92,42 @@ def test_duration_uses_real_elapsed_time_across_dst_change():
 LESSON_START = datetime(2026, 10, 21, 10, 0, tzinfo=UTC)
 
 
+@pytest.mark.req("US-05")
 def test_change_within_24_hours_before_start_is_recent():
     assert is_recently_changed([LESSON_START - timedelta(hours=23, minutes=59)], LESSON_START) is True
 
 
+@pytest.mark.req("US-05")
 def test_change_exactly_24_hours_before_start_is_not_recent():
     assert is_recently_changed([LESSON_START - timedelta(hours=24)], LESSON_START) is False
 
 
+@pytest.mark.req("US-05")
 def test_change_earlier_than_24_hours_is_not_recent():
     assert is_recently_changed([LESSON_START - timedelta(days=3)], LESSON_START) is False
 
 
+@pytest.mark.req("US-05")
 def test_change_at_lesson_start_is_recent():
     assert is_recently_changed([LESSON_START], LESSON_START) is True
 
 
+@pytest.mark.req("US-05")
 def test_change_after_lesson_start_is_not_recent():
     assert is_recently_changed([LESSON_START + timedelta(minutes=1)], LESSON_START) is False
 
 
+@pytest.mark.req("US-05")
 def test_no_changes_is_not_recent():
     assert is_recently_changed([], LESSON_START) is False
 
 
+@pytest.mark.req("US-05")
 def test_one_recent_change_among_old_ones_is_recent():
     changes = [LESSON_START - timedelta(days=5), LESSON_START - timedelta(hours=2)]
     assert is_recently_changed(changes, LESSON_START) is True
 
 
+@pytest.mark.req("US-05")
 def test_recent_change_rejects_naive_lesson_start():
     assert_raises_message(MSG_NAIVE, is_recently_changed, [], datetime(2026, 10, 21, 10, 0))

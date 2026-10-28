@@ -14,7 +14,7 @@ from rest_framework import status
 from api.microsoft_auth import SESSION_FLOW_KEY, MicrosoftLoginError, user_from_claims
 from api.models import User
 
-pytestmark = pytest.mark.django_db
+pytestmark = [pytest.mark.django_db, pytest.mark.req("SEC-002")]
 
 TENANT = "11111111-1111-1111-1111-111111111111"
 OTHER_TENANT = "22222222-2222-2222-2222-222222222222"

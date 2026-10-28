@@ -20,7 +20,7 @@ from api.models import AcademicGroup, Booking, AuditLog
 
 from .conftest import at
 
-pytestmark = pytest.mark.django_db
+pytestmark = [pytest.mark.django_db, pytest.mark.req("US-05")]
 
 
 @pytest.fixture

@@ -24,6 +24,10 @@ pytestmark = [pytest.mark.django_db, pytest.mark.req("US-10")]
 UNKNOWN_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
 _numbers = itertools.count(300)
 
+# ==========================================
+# Фікстури та Допоміжні функції
+# ==========================================
+
 
 @pytest.fixture
 def make_room(db):
@@ -48,6 +52,10 @@ def get_alternatives(client, booking, **params):
 
 def room_ids(response):
     return [item["id"] for item in response.json()]
+
+    # ==========================================
+    # Логіка доступності аудиторій (Накладки часу)
+    # ==========================================
 
 
 def test_room_busy_at_same_time_is_not_suggested(api_client, teacher, make_booking, make_room):
@@ -92,6 +100,10 @@ def test_room_with_cancelled_booking_is_suggested(api_client, teacher, make_book
 
     # Assert
     assert room_ids(response) == [str(freed.id)]
+
+    # ==========================================
+    # Фільтрація та Ранжування (Місткість і Корпус)
+    # ==========================================
 
 
 def test_current_room_is_not_suggested(api_client, teacher, room, make_booking):
@@ -163,6 +175,10 @@ def test_building_parameter_changes_preferred_building(api_client, teacher, make
     # Assert
     assert room_ids(response) == [str(requested_building.id), str(same_building.id)]
 
+    # ==========================================
+    # Контракт API та Обробка помилок
+    # ==========================================
+
 
 def test_response_contains_room_details(api_client, teacher, make_booking, make_room):
     # Arrange
@@ -214,6 +230,10 @@ def test_unknown_booking_returns_404(api_client, dispatcher):
 
     # Assert
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    # ==========================================
+    # Права доступу (Permissions)
+    # ==========================================
 
 
 def test_dispatcher_sees_alternatives_for_any_booking(api_client, dispatcher, make_booking, make_room):

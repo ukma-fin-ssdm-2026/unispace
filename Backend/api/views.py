@@ -20,16 +20,17 @@ test_room_alternatives.py, які закомічено раніше за реа�
 import uuid
 
 from django.db.models import Prefetch
-from django.db import IntegrityError, transaction
 from django.db.models import ProtectedError
+from drf_spectacular.utils import extend_schema
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
-from drf_spectacular.utils import extend_schema
-from .booking_rules import is_recently_changed
-from .models import AuditLog, Room, Booking, Lesson, SyncLog, User, Notification
-from .room_suggestions import suggest_rooms
+
+from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
+from api.services import bookings, schedule
+from api.services.room_suggestions import suggest_rooms
 
 from .serializers import (
     RoomSerializer,
@@ -47,6 +48,10 @@ from .serializers import (
     BookingChangeRoomSerializer,
     RoomAlternativesQuerySerializer,
 )
+
+# ==========================================
+# Дозволи (Permissions)
+# ==========================================
 
 
 class IsTeacherOrDispatcher(BasePermission):
@@ -69,8 +74,11 @@ class IsDispatcher(BasePermission):
         user = request.user
         return bool(user and user.is_authenticated and getattr(user, "role", None) == "dispatcher")
 
+    # ==========================================
+    # Допоміжні функції (Форматування відповідей)
+    # ==========================================
 
-# Допоміжна функція для генерації стандартної відповіді з помилкою
+
 def get_validation_error_response(errors):
     return {
         "error": {
@@ -117,6 +125,10 @@ def unknown_reference_response(field, entity):
 def can_manage_lesson(user, lesson):
     """Диспетчер керує будь-якими заняттями, викладач - лише власними."""
     return user.role == User.RoleChoices.DISPATCHER or lesson.teacher_id == user.id
+
+    # ==========================================
+    # API Аудиторій (Rooms)
+    # ==========================================
 
 
 class RoomListAPIView(APIView):
@@ -253,6 +265,10 @@ class AvailableSlotsAPIView(APIView):
         }
         return Response(mock_data, status=status.HTTP_200_OK)
 
+    # ==========================================
+    # API Бронювань (Bookings)
+    # ==========================================
+
 
 class BookingListCreateAPIView(APIView):
     permission_classes = [IsTeacherOrDispatcher]
@@ -286,14 +302,11 @@ class BookingListCreateAPIView(APIView):
         if not room.is_available:
             return conflict_response("Аудиторія недоступна для використання")
 
-        # Накладки та друге активне бронювання заняття відсікає БД (ExclusionConstraint, UniqueConstraint).
         try:
-            with transaction.atomic():
-                booking = Booking.objects.create(lesson=lesson, room=room, user=request.user)
-        except IntegrityError:
-            return conflict_response("Аудиторія вже заброньована на цей час або заняття вже має активне бронювання")
-
-        return Response(BookingResponseSerializer(booking).data, status=status.HTTP_201_CREATED)
+            booking = bookings.create_booking(lesson, room, request.user)
+            return Response(BookingResponseSerializer(booking).data, status=status.HTTP_201_CREATED)
+        except bookings.BookingConflictError as e:
+            return conflict_response(str(e))
 
 
 class BookingDetailAPIView(APIView):
@@ -326,18 +339,7 @@ class BookingDetailAPIView(APIView):
         if not can_manage_lesson(request.user, booking.lesson):
             return forbidden_response("Викладач може скасовувати лише бронювання власних занять")
 
-        # Повторне скасування нічого не змінює і не дублює запис аудиту.
-        if booking.status == Booking.BookingStatus.ACTIVE:
-            with transaction.atomic():
-                booking.status = Booking.BookingStatus.CANCELLED
-                booking.save(update_fields=["status", "updated_at"])
-                AuditLog.objects.create(
-                    booking=booking,
-                    user=request.user,
-                    action="cancelled",
-                    previous_room=booking.room,
-                )
-
+        bookings.cancel_booking(booking, request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -436,36 +438,11 @@ class BookingChangeRoomAPIView(APIView):
         if not new_room.is_available:
             return conflict_response("Аудиторія недоступна для використання")
 
-        previous_room = booking.room
         try:
-            with transaction.atomic():
-                booking.room = new_room
-                booking.save(update_fields=["room", "updated_at"])
-                AuditLog.objects.create(
-                    booking=booking,
-                    user=request.user,
-                    action="room_changed",
-                    previous_room=previous_room,
-                    new_room=new_room,
-                    reason=serializer.validated_data["reason"],
-                )
-                self.notify_group(booking, previous_room, new_room)
-        except IntegrityError:
-            return conflict_response("Нова аудиторія вже заброньована на цей час")
-
-        return Response(BookingResponseSerializer(booking).data, status=status.HTTP_200_OK)
-
-    @staticmethod
-    def notify_group(booking, previous_room, new_room):
-        """Створює сповіщення для кожного користувача академічної групи заняття (FR-015)."""
-        message = (
-            f"Заняття «{booking.lesson.subject}» ({booking.start_time:%d.%m.%Y %H:%M}) "
-            f"перенесено: {previous_room} → {new_room}"
-        )
-        recipients = User.objects.filter(group=booking.lesson.group)
-        Notification.objects.bulk_create(
-            [Notification(user=user, type="room_changed", message=message) for user in recipients]
-        )
+            booking = bookings.change_booking_room(booking, new_room, serializer.validated_data["reason"], request.user)
+            return Response(BookingResponseSerializer(booking).data, status=status.HTTP_200_OK)
+        except bookings.BookingConflictError as e:
+            return conflict_response(str(e))
 
 
 class UserBookingsAPIView(APIView):
@@ -481,44 +458,16 @@ class UserBookingsAPIView(APIView):
         if not query.is_valid():
             return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
 
-        bookings = Booking.objects.filter(user=request.user).order_by("-start_time")
+        user_bookings = Booking.objects.filter(user=request.user).order_by("-start_time")
         limit = query.validated_data.get("limit", 10)
-        bookings = bookings[:limit]
+        user_bookings = user_bookings[:limit]
 
-        serializer = BookingResponseSerializer(bookings, many=True)
+        serializer = BookingResponseSerializer(user_bookings, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-def limit_lessons_to_user(lessons, user, group_id):
-    """Студент бачить розклад своєї групи, викладач - власні заняття, диспетчер - будь-які (FR-006, FR-007)."""
-    if user.role == User.RoleChoices.STUDENT:
-        return lessons.filter(group_id=user.group_id)
-    if user.role == User.RoleChoices.TEACHER:
-        return lessons.filter(teacher=user)
-    if group_id:
-        return lessons.filter(group_id=group_id)
-    return lessons
-
-
-def build_schedule_item(lesson):
-    booking = lesson.active_bookings[0] if lesson.active_bookings else None
-    room = booking.room if booking else None
-    room_changed = False
-    if booking:
-        change_times = [change.created_at for change in booking.room_changes]
-        room_changed = is_recently_changed(change_times, booking.start_time)
-    return {
-        "lesson_id": lesson.id,
-        "subject": lesson.subject,
-        "date": lesson.date,
-        "start_time": lesson.start_time,
-        "end_time": lesson.end_time,
-        "group": lesson.group.name,
-        "teacher": str(lesson.teacher),
-        "room": room,
-        "room_assigned": room is not None,
-        "room_changed": room_changed,
-    }
+    # ==========================================
+    # API Розкладу (Schedule)
+    # ==========================================
 
 
 class ScheduleAPIView(APIView):
@@ -547,7 +496,7 @@ class ScheduleAPIView(APIView):
         lessons = Lesson.objects.select_related("group", "teacher").prefetch_related(
             Prefetch("bookings", queryset=active_bookings, to_attr="active_bookings")
         )
-        lessons = limit_lessons_to_user(lessons, request.user, query.validated_data.get("group_id"))
+        lessons = schedule.limit_lessons_to_user(lessons, request.user, query.validated_data.get("group_id"))
 
         date_from = query.validated_data.get("date_from")
         if date_from:
@@ -561,8 +510,13 @@ class ScheduleAPIView(APIView):
         limit = query.validated_data["limit"]
         lessons = lessons[offset : offset + limit]
 
-        serializer = ScheduleItemSerializer([build_schedule_item(lesson) for lesson in lessons], many=True)
+        serializer = ScheduleItemSerializer([schedule.build_schedule_item(lesson) for lesson in lessons], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# ==========================================
+# API Синхронізації (Sync)
+# ==========================================
 
 
 class SyncLogListAPIView(APIView):

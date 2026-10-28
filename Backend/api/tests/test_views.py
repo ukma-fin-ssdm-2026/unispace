@@ -16,11 +16,12 @@ api/views.py та api/serializers.py; перевірено запуском `pyt
 """
 
 import pytest
+from unittest.mock import patch
 import uuid
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
-
+from rest_framework.test import APITestCase, APIRequestFactory
+from api.views import get_validation_error_response, RoomListAPIView
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -62,6 +63,16 @@ class RoomListTests(ErrorFormatMixin, APITestCase):
 
     def test_non_numeric_capacity_returns_400(self):
         self.assert_validation_error(self.client.get(self.url, {"capacity": "abc"}), "capacity")
+
+    @pytest.mark.req("US-06")
+    def test_room_list_uses_room_manager(self):
+        # Перенос із test_test_doubles.py: перевірка використання менеджера модельних запитів
+        request = APIRequestFactory().get("/api/v1/rooms/")
+        with patch("api.views.Room.objects.all") as mock_all:
+            mock_all.return_value = []
+            response = RoomListAPIView.as_view()(request)
+            self.assertEqual(response.status_code, 200)
+            mock_all.assert_called_once_with()
 
 
 @pytest.mark.req("USAB-001")
@@ -161,3 +172,28 @@ class SyncLogSecurityTests(APITestCase):
         self.client.force_authenticate(user=self.dispatcher)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_teacher_cannot_view_sync_logs(self):
+        teacher = User.objects.create(email="teacher_sync@ukma.edu.ua", role="teacher")
+        self.client.force_authenticate(user=teacher)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    # ==========================================
+    # Формат відповіді та Маркери змін
+    # ==========================================
+
+
+@pytest.mark.req("USAB-001")
+class ErrorResponseHelperTests(APITestCase):
+    """Тести допоміжних функцій форматування відповідей з помилками (перенос із test_test_doubles.py)."""
+
+    def test_validation_error_response_contains_field_name(self):
+        errors = {"limit": ["Має бути більше нуля."]}
+        result = get_validation_error_response(errors)
+        self.assertEqual(result["error"]["details"][0]["field"], "limit")
+
+    def test_validation_error_response_has_correct_code(self):
+        errors = {"limit": ["Має бути більше нуля."]}
+        result = get_validation_error_response(errors)
+        self.assertEqual(result["error"]["code"], "VALIDATION_ERROR")

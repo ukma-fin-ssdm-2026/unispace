@@ -16,7 +16,7 @@
 import msal
 from django.conf import settings
 
-from .models import User
+from api.models import User
 
 LOGIN_SCOPES = ["User.Read"]
 SESSION_FLOW_KEY = "microsoft_auth_flow"

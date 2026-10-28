@@ -14,7 +14,7 @@ import pytest
 
 from api.services.notifications import generate_room_change_email_body
 
-pytestmark = pytest.mark.req("US-07", "FR-015")
+pytestmark = pytest.mark.req("US-07")
 
 # ==========================================
 # Тести генерації сповіщень

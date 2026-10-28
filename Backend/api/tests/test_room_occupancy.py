@@ -25,7 +25,7 @@ def make_booking(booking_id, room_id, start_str, end_str, user_id=1):
     )
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_get_day_bookings_queries_correct_parameters_from_db():
     booking_first = make_booking(1, 101, "2026-10-28 08:30:00", "2026-10-28 10:05:00")
     booking_second = make_booking(2, 101, "2026-10-28 10:25:00", "2026-10-28 12:00:00")
@@ -45,7 +45,7 @@ def test_get_day_bookings_queries_correct_parameters_from_db():
         mock_qs.order_by.assert_called_once_with("start_time")
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_first_pair_of_the_day_returns_none():
     current = make_booking(1, room_id=101, start_str="2026-10-28 08:30:00", end_str="2026-10-28 10:05:00")
     day_bookings = [current]
@@ -55,7 +55,7 @@ def test_first_pair_of_the_day_returns_none():
     assert previous is None
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_consecutive_pair_with_break_returns_preceding_booking():
     first_pair = make_booking(1, room_id=101, start_str="2026-10-28 08:30:00", end_str="2026-10-28 10:05:00")
     second_pair = make_booking(2, room_id=101, start_str="2026-10-28 10:25:00", end_str="2026-10-28 12:00:00")
@@ -66,7 +66,7 @@ def test_consecutive_pair_with_break_returns_preceding_booking():
     assert previous == first_pair
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_back_to_back_bookings_without_break_returns_preceding_booking():
     pair_a = make_booking(1, room_id=101, start_str="2026-10-28 12:00:00", end_str="2026-10-28 13:30:00")
     pair_b = make_booking(2, room_id=101, start_str="2026-10-28 13:30:00", end_str="2026-10-28 15:00:00")
@@ -76,7 +76,7 @@ def test_back_to_back_bookings_without_break_returns_preceding_booking():
     assert previous == pair_a
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_booking_after_window_returns_latest_booking_before_window():
     morning_pair = make_booking(1, room_id=101, start_str="2026-10-28 08:30:00", end_str="2026-10-28 10:05:00")
     afternoon_pair = make_booking(2, room_id=101, start_str="2026-10-28 14:15:00", end_str="2026-10-28 15:50:00")
@@ -86,7 +86,7 @@ def test_booking_after_window_returns_latest_booking_before_window():
     assert previous == morning_pair
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_multiple_prior_bookings_returns_only_the_most_recent_one():
     pair_1 = make_booking(1, room_id=101, start_str="2026-10-28 08:30:00", end_str="2026-10-28 10:05:00")
     pair_2 = make_booking(2, room_id=101, start_str="2026-10-28 10:25:00", end_str="2026-10-28 12:00:00")
@@ -97,7 +97,7 @@ def test_multiple_prior_bookings_returns_only_the_most_recent_one():
     assert previous == pair_2
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_bookings_in_other_rooms_are_ignored():
     other_room = make_booking(1, room_id=102, start_str="2026-10-28 08:30:00", end_str="2026-10-28 10:05:00")
     target_room = make_booking(2, room_id=101, start_str="2026-10-28 10:25:00", end_str="2026-10-28 12:00:00")
@@ -107,7 +107,7 @@ def test_bookings_in_other_rooms_are_ignored():
     assert previous is None
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_bookings_from_previous_days_are_ignored():
     yesterday = make_booking(1, room_id=101, start_str="2026-10-27 18:00:00", end_str="2026-10-27 19:35:00")
     today = make_booking(2, room_id=101, start_str="2026-10-28 10:25:00", end_str="2026-10-28 12:00:00")
@@ -117,7 +117,7 @@ def test_bookings_from_previous_days_are_ignored():
     assert previous is None
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_future_bookings_are_ignored():
     current = make_booking(1, room_id=101, start_str="2026-10-28 10:25:00", end_str="2026-10-28 12:00:00")
     later_pair = make_booking(2, room_id=101, start_str="2026-10-28 14:15:00", end_str="2026-10-28 15:50:00")
@@ -127,7 +127,7 @@ def test_future_bookings_are_ignored():
     assert previous is None
 
 
-@pytest.mark.req("FR-019")
+@pytest.mark.req("US-02")
 def test_get_previous_booking_fetches_from_db_when_day_bookings_is_none():
     first_pair = make_booking(1, 101, "2026-10-28 08:30:00", "2026-10-28 10:05:00")
     current_pair = make_booking(2, 101, "2026-10-28 10:25:00", "2026-10-28 12:00:00")

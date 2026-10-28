@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Палітра */
+    --c-blue-50: #f4f7fb;   /* Дуже світлий сіро-блакитний для фону сайту */
+    --c-blue-100: #e6eff8;
+    --c-blue-300: #a8c1de;
+    --c-blue-500: #4a77a8;  /* Основний акцент (кнопки) */
+    --c-blue-800: #1a2f4c;  /* Глибокий синій для сайдбару */
+    --c-blue-900: #0f172a;  /* Насичений темний для тексту */
+
+    --bg-main: var(--c-blue-50);
+    --bg-surface: #ffffff;  /* Білий для карток і верхньої панелі */
+    --text-main: var(--c-blue-900);
+    --text-muted: #64748b;  /* Вторинний сірий текст */
+
+    --bg-sidebar: var(--c-blue-800);
+    --text-sidebar: #e2e8f0;
+    --color-primary: var(--c-blue-500);
+    --color-primary-hover: #3b5f86;
+
+    --color-danger: #ef4444;
+    --color-danger-light: #fee2e2;
+
+    /* М'які тіні */
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.03);
+    --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.05);
+
+    /* Округлення */
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-pill: 9999px;
+}

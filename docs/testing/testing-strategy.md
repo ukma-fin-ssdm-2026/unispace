@@ -46,7 +46,7 @@
 ## Бонуси
 
 ### 1. Мутаційне тестування 
-Ми використали інструмент `mutmut` 3 для Python на модулі правил бронювання `Backend/api/booking_rules.py`
+Ми використали інструмент `mutmut` 3 для Python на модулі правил бронювання `Backend/api/services/booking_rules.py` (до рефакторингу — `Backend/api/booking_rules.py`)
 (функції `booking_duration` і `validate_attendees_fit_room`). Запуск: `mutmut run` із папки `Backend/`.
 **Оцінка мутації**
 - Перший запуск: згенеровано 35 мутантів, знищено 24, вижило 11 (≈69%).

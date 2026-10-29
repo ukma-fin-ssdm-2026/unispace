@@ -7,11 +7,13 @@
 старого booking_rules.py) в єдиний сервісний шар за допомогою ШІ-асистента.
 """
 
-from datetime import datetime, timedelta, timezone, time
+from datetime import date, datetime, time, timedelta, timezone
 from .scheduling import _require_timezone
 
 RECENT_CHANGE_HOURS = 24
 MAX_LESSON_MINUTES = 90
+# Довільна дата для перетворення часу заняття (time) на момент часу: тривалість від дати не залежить.
+_REFERENCE_DAY = date(2000, 1, 1)
 
 
 class BookingRuleError(ValueError):
@@ -40,13 +42,20 @@ def booking_duration(start_time: datetime, end_time: datetime) -> timedelta:
 
 
 def is_valid_lesson_duration(start_time: time, end_time: time) -> bool:
-    """Перевіряє, що час заняття коректний і не перевищує ліміт."""
+    """
+    Перевіряє, що час заняття коректний і не перевищує ліміт.
 
-    if start_time >= end_time:
+    Порядок і тривалість рахує та сама функція booking_duration, тож правило «кінець пізніше за початок»
+    реалізовано в одному місці; тут додається лише ліміт тривалості.
+    """
+    try:
+        duration = booking_duration(
+            datetime.combine(_REFERENCE_DAY, start_time, tzinfo=timezone.utc),
+            datetime.combine(_REFERENCE_DAY, end_time, tzinfo=timezone.utc),
+        )
+    except BookingRuleError:
         return False
-
-    duration_minutes = (end_time.hour * 60 + end_time.minute) - (start_time.hour * 60 + start_time.minute)
-    return duration_minutes <= MAX_LESSON_MINUTES
+    return duration <= timedelta(minutes=MAX_LESSON_MINUTES)
 
 
 def is_recently_changed(change_times: list[datetime], lesson_start: datetime) -> bool:
@@ -74,3 +83,12 @@ def validate_attendees_fit_room(attendees: int, capacity: int) -> None:
         raise BookingRuleError("Місткість аудиторії має бути не меншою за 1.")
     if attendees > capacity:
         raise BookingRuleError("Кількість учасників перевищує місткість аудиторії.")
+
+
+def fits_capacity(attendees: int, capacity: int) -> bool:
+    """Те саме правило місткості, що й validate_attendees_fit_room, але з відповіддю так/ні (для фільтрації)."""
+    try:
+        validate_attendees_fit_room(attendees, capacity)
+    except BookingRuleError:
+        return False
+    return True

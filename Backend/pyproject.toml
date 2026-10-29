@@ -34,6 +34,6 @@ skip_covered = false
 directory = "htmlcov"
 
 [tool.mutmut]
-source_paths = ["api/booking_rules.py"]
+source_paths = ["api/services/booking_rules.py"]
 pytest_add_cli_args_test_selection = ["api/tests/test_booking_rules.py"]
 also_copy = ["Backend", "api", "manage.py", "pyproject.toml"]

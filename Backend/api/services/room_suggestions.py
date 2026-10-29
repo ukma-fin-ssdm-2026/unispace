@@ -8,13 +8,15 @@
 Код верифіковано людиною (Тимохина Ксенія).
 """
 
+from .booking_rules import fits_capacity
+
 # ==========================================
 # Допоміжні функції (фільтрація та ранжування)
 # ==========================================
 
 
 def _is_candidate(room, min_capacity, busy_room_ids):
-    return room.is_available and room.id not in busy_room_ids and room.capacity >= min_capacity
+    return room.is_available and room.id not in busy_room_ids and fits_capacity(min_capacity, room.capacity)
 
 
 def _rank(room, preferred_building):

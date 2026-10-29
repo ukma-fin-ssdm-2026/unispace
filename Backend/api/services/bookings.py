@@ -6,8 +6,15 @@
 (винесення транзакцій із views.py) за допомогою ШІ-асистента.
 """
 
+from datetime import timedelta
+
 from django.db import transaction, IntegrityError
 from api.models import Booking, AuditLog, Notification, User
+
+from .scheduling import intervals_overlap
+
+# Бронювання не триває довше доби, тож кандидатів на перетин досить шукати в цьому вікні.
+_OVERLAP_SEARCH_WINDOW = timedelta(days=1)
 
 
 class BookingConflictError(Exception):
@@ -63,6 +70,32 @@ def change_booking_room(booking, new_room, reason, user):
         return booking
     except IntegrityError as e:
         raise BookingConflictError("Нова аудиторія вже заброньована на цей час") from e
+
+
+def busy_room_ids(booking):
+    """
+    ID аудиторій, зайнятих на час бронювання (FR-010): активні бронювання, що перетинаються з ним
+    за правилом intervals_overlap ([start, end)), плюс поточна аудиторія самого бронювання.
+
+    База лише звужує вибірку до вікна навколо заняття, а сам перетин визначає доменна функція,
+    тож правило «пари впритул не перетинаються» реалізовано в одному місці (scheduling.py).
+    """
+    candidates = (
+        Booking.objects.filter(
+            status=Booking.BookingStatus.ACTIVE,
+            start_time__lt=booking.end_time,
+            start_time__gte=booking.start_time - _OVERLAP_SEARCH_WINDOW,
+        )
+        .exclude(pk=booking.pk)
+        .only("room_id", "start_time", "end_time")
+    )
+    busy = {
+        other.room_id
+        for other in candidates
+        if intervals_overlap(booking.start_time, booking.end_time, other.start_time, other.end_time)
+    }
+    busy.add(booking.room_id)
+    return busy
 
     # ==========================================
     # Допоміжні функції (Сповіщення)

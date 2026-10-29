@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for api\urls.py: 100%</title>
+    <title>Coverage for api/urls.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
-    <link rel="stylesheet" href="style_cb_0853b3de.css" type="text/css">
-    <script src="coverage_html_cb_c6c441fc.js" defer></script>
+    <link rel="stylesheet" href="style_cb_4667309f.css" type="text/css">
+    <script src="coverage_html_cb_15cffcd0.js" defer></script>
 </head>
 <body class="pyfile">
 <header>
     <div class="content">
         <h1>
-            <span class="text">Coverage for </span><b>api<span class="sep">\</span>urls.py</b>:
+            <span class="text">Coverage for </span><b>api<span class="sep">/</span>urls.py</b>:
             <span class="pc_cov">100%</span>
         </h1>
         <aside id="help_panel_wrapper">
@@ -62,12 +62,12 @@
             <button type="button" class="par run show_par button_toggle_par" value="par" data-shortcut="p" title="Toggle lines partially run">0<span class="text"> partial</span></button>
         </h2>
         <p class="text">
-            <a id="prevFileLink" class="nav" href="z_daf816d9905cf04c_scheduling_py.html">&#xab; prev</a> &nbsp; &nbsp;
+            <a id="prevFileLink" class="nav" href="z_ea7dcbcd4ae655be_scheduling_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
-            <a id="nextFileLink" class="nav" href="z_10fae538ba4e8521_utils_py.html">&#xbb; next</a>
+            <a id="nextFileLink" class="nav" href="z_10fae538ba4e8521_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
-            created at 2026-10-22 09:40 +0300
+            created at 2026-10-29 09:49 +0200
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -88,22 +88,26 @@
     <p class="run"><span class="n"><a id="t4" href="#t4">4</a></span><span class="t"><span class="nam">urlpatterns</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t5" href="#t5">5</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;rooms/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">RoomListAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;room-list&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t6" href="#t6">6</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;rooms/available-slots/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">AvailableSlotsAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;available-slots&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;bookings/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">BookingListCreateAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;booking-list-create&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;bookings/&lt;uuid:pk&gt;/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">BookingDetailAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;booking-detail&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;users/me/bookings/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">UserBookingsAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;user-bookings&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;sync-logs/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">SyncLogListAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;sync-log-list&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;sync/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">SyncTriggerAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;sync-trigger&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;rooms/&lt;uuid:pk&gt;/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">RoomDetailAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;room-detail&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;bookings/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">BookingListCreateAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;booking-list-create&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;bookings/&lt;uuid:pk&gt;/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">BookingDetailAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;booking-detail&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;bookings/&lt;uuid:pk&gt;/change/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">BookingChangeRoomAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;booking-change-room&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;bookings/&lt;uuid:pk&gt;/alternatives/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">BookingAlternativesAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;booking-alternatives&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;users/me/bookings/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">UserBookingsAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;user-bookings&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;schedule/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">ScheduleAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;schedule&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;sync-logs/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">SyncLogListAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;sync-log-list&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">&quot;sync/&quot;</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">SyncTriggerAPIView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">&quot;sync-trigger&quot;</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
         <p>
-            <a class="nav" href="z_daf816d9905cf04c_scheduling_py.html">&#xab; prev</a> &nbsp; &nbsp;
+            <a class="nav" href="z_ea7dcbcd4ae655be_scheduling_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
-            <a class="nav" href="z_10fae538ba4e8521_utils_py.html">&#xbb; next</a>
+            <a class="nav" href="z_10fae538ba4e8521_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
-            created at 2026-10-22 09:40 +0300
+            created at 2026-10-29 09:49 +0200
         </p>
     </div>
 </footer>

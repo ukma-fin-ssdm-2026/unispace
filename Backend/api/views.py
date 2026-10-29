@@ -376,22 +376,10 @@ class BookingAlternativesAPIView(APIView):
         if booking.status != Booking.BookingStatus.ACTIVE:
             return conflict_response("Для скасованого бронювання аудиторію не підбирають")
 
-        # Півінтервали [start, end): пара, що закінчується рівно на початку заняття, аудиторію не займає.
-        busy_room_ids = set(
-            Booking.objects.filter(
-                status=Booking.BookingStatus.ACTIVE,
-                start_time__lt=booking.end_time,
-                end_time__gt=booking.start_time,
-            )
-            .exclude(pk=booking.pk)
-            .values_list("room_id", flat=True)
-        )
-        busy_room_ids.add(booking.room_id)
-
         rooms = suggest_rooms(
             Room.objects.all(),
             min_capacity=query.validated_data.get("min_capacity", booking.room.capacity),
-            busy_room_ids=busy_room_ids,
+            busy_room_ids=bookings.busy_room_ids(booking),
             preferred_building=query.validated_data.get("building", booking.room.building),
         )
         return Response(RoomSerializer(rooms, many=True).data, status=status.HTTP_200_OK)

@@ -94,7 +94,7 @@ CI-перевірка простежуваності (`Backend/scripts/check_tra
 | Тести закомічено червоними (18 тест-випадків, NoReverseMatch: маршруту ще немає) | [`43a7d5d` test: add failing spec for booking room alternatives](https://github.com/ukma-fin-ssdm-2026/unispace/commit/43a7d5d) |
 | Реалізацію згенерував ШІ-агент | [`f695f14` feat: suggest free rooms for booking room change](https://github.com/ukma-fin-ssdm-2026/unispace/commit/f695f14) |
 
-Огляд за контрольним списком ШІ-коду: _[посилання на огляд PR / розділ у `review-log.md`]_.
+Огляд за контрольним списком ШІ-коду: [див. розділ 2 у review-log.md](./review-log.md).
 
 Використання ШІ.
 

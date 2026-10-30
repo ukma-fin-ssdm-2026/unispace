@@ -3,11 +3,12 @@
 bandit==1.9.4
 flake8==7.4.1
 black==26.10.1
-pre-commit
-pip-audit
+pre-commit==4.7.0
+pip-audit==2.10.1
+
 # Тести та покриття (Lab06)
-pytest
-pytest-django
-pytest-cov
-mutmut>=3
-hypothesis
+pytest==9.1.1
+pytest-django==4.14.0
+pytest-cov==7.1.0
+mutmut==3.8.0
+hypothesis==6.170.5

@@ -1,4 +1,3 @@
-
 """
 TP-08 / REL-001: 10 concurrent requests for the same room and time slot.
 
@@ -20,14 +19,9 @@ from .conftest import at
 
 
 @pytest.mark.req("REL-001")
-def test_ten_concurrent_bookings_only_one_succeeds(
-    transactional_db, teacher, room, make_lesson
-):
+def test_ten_concurrent_bookings_only_one_succeeds(transactional_db, teacher, room, make_lesson):
     # Ten different lessons compete for the same room and time.
-    lessons = [
-        make_lesson(at(10), at(11, 30))
-        for _ in range(10)
-    ]
+    lessons = [make_lesson(at(10), at(11, 30)) for _ in range(10)]
 
     barrier = Barrier(10)
     url = reverse("booking-list-create")
@@ -72,7 +66,10 @@ def test_ten_concurrent_bookings_only_one_succeeds(
     assert counts[409] == 9, f"Unexpected responses: {results}"
 
     # Only one active booking must exist in the database.
-    assert Booking.objects.filter(
-        room=room,
-        status=Booking.BookingStatus.ACTIVE,
-    ).count() == 1
+    assert (
+        Booking.objects.filter(
+            room=room,
+            status=Booking.BookingStatus.ACTIVE,
+        ).count()
+        == 1
+    )

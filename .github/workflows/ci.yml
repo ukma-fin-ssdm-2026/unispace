@@ -192,7 +192,7 @@ jobs:
           Frontend/requirements-dev.txt
 
     - name: Upgrade pip
-      run: python -m pip install pip==26.22
+      run: "python -m pip install --only-binary=:all: pip==26.2.2"
 
     - name: Install dependencies
       run: pip install -r requirements.txt -r requirements-dev.txt

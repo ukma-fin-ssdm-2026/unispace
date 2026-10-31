@@ -1,45 +1,47 @@
 {% extends 'layout.html' %}
 {% load static %}
 
-{% block title %}{{ page_title }}{% endblock %}
+<!-- Статичний заголовок сторінки перенесено сюди -->
+{% block title %}Dashboard - UniSpace{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="card home-hero-card">
+    {% if show_welcome %}
+        <!-- Картка привітання (показується лише при першому заході) -->
+        <div class="card home-hero-card">
+            <div class="hero-glow"></div>
+            <div class="hero-icon-wrapper">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
 
-    <!-- Декоративний градієнтний відблиск -->
-    <div class="hero-glow"></div>
+            <!-- Текст привітання зашито прямо в HTML -->
+            <h1 class="hero-title">Ласкаво просимо до UniSpace!</h1>
+            <p class="hero-subtitle">
+                Сучасний простір для керування аудиторним фондом. Переглядайте розклад, знаходьте кабінети та запобігайте накладкам пар без жодних зусиль.
+            </p>
 
-    <!-- Іконка з левітацією -->
-    <div class="hero-icon-wrapper">
-        <i class="fa-solid fa-layer-group"></i>
-    </div>
+            <div class="hero-actions">
+                <a href="#" class="btn-primary-pill">
+                    <i class="fa-solid fa-calendar-check"></i> Розклад занять
+                </a>
+                <a href="#" class="btn-secondary-pill">
+                    <i class="fa-solid fa-magnifying-glass"></i> Знайти аудиторію
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <!-- Справжня головна сторінка (показується при перезавантаженні або поверненні) -->
+        <div class="dashboard-container">
+            <h2>Огляд системи</h2>
+            <p>Тут буде ваш дашборд, віджети статистики, найближчі заняття тощо.</p>
+        </div>
+    {% endif %}
+{% endblock %}
 
-    <h1 class="hero-title">
-        {{ welcome_message }}
-    </h1>
-
-    <p class="hero-subtitle">
-        Сучасний простір для керування аудиторним фондом. Переглядайте розклад, знаходьте кабінети та запобігайте накладкам пар без жодних зусиль.
-    </p>
-
-    <!-- Кнопки дій -->
-    <div class="hero-actions">
-        <a href="#" class="btn-primary-pill">
-            <i class="fa-solid fa-calendar-check"></i> Розклад занять
-        </a>
-        <a href="#" class="btn-secondary-pill">
-            <i class="fa-solid fa-magnifying-glass"></i> Знайти аудиторію
-        </a>
-    </div>
-
-</div> <!-- Закриваємо картку ТУТ -->
-{% endblock %} <!-- Закриваємо content ТУТ -->
-
-<!-- ТЕПЕР блок скриптів стоїть окремо і вставиться в кінець сторінки -->
 {% block extra_js %}
+    <script src="{% static 'js/home.js' %}"></script>
     <script src="{% static 'js/layout.js' %}"></script>
 {% endblock %}

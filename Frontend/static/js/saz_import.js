@@ -99,9 +99,9 @@ document.addEventListener('unispace:user', (event) => {
         } finally {
             importButton.disabled = false;
             importButton.replaceChildren(el('i', { className: 'fa-solid fa-file-import' }), el('span', { text: 'Імпортувати' }));
-            loadLogs();
+            void loadLogs();
         }
     });
 
-    loadLogs();
+    void loadLogs();
 });

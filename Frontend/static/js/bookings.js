@@ -184,10 +184,12 @@ document.addEventListener('unispace:user', (event) => {
         document.getElementById('change-lesson').textContent =
             `${item.subject} · ${item.date} ${shortTime(item.start_time)}–${shortTime(item.end_time)} · зараз: ${roomLabel(item.room)}`;
         setModal(changeModal, true);
-        loadAlternatives(false);
+        void loadAlternatives(false);
     }
 
-    expandButton.addEventListener('click', () => loadAlternatives(true));
+    expandButton.addEventListener('click', () => {
+        void loadAlternatives(true);
+    });
     document.getElementById('btn-change-cancel').addEventListener('click', () => setModal(changeModal, false));
 
     confirmChange.addEventListener('click', async () => {
@@ -198,11 +200,11 @@ document.addEventListener('unispace:user', (event) => {
             });
             setModal(changeModal, false);
             showNotice(pageNotice, 'success', `Заняття «${current.subject}» перенесено. Групу сповіщено.`);
-            loadLessons();
+            void loadLessons();
         } catch (error) {
             // 409: аудиторію щойно зайняли - оновлюємо список варіантів
             showNotice(changeNotice, 'error', UniSpaceApi.describeError(error));
-            if (error.status === 409) loadAlternatives(expandButton.hidden);
+            if (error.status === 409) void loadAlternatives(expandButton.hidden);
         }
     });
 
@@ -222,7 +224,7 @@ document.addEventListener('unispace:user', (event) => {
             await UniSpaceApi.del(`bookings/${current.booking_id}/`);
             setModal(cancelModal, false);
             showNotice(pageNotice, 'success', `Бронювання «${current.subject}» скасовано.`);
-            loadLessons();
+            void loadLessons();
         } catch (error) {
             setModal(cancelModal, false);
             showNotice(pageNotice, 'error', `Не вдалося скасувати: ${UniSpaceApi.describeError(error)}`);
@@ -231,6 +233,8 @@ document.addEventListener('unispace:user', (event) => {
         }
     });
 
-    document.getElementById('btn-refresh').addEventListener('click', loadLessons);
-    loadLessons();
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+        void loadLessons();
+    });
+    void loadLessons();
 });

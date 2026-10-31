@@ -57,6 +57,19 @@ class AuditLogInline(admin.TabularInline):
         return False
 
 
+class ReadOnlyAdmin(admin.ModelAdmin):
+    """Лише перегляд: записи створює система (сервіс чи парсер), вручну їх не додають, не змінюють і не видаляють."""
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 # ==========================================
 # Користувачі та групи
 # ==========================================
@@ -64,10 +77,20 @@ class AuditLogInline(admin.TabularInline):
 
 @admin.register(AcademicGroup)
 class AcademicGroupAdmin(admin.ModelAdmin):
-    """Реєструємо першим, бо на нього посилаються autocomplete_fields у UserAdmin і LessonAdmin."""
+    """
+    Реєструємо першим, бо на нього посилаються autocomplete_fields у UserAdmin і LessonAdmin.
+
+    Групи приходять із САЗу, а source_key - ключ синхронізації (унікальний, обов'язковий). Диспетчер бачить
+    його, але не змінює і не вигадує вручну: інакше наступний імпорт створить дублі або впаде на unique.
+    Тому ручне створення груп вимкнено; групи створює лише парсер.
+    """
 
     list_display = ("name", "source_key")
     search_fields = ("name", "source_key")
+    readonly_fields = ("source_key",)
+
+    def has_add_permission(self, request):
+        return False
 
 
 class DispatcherCreationForm(forms.ModelForm):
@@ -141,23 +164,36 @@ class RoomAdmin(admin.ModelAdmin):
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
+    """
+    Заняття приходять із САЗу; source_key - ключ синхронізації, його диспетчер не змінює (див. AcademicGroupAdmin).
+    Ручне створення занять вимкнено: без парсерного source_key запис зламав би наступний імпорт.
+    """
+
     list_display = ("subject", "date", "start_time", "end_time", "teacher", "group")
     list_filter = ("date", "group")
     search_fields = ("subject", "source_key", "teacher__email", "teacher__full_name", "group__name")
     list_select_related = ("teacher", "group")
     autocomplete_fields = ("teacher", "group")
+    readonly_fields = ("source_key",)
     date_hierarchy = "date"
     inlines = [BookingInline]
 
+    def has_add_permission(self, request):
+        return False
+
 
 @admin.register(Booking)
-class BookingAdmin(admin.ModelAdmin):
+class BookingAdmin(ReadOnlyAdmin):
     """
-    Бронювання. Час початку й кінця Booking.save() береться із заняття, тому поля лише для читання.
+    Бронювання: в адмінці лише перегляд.
 
-    Увага: накладку активних бронювань однієї аудиторії відхиляє ExclusionConstraint у PostgreSQL
-    (IntegrityError), а адмінка цю помилку не перехоплює. Для зміни аудиторії краще користуватися API
-    (POST /api/v1/bookings/{id}/change/), який пише AuditLog і сповіщає групу.
+    Зміни бронювань роблять тільки через API (POST /api/v1/bookings/{id}/change/ та скасування), бо:
+    1. створення AuditLog і сповіщень живе в сервісному шарі (api/services/bookings.py), а не в Booking.save().
+       Зміна через адмінку пройшла б непомітно: група не отримала б сповіщення, а журнал не зафіксував би дію;
+    2. накладку активних бронювань однієї аудиторії відхиляє ExclusionConstraint у PostgreSQL (IntegrityError),
+       а адмінка цю помилку не перехоплює (500 замість зрозумілої відповіді);
+    3. видалення з адмінки було б жорстким і без запису в AuditLog.
+    Час початку й кінця Booking.save() бере із заняття.
     """
 
     list_display = ("get_lesson_title", "room", "get_teacher", "start_time", "end_time", "status", "source")
@@ -222,19 +258,6 @@ class NotificationAdmin(admin.ModelAdmin):
 # ==========================================
 # Журнали (лише перегляд)
 # ==========================================
-
-
-class ReadOnlyAdmin(admin.ModelAdmin):
-    """Базовий клас для журналів: записи створює система, вручну їх не додають, не змінюють і не видаляють."""
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 
 @admin.register(AuditLog)

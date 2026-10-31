@@ -8,7 +8,7 @@
 
 from datetime import timedelta
 
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError, OperationalError, transaction
 from api.models import Booking, AuditLog, Notification, User
 
 from .scheduling import intervals_overlap
@@ -19,6 +19,16 @@ _OVERLAP_SEARCH_WINDOW = timedelta(days=1)
 
 class BookingConflictError(Exception):
     """Помилка бази даних через конфлікт (наприклад, накладка часу)."""
+
+
+# PostgreSQL при одночасних вставках, що перевіряють ExclusionConstraint, може не встигнути вирішити, хто
+# перший, і перериває одну з транзакцій як deadlock (40P01) або serialization failure (40001).
+# Для клієнта це той самий конфлікт за аудиторію, тож відповідаємо 409, а не 500 (REL-001).
+_CONCURRENCY_SQLSTATES = {"40P01", "40001"}
+
+
+def _is_concurrency_conflict(error):
+    return getattr(error.__cause__, "sqlstate", None) in _CONCURRENCY_SQLSTATES
 
     # ==========================================
     # Основні транзакції бронювання
@@ -34,6 +44,10 @@ def create_booking(lesson, room, user):
         raise BookingConflictError(
             "Аудиторія вже заброньована на цей час або заняття вже має активне бронювання"
         ) from e
+    except OperationalError as e:
+        if not _is_concurrency_conflict(e):
+            raise
+        raise BookingConflictError("Аудиторію одночасно бронюють інші користувачі; спробуйте ще раз") from e
 
 
 def cancel_booking(booking, user):
@@ -70,6 +84,10 @@ def change_booking_room(booking, new_room, reason, user):
         return booking
     except IntegrityError as e:
         raise BookingConflictError("Нова аудиторія вже заброньована на цей час") from e
+    except OperationalError as e:
+        if not _is_concurrency_conflict(e):
+            raise
+        raise BookingConflictError("Аудиторію одночасно бронюють інші користувачі; спробуйте ще раз") from e
 
 
 def busy_room_ids(booking):

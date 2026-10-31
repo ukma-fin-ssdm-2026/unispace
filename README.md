@@ -15,10 +15,11 @@ UniSpace — вебзастосунок, який працює як шар ке�
 * **Управління аудиторним фондом:** контроль статусу та доступності приміщень.
 * **Попередження конфліктів:** алгоритми недопущення накладок (Race Condition) та подвійного бронювання однієї аудиторії.
 * **Інтелектуальний пошук:** підбір вільних приміщень на основі заданої місткості, часу та необхідного обладнання.
+* **Безпечна авторизація:** єдиний вхід до системи (SSO) через університетський акаунт Microsoft (Entra ID) з підтримкою ролей користувачів.
 
 ## Стек технологій
 * **Backend:** Python (Django, Django REST Framework)
-* **Frontend:** HTML5, CSS, JS, Django Templates (перебуває в розробці)
+* **Frontend:** HTML5, CSS, JS, Django Templates, WhiteNoise
 * **База даних:** PostgreSQL (локальна розробка через Docker Compose (`Backend/docker-compose.yml`) та продакшн на Render; міграції вимагають обов'язкової підтримки PostgreSQL та розширення GiST)
 * **CI/CD, Тестування & Інструменти якості:** GitHub Actions, GitHub Flow, pytest, coverage, Flake8, Black, Bandit, pip-audit, Pre-commit, mutmut, hypothesis
 
@@ -68,8 +69,10 @@ UniSpace — вебзастосунок, який працює як шар ке�
 - *Клієнтський вебзастосунок доступний за адресою: `http://localhost:8001/`*
 
 ## Розгортання на Render (Deployment)
-Оскільки деплой бекенду на платформу Render здійснюється вручну через вебінтерфейс (без конфігураційного файлу `render.yaml`), для успішного відтворення розгортання використовуйте наступні параметри конфігурації вебсервісу:
+Обидва сервіси (Backend та Frontend) розгортаються на хмарній платформі Render як окремі вебсервіси (Web Services).
 
+### 1. Backend (REST API)
+* **Root Directory:** `Backend`
 * **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
 * **Start Command:** `gunicorn Backend.wsgi:application --timeout 45`
 
@@ -79,7 +82,24 @@ UniSpace — вебзастосунок, який працює як шар ке�
 * `DEBUG` = `False`
 * `ALLOWED_HOSTS` = `<unispace-wtf6.onrender.com>`
 * `DATABASE_URL` = `<url-бази>` *(Internal Database URL від вашого PostgreSQL інстансу на Render)*
-* Параметри `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` для коректної роботи авторизації через Microsoft.
+* `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` = *(Дані з реєстрації застосунку в Microsoft Entra ID)*
+* `MS_REDIRECT_URI` = `https://<ваша-адреса-бекенду>.onrender.com/auth/microsoft/callback/`
+* `LOGIN_REDIRECT_URL` = `https://<ваша-адреса-фронтенду>.onrender.com/`
+
+### 2. Frontend (Web UI)
+Оскільки фронтенд також працює на базі Django, він розгортається аналогічно, використовуючи WhiteNoise для роздачі статичних файлів (CSS, JS).
+* **Root Directory:** `Frontend`
+* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
+* **Start Command:** `gunicorn Frontend.wsgi:application`
+
+**Необхідні змінні середовища (Environment Variables):**
+* `PYTHON_VERSION` = `3.12.0`
+* `SECRET_KEY` = `<ваш-унікальний-секретний-ключ>`
+* `DEBUG` = `False`
+* `ALLOWED_HOSTS` = `<unispace-front.onrender.com>`
+* `BACKEND_API_URL` = `https://<ваша-адреса-бекенду>.onrender.com/api/v1/`
+
+> **Важлива примітка щодо безпеки:** Щоб авторизація запрацювала, адресу, вказану в `MS_REDIRECT_URI` вашого бекенду, необхідно обов'язково додати до списку дозволених "Redirect URIs" у налаштуваннях застосунку на порталі Microsoft Entra ID.
 
 ## Проєктування та реалізація API
 Усі артефакти, що стосуються RESTful API та Code-First підходу, зберігаються у відповідних директоріях (зверніть увагу: вихідний код розміщено в ізольованому Django-додатку):

@@ -61,8 +61,9 @@ jobs:
           Backend/requirements-dev.txt
 
     # Оновлюємо сам pip: старі версії pip мають відомі вразливості (див. static-analysis.md, D-1).
+    # Версію зафіксовано, а --only-binary не дає виконувати setup-скрипти під час встановлення (SonarCloud S8541, S8544).
     - name: Upgrade pip
-      run: python -m pip install --upgrade pip
+      run: "python -m pip install --only-binary=:all: pip==26.2.2"
 
     - name: Install dependencies
       run: pip install -r requirements.txt -r requirements-dev.txt
@@ -192,7 +193,7 @@ jobs:
           Frontend/requirements-dev.txt
 
     - name: Upgrade pip
-      run: python -m pip install --upgrade pip
+      run: "python -m pip install --only-binary=:all: pip==26.2.2"
 
     - name: Install dependencies
       run: pip install -r requirements.txt -r requirements-dev.txt

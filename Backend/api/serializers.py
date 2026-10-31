@@ -201,6 +201,9 @@ class ScheduleRoomSerializer(serializers.ModelSerializer):
 
 class ScheduleItemSerializer(serializers.Serializer):
     lesson_id = serializers.UUIDField()
+    booking_id = serializers.UUIDField(
+        allow_null=True, help_text="Активне бронювання заняття (для зміни аудиторії чи скасування) або null"
+    )
     subject = serializers.CharField(help_text="Назва дисципліни")
     date = serializers.DateField()
     start_time = serializers.TimeField()

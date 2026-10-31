@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+{% load static %}
+<!-- Примітка щодо використання ШІ: сторінку згенеровано ШІ (Claude) у стилі наявного макета. -->
+
+{% block title %}Мої бронювання - UniSpace{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <div>
+            <h1>Мої бронювання</h1>
+            <p class="page-subtitle">Найближчі заняття та їхні аудиторії. Тут можна перенести заняття в іншу аудиторію або скасувати бронювання.</p>
+        </div>
+        <button id="btn-refresh" class="btn btn-outline"><i class="fa-solid fa-rotate"></i> Оновити</button>
+    </div>
+
+    <div id="page-notice" hidden></div>
+    <div id="lessons">
+        <div class="state-message"><i class="fa-solid fa-spinner fa-spin"></i>Завантаження занять…</div>
+    </div>
+
+    <!-- Вікно підбору аудиторії (GET /bookings/{id}/alternatives/, POST /bookings/{id}/change/) -->
+    <div id="change-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="change-title">
+        <div class="modal-box modal-wide">
+            <h3 id="change-title">Інша аудиторія</h3>
+            <p id="change-lesson" class="page-subtitle"></p>
+            <div id="change-notice" hidden></div>
+            <div id="room-list" class="room-list"></div>
+            <button id="btn-expand" class="btn btn-outline" hidden>
+                <i class="fa-solid fa-building"></i> Шукати в інших корпусах
+            </button>
+            <div class="field" style="margin-top: 1rem;">
+                <label for="change-reason">Причина зміни (необов'язково)</label>
+                <input id="change-reason" type="text" maxlength="255" placeholder="Наприклад: не працює проєктор">
+            </div>
+            <div class="modal-footer">
+                <button id="btn-change-cancel" class="btn btn-outline">Закрити</button>
+                <button id="btn-change-confirm" class="btn btn-primary" disabled>
+                    <i class="fa-solid fa-right-left"></i> Перенести
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Підтвердження скасування (DELETE /bookings/{id}/) -->
+    <div id="cancel-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cancel-title">
+        <div class="modal-box">
+            <div style="font-size: 2.5rem; color: var(--color-danger); margin-bottom: 1rem;">
+                <i class="fa-solid fa-calendar-xmark"></i>
+            </div>
+            <h3 id="cancel-title">Скасувати бронювання?</h3>
+            <p id="cancel-lesson" style="color: var(--text-muted); margin-bottom: 1.5rem;"></p>
+            <button id="btn-cancel-back" class="modal-btn btn-grey">Ні, залишити</button>
+            <button id="btn-cancel-confirm" class="modal-btn btn-danger">Так, скасувати</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/bookings.js' %}"></script>
+{% endblock %}

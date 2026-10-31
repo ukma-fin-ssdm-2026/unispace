@@ -23,6 +23,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase, APIRequestFactory
 from api.views import get_validation_error_response, RoomListAPIView
 from django.contrib.auth import get_user_model
+from api.models import Room
 
 User = get_user_model()
 
@@ -80,19 +81,80 @@ class AvailableSlotsTests(ErrorFormatMixin, APITestCase):
     url = reverse("available-slots")
 
     def setUp(self):
-        self.test_room_id = str(uuid.uuid4())
+        self.room = Room.objects.create(
+            building="1",
+            number="101",
+            capacity=30,
+            is_available=True,
+        )
+        self.test_room_id = str(self.room.id)
 
     def test_valid_query_returns_200(self):
-        response = self.client.get(self.url, {"room_id": self.test_room_id, "date": "2026-10-20"})
+        response = self.client.get(
+            self.url,
+            {
+                "room_id": self.test_room_id,
+                "date": "2026-10-20",
+            },
+        )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json()["available_slots"],
+            ["08:00-20:00"],
+        )
 
     def test_missing_params_returns_400(self):
-        self.assert_validation_error(self.client.get(self.url), "room_id", "date")
+        self.assert_validation_error(
+            self.client.get(self.url),
+            "room_id",
+            "date",
+        )
 
     def test_invalid_uuid_format_returns_400(self):
         self.assert_validation_error(
-            self.client.get(self.url, {"room_id": "not-a-uuid", "date": "2026-10-20"}), "room_id"
+            self.client.get(
+                self.url,
+                {
+                    "room_id": "not-a-uuid",
+                    "date": "2026-10-20",
+                },
+            ),
+            "room_id",
         )
+
+    def test_nonexistent_room_returns_404(self):
+        response = self.client.get(
+            self.url,
+            {
+                "room_id": str(uuid.uuid4()),
+                "date": "2026-10-20",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        error = response.json()["error"]
+
+        self.assertEqual(error["code"], "NOT_FOUND")
+        self.assertIn("Аудиторію", error["message"])
+        self.assertIn("request_id", error)
+        self.assertIn("documentation", error)
+
+    def test_unavailable_room_returns_no_slots(self):
+        self.room.is_available = False
+        self.room.save()
+
+        response = self.client.get(
+            self.url,
+            {
+                "room_id": self.test_room_id,
+                "date": "2026-10-20",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["available_slots"], [])
 
 
 @pytest.mark.req("US-08")

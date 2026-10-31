@@ -1235,6 +1235,12 @@ components:
         lesson_id:
           type: string
           format: uuid
+        booking_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Активне бронювання заняття (для зміни аудиторії чи скасування)
+            або null
         subject:
           type: string
           description: Назва дисципліни
@@ -1266,6 +1272,7 @@ components:
           description: 'Маркер «Змінено»: аудиторію змінено менш ніж за 24 години
             до початку заняття'
       required:
+      - booking_id
       - date
       - end_time
       - group

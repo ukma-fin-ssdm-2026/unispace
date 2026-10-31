@@ -153,10 +153,12 @@ paths:
           description: ''
   /api/v1/bookings/{id}/alternatives/:
     get:
-      operationId: v1_bookings_alternatives_list
+      operationId: v1_bookings_alternatives_retrieve
       description: 'Аудиторії, вільні на час заняття: доступні, не менші за потрібну
-        місткість і без активних бронювань, що перетинаються з заняттям. Спершу аудиторії
-        бажаного корпусу, далі - за найменшою достатньою місткістю.'
+        місткість і без активних бронювань, що перетинаються з заняттям (FR-010).
+        Початковий пошук обмежено бажаним корпусом; якщо там варіантів немає, у відповіді
+        є повідомлення з пропозицією повторити запит з expand=true. Після розширення
+        спершу йде бажаний корпус, далі - найменша достатня місткість.'
       summary: Підібрати вільні аудиторії для заміни
       parameters:
       - in: query
@@ -166,6 +168,13 @@ paths:
           maxLength: 20
           minLength: 1
         description: Бажаний корпус; за замовчуванням - корпус поточної аудиторії
+      - in: query
+        name: expand
+        schema:
+          type: boolean
+          default: false
+        description: false - лише бажаний корпус (FR-010); true - розширити пошук
+          на інші корпуси
       - in: path
         name: id
         schema:
@@ -188,9 +197,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Room'
+                $ref: '#/components/schemas/RoomAlternativesResponse'
           description: ''
         '400':
           content:
@@ -921,6 +928,31 @@ components:
       - capacity
       - id
       - number
+    RoomAlternativesResponse:
+      type: object
+      description: 'Результат підбору: аудиторії та повідомлення, якщо варіантів немає
+        (FR-010, US-10).'
+      properties:
+        building:
+          type: string
+          description: Корпус, з якого почали пошук
+        expanded:
+          type: boolean
+          description: Чи розширено пошук на інші корпуси
+        rooms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Room'
+          description: 'Вільні аудиторії: спершу бажаний корпус, далі найменша місткість'
+        message:
+          type: string
+          nullable: true
+          description: Пояснення, якщо вільних аудиторій немає; інакше null
+      required:
+      - building
+      - expanded
+      - message
+      - rooms
     RoomWrite:
       type: object
       description: Вхідні дані для створення й редагування аудиторії диспетчером (FR-008).

@@ -47,6 +47,7 @@ from .serializers import (
     RoomWriteSerializer,
     BookingChangeRoomSerializer,
     RoomAlternativesQuerySerializer,
+    RoomAlternativesResponseSerializer,
 )
 
 # ==========================================
@@ -350,11 +351,13 @@ class BookingAlternativesAPIView(APIView):
         summary="Підібрати вільні аудиторії для заміни",
         description=(
             "Аудиторії, вільні на час заняття: доступні, не менші за потрібну місткість і без активних бронювань, "
-            "що перетинаються з заняттям. Спершу аудиторії бажаного корпусу, далі - за найменшою достатньою місткістю."
+            "що перетинаються з заняттям (FR-010). Початковий пошук обмежено бажаним корпусом; якщо там варіантів "
+            "немає, у відповіді є повідомлення з пропозицією повторити запит з expand=true. Після розширення спершу "
+            "йде бажаний корпус, далі - найменша достатня місткість."
         ),
         parameters=[RoomAlternativesQuerySerializer],
         responses={
-            200: RoomSerializer(many=True),
+            200: RoomAlternativesResponseSerializer,
             400: ErrorResponseSerializer,
             403: ErrorResponseSerializer,
             404: ErrorResponseSerializer,
@@ -376,13 +379,27 @@ class BookingAlternativesAPIView(APIView):
         if booking.status != Booking.BookingStatus.ACTIVE:
             return conflict_response("Для скасованого бронювання аудиторію не підбирають")
 
+        building = query.validated_data.get("building", booking.room.building)
+        expanded = query.validated_data["expand"]
+        candidates = Room.objects.all() if expanded else Room.objects.filter(building=building)
         rooms = suggest_rooms(
-            Room.objects.all(),
+            candidates,
             min_capacity=query.validated_data.get("min_capacity", booking.room.capacity),
             busy_room_ids=bookings.busy_room_ids(booking),
-            preferred_building=query.validated_data.get("building", booking.room.building),
+            preferred_building=building,
         )
-        return Response(RoomSerializer(rooms, many=True).data, status=status.HTTP_200_OK)
+
+        message = None
+        if not rooms and expanded:
+            message = "Вільних аудиторій потрібної місткості немає в жодному корпусі."
+        elif not rooms:
+            message = (
+                f"У корпусі {building} немає вільних аудиторій потрібної місткості. "
+                "Щоб побачити варіанти в інших корпусах, повторіть запит з expand=true."
+            )
+
+        result = {"building": building, "expanded": expanded, "rooms": rooms, "message": message}
+        return Response(RoomAlternativesResponseSerializer(result).data, status=status.HTTP_200_OK)
 
 
 class BookingChangeRoomAPIView(APIView):

@@ -17,7 +17,7 @@ test_rooms_crud.py і test_bookings_crud.py.
 test_room_alternatives.py, які закомічено раніше за реалізацію.
 """
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.db.models import ProtectedError
 from drf_spectacular.utils import extend_schema
 

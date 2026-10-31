@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (!isLoginPage) {
         try {
             // Звертаємося до бекенду за правильним URL
-            const response = await fetch('http://127.0.0.1:8000/api/v1/auth/me/', {
+            const response = await fetch('https://unispace-wtf6.onrender.com/api/v1/auth/me/', {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' },
                 credentials: 'include' // Передаємо сесійні куки на бекенд
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Справжній запит на вихід до бекенду
         btnConfirm.addEventListener('click', async () => {
             try {
-                await fetch('http://127.0.0.1:8000/auth/logout/', {
+                await fetch('https://unispace-wtf6.onrender.com/auth/logout/', {
                     method: 'POST',
                     credentials: 'include'
                 });

@@ -1,0 +1,112 @@
+/* Сторінки «Мої бронювання» та «Імпорт із САЗ». Кольори й радіуси - зі змінних variables.css.
+   Примітка щодо використання ШІ: стилі згенеровано ШІ (Claude) у стилі наявного layout.css. */
+
+.page-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.page-header h1 { margin: 0 0 .25rem; font-size: 1.75rem; color: var(--text-main); }
+.page-subtitle { margin: 0; color: var(--text-muted); }
+
+.panel {
+    background: var(--bg-surface);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.panel h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+
+.state-message { color: var(--text-muted); text-align: center; padding: 2rem 1rem; }
+.state-message i { display: block; font-size: 2rem; margin-bottom: .75rem; color: var(--c-blue-300); }
+
+.notice { border-radius: var(--radius-md); padding: .85rem 1rem; margin-bottom: 1rem; }
+.notice-error { background: var(--color-danger-light); color: #991b1b; }
+.notice-success { background: #dcfce7; color: #166534; }
+.notice-info { background: var(--c-blue-100); color: var(--c-blue-800); }
+
+/* --- Кнопки --- */
+.btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: var(--radius-pill);
+    border: 1px solid transparent; font: inherit; font-weight: 600; font-size: .9rem;
+    cursor: pointer; transition: all .2s ease;
+}
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-primary { background: var(--color-primary); color: #fff; box-shadow: 0 4px 14px rgba(74, 119, 168, .25); }
+.btn-primary:hover:not(:disabled) { background: var(--color-primary-hover); }
+.btn-outline { background: #fff; color: var(--text-main); border-color: rgba(15, 23, 42, .12); }
+.btn-outline:hover:not(:disabled) { background: var(--c-blue-50); }
+.btn-ghost-danger { background: transparent; color: var(--color-danger); }
+.btn-ghost-danger:hover:not(:disabled) { background: var(--color-danger-light); }
+
+/* --- Список занять --- */
+.day-group { margin-bottom: 1.75rem; }
+.day-title { font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin: 0 0 .75rem; }
+
+.lesson-card {
+    display: grid; grid-template-columns: 110px 1fr auto; gap: 1rem; align-items: center;
+    background: var(--bg-surface); border: 1px solid rgba(226, 232, 240, .9);
+    border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: .75rem;
+    box-shadow: var(--shadow-sm); animation: fadeIn .3s ease;
+}
+.lesson-time { font-weight: 700; color: var(--c-blue-800); }
+.lesson-subject { font-weight: 600; margin-bottom: .2rem; }
+.lesson-meta { color: var(--text-muted); font-size: .9rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+.lesson-actions { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
+
+.badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: var(--radius-pill); font-size: .8rem; font-weight: 600;
+}
+.badge-room { background: var(--c-blue-100); color: var(--c-blue-800); }
+.badge-none { background: #f1f5f9; color: var(--text-muted); }
+.badge-changed { background: #fef3c7; color: #92400e; }
+
+/* --- Модальне вікно підбору аудиторії (поверх .modal-overlay з layout.css) --- */
+.modal-box.modal-wide { max-width: 640px; width: 100%; text-align: left; padding: 2rem; }
+.modal-box h3 { margin: 0 0 .25rem; }
+.modal-footer { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1.25rem; }
+
+.room-option {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    border: 1px solid rgba(226, 232, 240, .9); border-radius: var(--radius-md);
+    padding: .75rem 1rem; margin-bottom: .5rem; cursor: pointer; transition: border-color .2s, background .2s;
+}
+.room-option:hover { border-color: var(--c-blue-300); }
+.room-option.selected { border-color: var(--color-primary); background: var(--c-blue-50); }
+.room-option-title { font-weight: 600; }
+.room-option-meta { color: var(--text-muted); font-size: .85rem; display: flex; gap: .75rem; }
+.room-list { max-height: 320px; overflow-y: auto; margin: 1rem 0; }
+
+.field { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1rem; }
+.field label { font-weight: 600; font-size: .9rem; }
+.field input {
+    padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid rgba(15, 23, 42, .15);
+    font: inherit; background: #fff;
+}
+.field input:focus { outline: 2px solid var(--c-blue-300); border-color: var(--color-primary); }
+.field-hint { color: var(--text-muted); font-size: .8rem; }
+.form-row { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; align-items: end; }
+
+/* --- Підсумок імпорту --- */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.stat { background: var(--c-blue-50); border-radius: var(--radius-md); padding: 1rem; }
+.stat-value { font-size: 1.6rem; font-weight: 700; color: var(--c-blue-800); }
+.stat-label { color: var(--text-muted); font-size: .85rem; }
+.warnings { margin: 0; padding-left: 1.25rem; color: #92400e; }
+.warnings li { margin-bottom: .25rem; }
+
+.data-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.data-table th { text-align: left; color: var(--text-muted); font-weight: 600; padding: .6rem .75rem; border-bottom: 1px solid #e2e8f0; }
+.data-table td { padding: .6rem .75rem; border-bottom: 1px solid #f1f5f9; }
+.status-success { color: #166534; font-weight: 600; }
+.status-failed { color: #991b1b; font-weight: 600; }
+.status-in_progress { color: var(--color-primary); font-weight: 600; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 720px) {
+    .lesson-card { grid-template-columns: 1fr; }
+    .lesson-actions { justify-content: flex-start; }
+    .form-row { grid-template-columns: 1fr; }
+    .content-area { padding: 1.25rem; }
+}

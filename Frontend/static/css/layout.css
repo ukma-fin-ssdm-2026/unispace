@@ -363,3 +363,6 @@ body {
 .app-footer .footer-links a:hover {
     color: var(--color-primary);
 }
+
+/* Атрибут hidden має перемагати display: flex у .nav-item (меню за ролями, layout.js) */
+[hidden] { display: none !important; }

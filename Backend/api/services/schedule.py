@@ -46,6 +46,7 @@ def build_schedule_item(lesson):
 
     return {
         "lesson_id": lesson.id,
+        "booking_id": booking.id if booking else None,
         "subject": lesson.subject,
         "date": lesson.date,
         "start_time": lesson.start_time,

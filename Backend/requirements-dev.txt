@@ -11,4 +11,5 @@ pytest==9.1.1
 pytest-django==4.14.0
 pytest-cov==7.1.0
 mutmut==3.8.0
-hypothesis==6.170.5
+hypothesis==6.170.5 \
+    --hash=sha256:89fac44c615a219a7cb31af8b2dca7da0f93ecfbfd52c4381571e345d4afcf9b

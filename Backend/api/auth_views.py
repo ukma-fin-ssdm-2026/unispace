@@ -7,6 +7,8 @@
 from django.conf import settings
 from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect, JsonResponse
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 from drf_spectacular.utils import extend_schema
 
@@ -60,6 +62,16 @@ def microsoft_callback(request):
 
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
     return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+
+
+@require_GET
+@ensure_csrf_cookie
+def csrf_token_view(request):
+    """
+    CSRF-токен для фронтенду на іншому домені: прочитати cookie бекенду він не може, тож отримує токен тут
+    і надсилає його в заголовку X-CSRFToken для POST/PATCH/DELETE.
+    """
+    return JsonResponse({"csrfToken": get_token(request)})
 
 
 @require_POST

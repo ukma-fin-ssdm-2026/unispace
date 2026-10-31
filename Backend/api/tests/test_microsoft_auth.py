@@ -253,3 +253,13 @@ def test_logout_ends_session(client, teacher):
     # Assert
     assert response.status_code == status.HTTP_200_OK
     assert "_auth_user_id" not in client.session
+
+
+def test_csrf_endpoint_returns_token_and_sets_cookie(client):
+    # Act: фронтенд на іншому домені отримує CSRF-токен для POST/DELETE
+    response = client.get(reverse("csrf-token"))
+
+    # Assert
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["csrfToken"]
+    assert "csrftoken" in response.cookies

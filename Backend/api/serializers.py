@@ -177,6 +177,36 @@ class SyncLogSerializer(serializers.Serializer):
     )
 
 
+class SazImportRequestSerializer(serializers.Serializer):
+    """Ручний імпорт розкладу САЗ (FR-004, FR-005): збережена сторінка попереднього перегляду розкладу."""
+
+    MAX_FILE_BYTES = 5 * 1024 * 1024
+
+    file = serializers.FileField(help_text="HTML-сторінка розкладу з my.ukma.edu.ua/schedule/preview/... (до 5 МБ)")
+    semester_start = serializers.DateField(help_text="Будь-який день першого навчального тижня семестру")
+
+    def validate_file(self, value):
+        if value.size > self.MAX_FILE_BYTES:
+            raise serializers.ValidationError("Файл завеликий: розклад має бути не більше 5 МБ.")
+        return value
+
+
+class SazImportSummarySerializer(serializers.Serializer):
+    lessons_created = serializers.IntegerField()
+    lessons_updated = serializers.IntegerField()
+    bookings_created = serializers.IntegerField()
+    conflicts_created = serializers.IntegerField()
+    teachers_created = serializers.IntegerField()
+    online_lessons = serializers.IntegerField()
+    warnings = serializers.ListField(child=serializers.CharField())
+
+
+class SyncResultSerializer(SyncLogSerializer):
+    """Запис журналу синхронізації та підсумок імпорту (null, якщо імпорт не вдався)."""
+
+    summary = SazImportSummarySerializer(allow_null=True)
+
+
 # --- Ресурс: Розклад (Schedule) ---
 class ScheduleQuerySerializer(serializers.Serializer):
     date_from = serializers.DateField(required=False, help_text="Початок періоду (включно)")
@@ -201,6 +231,9 @@ class ScheduleRoomSerializer(serializers.ModelSerializer):
 
 class ScheduleItemSerializer(serializers.Serializer):
     lesson_id = serializers.UUIDField()
+    booking_id = serializers.UUIDField(
+        allow_null=True, help_text="Активне бронювання заняття (для зміни аудиторії чи скасування) або null"
+    )
     subject = serializers.CharField(help_text="Назва дисципліни")
     date = serializers.DateField()
     start_time = serializers.TimeField()

@@ -19,3 +19,15 @@ def home_view(request):
         "show_welcome": show_welcome,
     }
     return render(request, "home.html", context)
+
+
+@require_GET
+def bookings_view(request):
+    """Мої бронювання: зміна аудиторії та скасування (викладач, диспетчер). Дані завантажує bookings.js."""
+    return render(request, "bookings.html")
+
+
+@require_GET
+def saz_import_view(request):
+    """Імпорт розкладу із САЗ (диспетчер). Дані надсилає й показує saz_import.js."""
+    return render(request, "saz_import.html")

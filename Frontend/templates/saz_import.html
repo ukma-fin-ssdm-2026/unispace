@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% load static %}
+<!-- Примітка щодо використання ШІ: сторінку згенеровано ШІ (Claude) у стилі наявного макета. -->
+
+{% block title %}Імпорт із САЗ - UniSpace{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <div>
+            <h1>Імпорт розкладу із САЗ</h1>
+            <p class="page-subtitle">САЗ показує розклад лише після входу, тому імпорт робиться зі збереженої сторінки розкладу.</p>
+        </div>
+    </div>
+
+    <div id="access-notice" hidden></div>
+
+    <section class="panel" id="import-panel">
+        <h2><i class="fa-solid fa-cloud-arrow-up" style="color: var(--color-primary);"></i> Новий імпорт</h2>
+        <div class="notice notice-info">
+            Відкрийте розклад на <strong>my.ukma.edu.ua</strong> (сторінка «Перегляд розкладу»), збережіть її
+            (Cmd/Ctrl + S, «Вебсторінка, лише HTML») і завантажте файл сюди. Повторний імпорт того самого розкладу
+            не створює дублікатів.
+        </div>
+        <form id="import-form" novalidate>
+            <div class="form-row">
+                <div class="field">
+                    <label for="schedule-file">Сторінка розкладу (.html)</label>
+                    <input id="schedule-file" name="file" type="file" accept=".html,.htm,text/html" required>
+                </div>
+                <div class="field">
+                    <label for="semester-start">Початок семестру</label>
+                    <input id="semester-start" name="semester_start" type="date" required>
+                    <span class="field-hint">Будь-який день 1-го навчального тижня</span>
+                </div>
+            </div>
+            <button id="btn-import" type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-file-import"></i> Імпортувати
+            </button>
+        </form>
+    </section>
+
+    <section class="panel" id="result-panel" hidden>
+        <h2>Результат імпорту</h2>
+        <div id="result-notice"></div>
+        <div id="result-stats" class="stats"></div>
+        <div id="result-warnings"></div>
+    </section>
+
+    <section class="panel">
+        <h2><i class="fa-solid fa-clock-rotate-left" style="color: var(--color-primary);"></i> Журнал синхронізацій</h2>
+        <div id="sync-logs"><div class="state-message">Завантаження…</div></div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/saz_import.js' %}"></script>
+{% endblock %}

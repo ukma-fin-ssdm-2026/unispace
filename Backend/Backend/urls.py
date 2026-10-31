@@ -28,6 +28,7 @@ urlpatterns = [
     path("auth/microsoft/callback/", auth_views.microsoft_callback, name="microsoft-callback"),
     path("auth/logout/", auth_views.logout_view, name="logout"),
     path("api/v1/auth/me/", auth_views.CurrentUserAPIView.as_view(), name="current-user"),
+    path("api/v1/auth/csrf/", auth_views.csrf_token_view, name="csrf-token"),
     path("api/v1/", include("api.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),

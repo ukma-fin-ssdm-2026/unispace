@@ -41,28 +41,26 @@
                     <i class="fa-solid fa-door-open"></i> <span>Аудиторії</span>
                 </a>
 
-                {% if user_role == 'teacher' or user_role == 'dispatcher' %}
-                <a href="#" class="nav-item" data-tooltip="Мої бронювання">
+                <!-- Пункт для викладача та диспетчера (початково прихований) -->
+                <a href="#" class="nav-item js-teacher-dispatcher-only" data-tooltip="Мої бронювання" style="display: none;">
                     <i class="fa-solid fa-bookmark"></i> <span>Мої бронювання</span>
                 </a>
-                {% endif %}
 
-                {% if user_role == 'dispatcher' %}
-                <div class="sidebar-heading">Адміністрування</div>
+                <!-- Адмін-блок для диспетчера (початково прихований) -->
+                <div class="sidebar-heading js-admin-heading" style="display: none;">Адміністрування</div>
 
-                <a href="#" class="nav-item" data-tooltip="Конфлікти">
+                <a href="#" class="nav-item js-dispatcher-only" data-tooltip="Конфлікти" style="display: none;">
                     <i class="fa-solid fa-triangle-exclamation"></i> <span>Конфлікти</span>
                 </a>
-                <a href="#" class="nav-item" data-tooltip="Імпорт із САЗ">
+                <a href="#" class="nav-item js-dispatcher-only" data-tooltip="Імпорт із САЗ" style="display: none;">
                     <i class="fa-solid fa-cloud-arrow-down"></i> <span>Імпорт із САЗ</span>
                 </a>
-                <a href="#" class="nav-item" data-tooltip="Журнал аудиту">
+                <a href="#" class="nav-item js-dispatcher-only" data-tooltip="Журнал аудиту" style="display: none;">
                     <i class="fa-solid fa-clipboard-list"></i> <span>Журнал аудиту</span>
                 </a>
-                <a href="#" class="nav-item" data-tooltip="Користувачі">
+                <a href="#" class="nav-item js-dispatcher-only" data-tooltip="Користувачі" style="display: none;">
                     <i class="fa-solid fa-users-gear"></i> <span>Користувачі</span>
                 </a>
-                {% endif %}
             </nav>
         </aside>
 

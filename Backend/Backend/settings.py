@@ -92,6 +92,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://unispace-wtf6.onrender.com",
 ]
 
+SESSION_COOKIE_NAME = "api_sessionid"
+CSRF_COOKIE_NAME = "api_csrftoken"
+
 ROOT_URLCONF = "Backend.urls"
 
 TEMPLATES = [

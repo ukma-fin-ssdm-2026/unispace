@@ -1,18 +1,20 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const isLoginPage = window.location.pathname.includes('/login/');
 
+    // Визначаємо базовий URL бекенду динамічно
+    const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+    const BACKEND_BASE_URL = isLocalhost ? `http://${window.location.hostname}:8000` : 'https://unispace-wtf6.onrender.com';
+
     // 1. ЗАХИСТ СТОРІНОК ТА ОДЕРЖАННЯ ПРОФІЛЮ З БЕКЕНДУ
     if (!isLoginPage) {
         try {
-            // Звертаємося до бекенду за правильним URL
-            const response = await fetch('https://unispace-wtf6.onrender.com/api/v1/auth/me/', {
+            const response = await fetch(`${BACKEND_BASE_URL}/api/v1/auth/me/`, {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' },
-                credentials: 'include' // Передаємо сесійні куки на бекенд
+                credentials: 'include'
             });
 
             if (!response.ok) {
-                // Якщо бекенд відповів 403 (не авторизовано) - викидаємо на логін
                 window.location.href = '/login/';
                 return;
             }
@@ -23,6 +25,21 @@ document.addEventListener('DOMContentLoaded', async function () {
             if (profileElement) {
                 profileElement.innerHTML = `<i class="fa-solid fa-circle-user" style="font-size: 1.5rem; color: var(--color-primary);"></i> ${userData.full_name}`;
             }
+
+            // Динамічне керування ролями та меню
+            if (userData.role === 'teacher' || userData.role === 'dispatcher') {
+                document.querySelectorAll('.js-teacher-dispatcher-only').forEach(el => {
+                    el.style.display = 'flex';
+                });
+            }
+
+            if (userData.role === 'dispatcher') {
+                const adminHeading = document.querySelector('.js-admin-heading');
+                if (adminHeading) adminHeading.style.display = 'flex';
+
+                document.querySelectorAll('.js-dispatcher-only').forEach(el => el.style.display = 'block');
+            }
+
         } catch (error) {
             console.error("Не вдалося перевірити авторизацію:", error);
             window.location.href = '/login/';
@@ -71,10 +88,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     if (btnConfirm) {
-        // Справжній запит на вихід до бекенду
         btnConfirm.addEventListener('click', async () => {
             try {
-                await fetch('https://unispace-wtf6.onrender.com/auth/logout/', {
+                await fetch(`${BACKEND_BASE_URL}/auth/logout/`, {
                     method: 'POST',
                     credentials: 'include'
                 });

@@ -24,6 +24,7 @@ from api import auth_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/microsoft/login/", auth_views.microsoft_login, name="microsoft-login"),
+    path("auth/dev-login/", auth_views.dev_login, name="dev-login"),
     path("auth/microsoft/callback/", auth_views.microsoft_callback, name="microsoft-callback"),
     path("auth/logout/", auth_views.logout_view, name="logout"),
     path("api/v1/auth/me/", auth_views.CurrentUserAPIView.as_view(), name="current-user"),

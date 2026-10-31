@@ -19,7 +19,7 @@ test_room_alternatives.py, які закомічено раніше за реа�
 
 import uuid
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.db.models import ProtectedError
 from drf_spectacular.utils import extend_schema
 
@@ -31,6 +31,7 @@ from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
 from api.services import bookings, schedule
 from api.services.room_suggestions import suggest_rooms
+from api.room_occupancy import get_previous_booking
 
 from .serializers import (
     RoomSerializer,
@@ -48,6 +49,9 @@ from .serializers import (
     BookingChangeRoomSerializer,
     RoomAlternativesQuerySerializer,
     RoomAlternativesResponseSerializer,
+    AuditLogQuerySerializer,
+    AuditLogEntrySerializer,
+    PreviousLessonResponseSerializer,
 )
 
 # ==========================================
@@ -127,9 +131,12 @@ def can_manage_lesson(user, lesson):
     """Диспетчер керує будь-якими заняттями, викладач - лише власними."""
     return user.role == User.RoleChoices.DISPATCHER or lesson.teacher_id == user.id
 
-    # ==========================================
-    # API Аудиторій (Rooms)
-    # ==========================================
+
+NO_PREVIOUS_LESSON_MESSAGE = "Попередньої пари не було"
+
+# ==========================================
+# API Аудиторій (Rooms)
+# ==========================================
 
 
 class RoomListAPIView(APIView):
@@ -402,6 +409,52 @@ class BookingAlternativesAPIView(APIView):
         return Response(RoomAlternativesResponseSerializer(result).data, status=status.HTTP_200_OK)
 
 
+class BookingPreviousLessonAPIView(APIView):
+    permission_classes = [IsTeacherOrDispatcher]
+
+    @extend_schema(
+        summary="Попередня пара в аудиторії",
+        description=(
+            "Блок «Попередня пара» для заняття (FR-019): дисципліна, група й ПІБ викладача заняття, яке було "
+            "в тій самій аудиторії того ж дня безпосередньо перед цим (скасовані бронювання не враховуються). "
+            "Якщо такого заняття не було, previous_lesson = null, а message містить «Попередньої пари не було»."
+        ),
+        responses={
+            200: PreviousLessonResponseSerializer,
+            403: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+            409: ErrorResponseSerializer,
+        },
+    )
+    def get(self, request, pk, format=None):
+        booking = Booking.objects.select_related("lesson").filter(pk=pk).first()
+        if booking is None:
+            return not_found_response("Бронювання", pk)
+
+        if not can_manage_lesson(request.user, booking.lesson):
+            return forbidden_response("Викладач бачить попередню пару лише для власних занять")
+
+        if booking.status != Booking.BookingStatus.ACTIVE:
+            return conflict_response("Для скасованого бронювання попередню пару не показують")
+
+        previous = get_previous_booking(booking)
+        if previous is None:
+            result = {"previous_lesson": None, "message": NO_PREVIOUS_LESSON_MESSAGE}
+        else:
+            lesson = previous.lesson
+            result = {
+                "previous_lesson": {
+                    "subject": lesson.subject,
+                    "group": lesson.group.name,
+                    "teacher": str(lesson.teacher),
+                    "start_time": previous.start_time,
+                    "end_time": previous.end_time,
+                },
+                "message": None,
+            }
+        return Response(PreviousLessonResponseSerializer(result).data, status=status.HTTP_200_OK)
+
+
 class BookingChangeRoomAPIView(APIView):
     permission_classes = [IsTeacherOrDispatcher]
 
@@ -517,6 +570,48 @@ class ScheduleAPIView(APIView):
 
         serializer = ScheduleItemSerializer([schedule.build_schedule_item(lesson) for lesson in lessons], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# ==========================================
+# API Аудит-логу (AuditLog, FR-017)
+# ==========================================
+
+
+class AuditLogListAPIView(APIView):
+    permission_classes = [IsDispatcher]
+
+    @extend_schema(
+        summary="Історія змін бронювань (аудит-лог)",
+        description=(
+            "Диспетчер переглядає записи про перенесення й скасування бронювань: час, автор, "
+            "попередня та нова аудиторії, причина. Найновіші записи першими. Тільки для читання: "
+            "редагувати чи видаляти записи через API неможливо."
+        ),
+        parameters=[AuditLogQuerySerializer],
+        responses={200: AuditLogEntrySerializer(many=True), 400: ErrorResponseSerializer},
+    )
+    def get(self, request, format=None):
+        query = AuditLogQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+        params = query.validated_data
+
+        logs = AuditLog.objects.select_related("user", "previous_room", "new_room", "booking__lesson")
+
+        if "booking_id" in params:
+            logs = logs.filter(booking_id=params["booking_id"])
+        if "room_id" in params:
+            logs = logs.filter(Q(previous_room_id=params["room_id"]) | Q(new_room_id=params["room_id"]))
+        if "action" in params:
+            logs = logs.filter(action=params["action"])
+        if "date_from" in params:
+            logs = logs.filter(created_at__date__gte=params["date_from"])
+        if "date_to" in params:
+            logs = logs.filter(created_at__date__lte=params["date_to"])
+
+        offset = params["offset"]
+        logs = logs.order_by("-created_at", "-id")[offset : offset + params["limit"]]
+        return Response(AuditLogEntrySerializer(logs, many=True).data, status=status.HTTP_200_OK)
 
 
 # ==========================================

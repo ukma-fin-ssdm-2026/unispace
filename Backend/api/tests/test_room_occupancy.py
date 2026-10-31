@@ -11,6 +11,7 @@ from datetime import date, datetime
 from unittest.mock import Mock, patch
 
 import pytest
+from api.models import Booking
 from api.room_occupancy import get_day_bookings, get_previous_booking
 
 
@@ -32,7 +33,8 @@ def test_get_day_bookings_queries_correct_parameters_from_db():
     target_date = date(2026, 10, 28)
 
     with patch("api.room_occupancy.Booking.objects") as mock_objects:
-        mock_qs = mock_objects.filter.return_value
+        mock_filtered = mock_objects.filter.return_value
+        mock_qs = mock_filtered.select_related.return_value
         mock_qs.order_by.return_value = [booking_first, booking_second]
 
         results = get_day_bookings(room_id=101, target_date=target_date)
@@ -41,7 +43,9 @@ def test_get_day_bookings_queries_correct_parameters_from_db():
         mock_objects.filter.assert_called_once_with(
             room_id=101,
             start_time__date=target_date,
+            status=Booking.BookingStatus.ACTIVE,
         )
+        mock_filtered.select_related.assert_called_once_with("lesson__group", "lesson__teacher")
         mock_qs.order_by.assert_called_once_with("start_time")
 
 

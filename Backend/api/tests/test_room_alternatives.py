@@ -1,8 +1,10 @@
 """
 Тести підбору вільних аудиторій для заміни (FR-010, US-10, US-03): TP-06, TP-09.
 
-GET /api/v1/bookings/{id}/alternatives/ повертає аудиторії, вільні на час заняття,
-ранжовані функцією suggest_rooms: спершу той самий корпус, далі найменша достатня місткість.
+GET /api/v1/bookings/{id}/alternatives/ повертає аудиторії, вільні на час заняття. Згідно з FR-010 / US-10
+початковий пошук обмежено бажаним корпусом; якщо там варіантів немає, відповідь містить повідомлення
+з пропозицією розширити пошук (expand=true). Після розширення спершу йде бажаний корпус, далі -
+найменша достатня місткість (suggest_rooms).
 Зайнятість рахується за півінтервалами [start, end), як у ExclusionConstraint і intervals_overlap.
 
 Тести написано до реалізації (специфікація для ШІ-агента); див. «Використання ШІ» в описі PR.
@@ -51,7 +53,7 @@ def get_alternatives(client, booking, **params):
 
 
 def room_ids(response):
-    return [item["id"] for item in response.json()]
+    return [item["id"] for item in response.json()["rooms"]]
 
     # ==========================================
     # Логіка доступності аудиторій (Накладки часу)
@@ -147,10 +149,10 @@ def test_min_capacity_parameter_overrides_current_room_capacity(api_client, teac
     assert room_ids(response) == [str(small.id)]
 
 
-def test_same_building_comes_first_then_smallest_sufficient_capacity(api_client, teacher, make_booking, make_room):
-    # Arrange: поточна аудиторія - корпус 1
+def test_initial_search_returns_only_rooms_of_current_building(api_client, teacher, make_booking, make_room):
+    # Arrange: поточна аудиторія - корпус 1 (FR-010: початковий пошук - лише в корпусі)
     booking = make_booking(at(10), at(11, 30))
-    other_building = make_room(building="4", capacity=30)
+    make_room(building="4", capacity=30)
     big_same_building = make_room(building="1", capacity=60)
     snug_same_building = make_room(building="1", capacity=35)
     api_client.force_authenticate(user=teacher)
@@ -159,10 +161,63 @@ def test_same_building_comes_first_then_smallest_sufficient_capacity(api_client,
     response = get_alternatives(api_client, booking)
 
     # Assert
+    body = response.json()
+    assert room_ids(response) == [str(snug_same_building.id), str(big_same_building.id)]
+    assert body["building"] == "1"
+    assert body["expanded"] is False
+    assert body["message"] is None
+
+
+def test_empty_building_reports_no_rooms_and_offers_expansion(api_client, teacher, make_booking, make_room):
+    # Arrange: у корпусі 1 вільних аудиторій немає, у корпусі 4 є
+    booking = make_booking(at(10), at(11, 30))
+    make_room(building="4", capacity=30)
+    api_client.force_authenticate(user=teacher)
+
+    # Act
+    response = get_alternatives(api_client, booking)
+
+    # Assert
+    body = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    assert body["rooms"] == []
+    assert body["expanded"] is False
+    assert "корпусі 1" in body["message"]
+    assert "expand=true" in body["message"]
+
+
+def test_expanded_search_lists_preferred_building_first_then_smallest_capacity(
+    api_client, teacher, make_booking, make_room
+):
+    # Arrange
+    booking = make_booking(at(10), at(11, 30))
+    other_building = make_room(building="4", capacity=30)
+    big_same_building = make_room(building="1", capacity=60)
+    snug_same_building = make_room(building="1", capacity=35)
+    api_client.force_authenticate(user=teacher)
+
+    # Act
+    response = get_alternatives(api_client, booking, expand="true")
+
+    # Assert
+    assert response.json()["expanded"] is True
     assert room_ids(response) == [str(snug_same_building.id), str(big_same_building.id), str(other_building.id)]
 
 
-def test_building_parameter_changes_preferred_building(api_client, teacher, make_booking, make_room):
+def test_expanded_search_without_any_rooms_reports_it(api_client, teacher, make_booking):
+    # Arrange: крім поточної, аудиторій немає взагалі
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    # Act
+    body = get_alternatives(api_client, booking, expand="true").json()
+
+    # Assert
+    assert body["rooms"] == []
+    assert "жодному корпусі" in body["message"]
+
+
+def test_building_parameter_changes_searched_building(api_client, teacher, make_booking, make_room):
     # Arrange
     booking = make_booking(at(10), at(11, 30))
     same_building = make_room(building="1", capacity=30)
@@ -170,10 +225,13 @@ def test_building_parameter_changes_preferred_building(api_client, teacher, make
     api_client.force_authenticate(user=teacher)
 
     # Act
-    response = get_alternatives(api_client, booking, building="4")
+    initial = get_alternatives(api_client, booking, building="4")
+    expanded = get_alternatives(api_client, booking, building="4", expand="true")
 
     # Assert
-    assert room_ids(response) == [str(requested_building.id), str(same_building.id)]
+    assert initial.json()["building"] == "4"
+    assert room_ids(initial) == [str(requested_building.id)]
+    assert room_ids(expanded) == [str(requested_building.id), str(same_building.id)]
 
     # ==========================================
     # Контракт API та Обробка помилок
@@ -187,7 +245,7 @@ def test_response_contains_room_details(api_client, teacher, make_booking, make_
     api_client.force_authenticate(user=teacher)
 
     # Act
-    item = get_alternatives(api_client, booking).json()[0]
+    item = get_alternatives(api_client, booking, expand="true").json()["rooms"][0]
 
     # Assert
     assert item["building"] == "2"
@@ -207,6 +265,19 @@ def test_invalid_min_capacity_returns_400(api_client, teacher, make_booking, min
     # Assert
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["error"]["details"][0]["field"] == "min_capacity"
+
+
+def test_invalid_expand_returns_400(api_client, teacher, make_booking):
+    # Arrange
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    # Act
+    response = get_alternatives(api_client, booking, expand="maybe")
+
+    # Assert
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["error"]["details"][0]["field"] == "expand"
 
 
 def test_cancelled_booking_returns_409(api_client, teacher, make_booking):

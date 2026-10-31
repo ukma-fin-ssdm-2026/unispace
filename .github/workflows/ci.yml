@@ -61,8 +61,11 @@ jobs:
           Backend/requirements-dev.txt
 
     # Оновлюємо сам pip: старі версії pip мають відомі вразливості (див. static-analysis.md, D-1).
-    - name: Upgrade pip
-      run: python -m pip install --upgrade pip
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install --only-binary :all: --require-hashes -r Backend/requirements.txt -r Backend/requirements-dev.txt
 
     - name: Install dependencies
       run: "pip install --only-binary :all: --require-hashes -r requirements.txt -r requirements-dev.txt"
@@ -191,8 +194,10 @@ jobs:
           Frontend/requirements.txt
           Frontend/requirements-dev.txt
 
-    - name: Upgrade pip
-      run: python -m pip install --upgrade pip
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install --only-binary :all: --require-hashes -r Frontend/requirements.txt -r Frontend/requirements-dev.txt
 
     - name: Install dependencies
       run: pip install -r requirements.txt -r requirements-dev.txt

@@ -23,10 +23,12 @@ DAYS = {"понеділок": 0, "вівторок": 1, "середа": 2, "че
 HEADER = ["день", "час", "дисципліна, викладач", "група", "тижні", "аудиторія"]
 LECTURE = "лекція"
 
-_TIME_RANGE = re.compile(r"(\d{1,2})[:.](\d{2})\s*[-–]\s*(\d{1,2})[:.](\d{2})")
-_ROOM = re.compile(r"(\d+)\s*-\s*(\d+)")
-_TEACHER = re.compile(r"([А-ЯІЇЄҐ]\.\s*(?:[А-ЯІЇЄҐ]\.)?\s*[А-ЯІЇЄҐ][а-яіїєґ'’ʼ`-]+)\s*$")
-_SPECIALTY = re.compile(r"Спеціальність\s*[\"«“]\s*(.+?)\s*[\"»”]\s*,\s*(\d+)\s*р\.?\s*н", re.IGNORECASE)
+# Текст клітинок уже нормалізовано (пробіли зведено до одного), тож у шаблонах достатньо « ?» замість «\s*»;
+# квантифікатори обмежено, щоб уникнути надлінійного перебору (SonarCloud python:S5852).
+_TIME_RANGE = re.compile(r"(\d{1,2})[:.](\d{2}) ?[-–] ?(\d{1,2})[:.](\d{2})")
+_ROOM = re.compile(r"(\d{1,3}) ?- ?(\d{1,4})")
+_TEACHER = re.compile(r"[А-ЯІЇЄҐ]\. ?(?:[А-ЯІЇЄҐ]\. ?)?[А-ЯІЇЄҐ][а-яіїєґ'’ʼ`-]{1,40}$")
+_SPECIALTY = re.compile(r"Спеціальність ?[\"«“]([^\"»”]{1,150})[\"»”] ?, ?(\d{1,2}) ?р\.? ?н", re.IGNORECASE)
 _ONLINE_ONLY = {"дистанційно", "онлайн"}
 
 
@@ -170,11 +172,11 @@ def split_subject_and_teacher(text):
     subject, _, rest = _normalize(text).rpartition(",")
     if not subject:
         return _normalize(text), ""
-    match = _TEACHER.search(rest)
+    match = _TEACHER.search(rest.strip())
     if not match:
         return subject.strip(), ""
-    teacher = re.sub(r"\.\s*", ". ", match.group(1)).strip()
-    teacher = re.sub(r"\.\s+(?=[А-ЯІЇЄҐ]\.)", ".", teacher)  # «В. С. Проценко» -> «В.С. Проценко»
+    teacher = re.sub(r"\. ?", ". ", match.group(0)).strip()
+    teacher = re.sub(r"\. (?=[А-ЯІЇЄҐ]\.)", ".", teacher)  # «В. С. Проценко» -> «В.С. Проценко»
     return subject.strip(), teacher
 
 

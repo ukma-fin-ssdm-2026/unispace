@@ -177,8 +177,9 @@ def test_limit_and_offset_page_through_entries(dispatcher_client, make_booking, 
 def test_listing_uses_constant_number_of_queries(
     dispatcher_client, make_booking, teacher, room, other_room, django_assert_max_num_queries
 ):
-    for hour in (8, 9, 10, 11):
-        log_at(at(hour), make_booking(at(12), at(13)), teacher, previous_room=room, new_room=other_room)
+    for hour in (8, 10, 12, 14):
+        booking = make_booking(at(hour), at(hour + 1))
+        log_at(at(hour), booking, teacher, previous_room=room, new_room=other_room)
 
     with django_assert_max_num_queries(3):
         response = get_logs(dispatcher_client)

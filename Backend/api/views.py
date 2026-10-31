@@ -19,7 +19,7 @@ test_room_alternatives.py, які закомічено раніше за реа�
 
 import uuid
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.db.models import ProtectedError
 from drf_spectacular.utils import extend_schema
 
@@ -48,6 +48,8 @@ from .serializers import (
     BookingChangeRoomSerializer,
     RoomAlternativesQuerySerializer,
     RoomAlternativesResponseSerializer,
+    AuditLogQuerySerializer,
+    AuditLogEntrySerializer,
 )
 
 # ==========================================
@@ -517,6 +519,48 @@ class ScheduleAPIView(APIView):
 
         serializer = ScheduleItemSerializer([schedule.build_schedule_item(lesson) for lesson in lessons], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# ==========================================
+# API Аудит-логу (AuditLog, FR-017)
+# ==========================================
+
+
+class AuditLogListAPIView(APIView):
+    permission_classes = [IsDispatcher]
+
+    @extend_schema(
+        summary="Історія змін бронювань (аудит-лог)",
+        description=(
+            "Диспетчер переглядає записи про перенесення й скасування бронювань: час, автор, "
+            "попередня та нова аудиторії, причина. Найновіші записи першими. Тільки для читання: "
+            "редагувати чи видаляти записи через API неможливо."
+        ),
+        parameters=[AuditLogQuerySerializer],
+        responses={200: AuditLogEntrySerializer(many=True), 400: ErrorResponseSerializer},
+    )
+    def get(self, request, format=None):
+        query = AuditLogQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+        params = query.validated_data
+
+        logs = AuditLog.objects.select_related("user", "previous_room", "new_room", "booking__lesson")
+
+        if "booking_id" in params:
+            logs = logs.filter(booking_id=params["booking_id"])
+        if "room_id" in params:
+            logs = logs.filter(Q(previous_room_id=params["room_id"]) | Q(new_room_id=params["room_id"]))
+        if "action" in params:
+            logs = logs.filter(action=params["action"])
+        if "date_from" in params:
+            logs = logs.filter(created_at__date__gte=params["date_from"])
+        if "date_to" in params:
+            logs = logs.filter(created_at__date__lte=params["date_to"])
+
+        offset = params["offset"]
+        logs = logs.order_by("-created_at", "-id")[offset : offset + params["limit"]]
+        return Response(AuditLogEntrySerializer(logs, many=True).data, status=status.HTTP_200_OK)
 
 
 # ==========================================

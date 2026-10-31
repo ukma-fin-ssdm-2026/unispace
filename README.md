@@ -1,5 +1,8 @@
 # UniSpace [![CI Pipeline](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml/badge.svg)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml)
 
+**Жива система:**
+* Web UI (Фронтенд на Render) [(Відкрити застосунок)](https://unispace-front.onrender.com/)
+
 **Інтерактивна API Документація:**
 * Swagger UI [(Статична версія на GitHub Pages)](https://ukma-fin-ssdm-2026.github.io/unispace/)
 * Swagger UI [(Живий бекенд на Render)](https://unispace-wtf6.onrender.com/api/docs/)

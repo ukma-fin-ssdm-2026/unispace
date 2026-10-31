@@ -31,7 +31,7 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-BACKEND_API_URL = os.environ.get("BACKEND_API_URL", "http://localhost:8000/api/v1/")
+BACKEND_API_URL = os.environ.get("BACKEND_API_URL", "https://unispace-wtf6.onrender.com/api/v1/")
 
 # Application definition
 

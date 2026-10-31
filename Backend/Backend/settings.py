@@ -31,7 +31,14 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+if not DEBUG:
+    SESSION_COOKIE_SAMESITE = "None"
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SAMESITE = "None"
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,unispace-wtf6.onrender.com").split(",")
 
 AUTH_USER_MODEL = "api.User"
 
@@ -39,9 +46,9 @@ AUTH_USER_MODEL = "api.User"
 MS_TENANT_ID = os.environ.get("MS_TENANT_ID", "")
 MS_CLIENT_ID = os.environ.get("MS_CLIENT_ID", "")
 MS_CLIENT_SECRET = os.environ.get("MS_CLIENT_SECRET", "")
-MS_REDIRECT_URI = os.environ.get("MS_REDIRECT_URI", "http://localhost:8000/auth/microsoft/callback/")
+MS_REDIRECT_URI = os.environ.get("MS_REDIRECT_URI", "https://unispace-wtf6.onrender.com/auth/microsoft/callback/")
 # Куди повертати користувача після входу (поки фронтенду немає - Swagger UI).
-LOGIN_REDIRECT_URL = os.environ.get("LOGIN_REDIRECT_URL", "/api/docs/")
+LOGIN_REDIRECT_URL = os.environ.get("LOGIN_REDIRECT_URL", "https://unispace-front.onrender.com/")
 
 # Application definition
 
@@ -70,9 +77,18 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8001",
     "http://127.0.0.1:8001",
+    "https://unispace-front.onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8001",
+    "http://localhost:8001",
+    "https://unispace-front.onrender.com",
 ]
 
 ROOT_URLCONF = "Backend.urls"

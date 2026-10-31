@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="{% static 'css/layout.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body data-api-base="{{ backend_api_url }}" data-backend-origin="{{ backend_origin }}">
 
     <div class="app-container">
 
@@ -31,7 +31,7 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a href="{% url 'home' %}" class="nav-item active" data-tooltip="Головна">
+                <a href="{% url 'home' %}" class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}" data-tooltip="Головна">
                     <i class="fa-solid fa-house"></i> <span>Головна</span>
                 </a>
                 <a href="#" class="nav-item" data-tooltip="Розклад">
@@ -41,19 +41,18 @@
                     <i class="fa-solid fa-door-open"></i> <span>Аудиторії</span>
                 </a>
 
-                {% if user_role == 'teacher' or user_role == 'dispatcher' %}
-                <a href="#" class="nav-item" data-tooltip="Мої бронювання">
+                <!-- Пункти для ролей приховано, доки layout.js не отримає роль із /api/v1/auth/me/ -->
+                <a href="{% url 'bookings' %}" class="nav-item {% if request.resolver_match.url_name == 'bookings' %}active{% endif %}" data-tooltip="Мої бронювання" data-roles="teacher dispatcher" hidden>
                     <i class="fa-solid fa-bookmark"></i> <span>Мої бронювання</span>
                 </a>
-                {% endif %}
 
-                {% if user_role == 'dispatcher' %}
+                <div data-roles="dispatcher" hidden>
                 <div class="sidebar-heading">Адміністрування</div>
 
                 <a href="#" class="nav-item" data-tooltip="Конфлікти">
                     <i class="fa-solid fa-triangle-exclamation"></i> <span>Конфлікти</span>
                 </a>
-                <a href="#" class="nav-item" data-tooltip="Імпорт із САЗ">
+                <a href="{% url 'saz-import' %}" class="nav-item {% if request.resolver_match.url_name == 'saz-import' %}active{% endif %}" data-tooltip="Імпорт із САЗ">
                     <i class="fa-solid fa-cloud-arrow-down"></i> <span>Імпорт із САЗ</span>
                 </a>
                 <a href="#" class="nav-item" data-tooltip="Журнал аудиту">
@@ -62,7 +61,7 @@
                 <a href="#" class="nav-item" data-tooltip="Користувачі">
                     <i class="fa-solid fa-users-gear"></i> <span>Користувачі</span>
                 </a>
-                {% endif %}
+                </div>
             </nav>
         </aside>
 
@@ -77,7 +76,7 @@
                 <div class="user-info">
                     <div class="user-profile">
                         <i class="fa-solid fa-circle-user" style="font-size: 1.5rem; color: var(--color-primary);"></i>
-                        Викладач
+                        <span class="js-user-name">…</span>
                     </div>
                     <button class="btn-logout js-logout-trigger">
                         Вийти <i class="fa-solid fa-arrow-right-from-bracket"></i>
@@ -120,7 +119,8 @@
         </div>
     </div>
 
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/api.js' %}"></script>
+    <script src="{% static 'js/layout.js' %}"></script>
     {% block extra_js %}{% endblock %}
 
 </body>

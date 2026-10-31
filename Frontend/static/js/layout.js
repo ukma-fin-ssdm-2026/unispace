@@ -1,31 +1,28 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const isLoginPage = window.location.pathname.includes('/login/');
 
-    // 1. ЗАХИСТ СТОРІНОК ТА ОДЕРЖАННЯ ПРОФІЛЮ З БЕКЕНДУ
+    // 1. ЗАХИСТ СТОРІНОК, ПРОФІЛЬ І МЕНЮ ЗА РОЛЛЮ (дані з бекенду, /api/v1/auth/me/)
     if (!isLoginPage) {
         try {
-            // Звертаємося до бекенду за правильним URL
-            const response = await fetch('https://unispace-wtf6.onrender.com/api/v1/auth/me/', {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' },
-                credentials: 'include' // Передаємо сесійні куки на бекенд
+            const user = await UniSpaceApi.get('auth/me/');
+            window.currentUser = user;
+
+            const nameElement = document.querySelector('.js-user-name');
+            if (nameElement) {
+                nameElement.textContent = user.full_name || user.email;
+            }
+
+            // Пункти меню з data-roles показуємо лише відповідним ролям
+            document.querySelectorAll('[data-roles]').forEach((item) => {
+                item.hidden = !item.dataset.roles.split(' ').includes(user.role);
             });
 
-            if (!response.ok) {
-                // Якщо бекенд відповів 403 (не авторизовано) - викидаємо на логін
-                window.location.href = '/login/';
-                return;
-            }
-
-            // Якщо успішно, виводимо справжнє ім'я з БД
-            const userData = await response.json();
-            const profileElement = document.querySelector('.user-profile');
-            if (profileElement) {
-                profileElement.innerHTML = `<i class="fa-solid fa-circle-user" style="font-size: 1.5rem; color: var(--color-primary);"></i> ${userData.full_name}`;
-            }
+            document.dispatchEvent(new CustomEvent('unispace:user', { detail: user }));
         } catch (error) {
-            console.error("Не вдалося перевірити авторизацію:", error);
+            // 403 (не увійшли) або бекенд недоступний - на сторінку входу
+            console.error('Не вдалося перевірити авторизацію:', error);
             window.location.href = '/login/';
+            return;
         }
     }
 
@@ -74,10 +71,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Справжній запит на вихід до бекенду
         btnConfirm.addEventListener('click', async () => {
             try {
-                await fetch('https://unispace-wtf6.onrender.com/auth/logout/', {
-                    method: 'POST',
-                    credentials: 'include'
-                });
+                await UniSpaceApi.logout();
             } catch (error) {
                 console.error("Помилка при виході:", error);
             }

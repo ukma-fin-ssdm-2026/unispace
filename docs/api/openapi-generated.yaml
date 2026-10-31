@@ -611,10 +611,21 @@ paths:
   /api/v1/sync/:
     post:
       operationId: v1_sync_create
-      description: Ручний запуск синхронізації.
-      summary: Запустити імпорт розкладу
+      description: 'Ручна синхронізація (FR-004, FR-005). САЗ показує розклад лише
+        після входу, тому диспетчер завантажує збережену HTML-сторінку попереднього
+        перегляду розкладу (multipart/form-data: file, semester_start). Кожна спроба
+        пишеться в журнал синхронізації; якщо сторінку не вдалося розібрати, статус
+        failed, а раніше імпортовані дані не змінюються (REL-002). Повторний імпорт
+        того самого розкладу не дублює даних.'
+      summary: Імпортувати розклад із САЗ
       tags:
       - v1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SazImportRequest'
+        required: true
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -623,9 +634,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SyncLog'
+                $ref: '#/components/schemas/SyncResult'
           description: ''
-        '429':
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
           content:
             application/json:
               schema:
@@ -756,7 +773,7 @@ components:
           readOnly: true
         status:
           allOf:
-          - $ref: '#/components/schemas/BookingResponseStatusEnum'
+          - $ref: '#/components/schemas/BookingStatusEnum'
           readOnly: true
         title:
           type: string
@@ -778,7 +795,7 @@ components:
       - start_time
       - status
       - title
-    BookingResponseStatusEnum:
+    BookingStatusEnum:
       enum:
       - active
       - cancelled
@@ -989,6 +1006,50 @@ components:
       - building
       - capacity
       - number
+    SazImportRequest:
+      type: object
+      description: 'Ручний імпорт розкладу САЗ (FR-004, FR-005): збережена сторінка
+        попереднього перегляду розкладу.'
+      properties:
+        file:
+          type: string
+          format: uri
+          description: HTML-сторінка розкладу з my.ukma.edu.ua/schedule/preview/...
+            (до 5 МБ)
+        semester_start:
+          type: string
+          format: date
+          description: Будь-який день першого навчального тижня семестру
+      required:
+      - file
+      - semester_start
+    SazImportSummary:
+      type: object
+      properties:
+        lessons_created:
+          type: integer
+        lessons_updated:
+          type: integer
+        bookings_created:
+          type: integer
+        conflicts_created:
+          type: integer
+        teachers_created:
+          type: integer
+        online_lessons:
+          type: integer
+        warnings:
+          type: array
+          items:
+            type: string
+      required:
+      - bookings_created
+      - conflicts_created
+      - lessons_created
+      - lessons_updated
+      - online_lessons
+      - teachers_created
+      - warnings
     ScheduleItem:
       type: object
       properties:
@@ -1073,7 +1134,7 @@ components:
           description: Час завершення синхронізації
         status:
           allOf:
-          - $ref: '#/components/schemas/SyncLogStatusEnum'
+          - $ref: '#/components/schemas/SyncStatusEnum'
           description: |-
             Поточний статус синхронізації
 
@@ -1097,7 +1158,56 @@ components:
       - started_at
       - status
       - trigger
-    SyncLogStatusEnum:
+    SyncResult:
+      type: object
+      description: Запис журналу синхронізації та підсумок імпорту (null, якщо імпорт
+        не вдався).
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        started_at:
+          type: string
+          format: date-time
+          description: Час початку синхронізації
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Час завершення синхронізації
+        status:
+          allOf:
+          - $ref: '#/components/schemas/SyncStatusEnum'
+          description: |-
+            Поточний статус синхронізації
+
+            * `in_progress` - in_progress
+            * `success` - success
+            * `failed` - failed
+        trigger:
+          allOf:
+          - $ref: '#/components/schemas/TriggerEnum'
+          description: |-
+            Джерело запуску (ручний диспетчером чи за розкладом)
+
+            * `manual` - manual
+            * `scheduled` - scheduled
+        error_message:
+          type: string
+          nullable: true
+          description: Текст помилки парсингу або мережі, якщо статус failed
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/SazImportSummary'
+          nullable: true
+      required:
+      - id
+      - started_at
+      - status
+      - summary
+      - trigger
+    SyncStatusEnum:
       enum:
       - in_progress
       - success

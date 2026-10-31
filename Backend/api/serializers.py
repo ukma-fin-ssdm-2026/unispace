@@ -111,6 +111,20 @@ class RoomAlternativesQuerySerializer(serializers.Serializer):
     building = serializers.CharField(
         max_length=20, required=False, help_text="Бажаний корпус; за замовчуванням - корпус поточної аудиторії"
     )
+    expand = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="false - лише бажаний корпус (FR-010); true - розширити пошук на інші корпуси",
+    )
+
+
+class RoomAlternativesResponseSerializer(serializers.Serializer):
+    """Результат підбору: аудиторії та повідомлення, якщо варіантів немає (FR-010, US-10)."""
+
+    building = serializers.CharField(help_text="Корпус, з якого почали пошук")
+    expanded = serializers.BooleanField(help_text="Чи розширено пошук на інші корпуси")
+    rooms = RoomSerializer(many=True, help_text="Вільні аудиторії: спершу бажаний корпус, далі найменша місткість")
+    message = serializers.CharField(allow_null=True, help_text="Пояснення, якщо вільних аудиторій немає; інакше null")
 
 
 class UserBookingsQuerySerializer(serializers.Serializer):

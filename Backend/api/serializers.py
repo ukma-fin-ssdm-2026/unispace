@@ -254,3 +254,21 @@ class AuditLogEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = AuditLog
         fields = ["id", "booking_id", "subject", "action", "user", "previous_room", "new_room", "reason", "created_at"]
+
+
+# --- Ресурс: Попередня пара в аудиторії (FR-019) ---
+class PreviousLessonSerializer(serializers.Serializer):
+    subject = serializers.CharField(help_text="Назва дисципліни")
+    group = serializers.CharField(help_text="Назва академічної групи")
+    teacher = serializers.CharField(help_text="ПІБ викладача попереднього заняття")
+    start_time = serializers.DateTimeField(help_text="Початок попереднього заняття")
+    end_time = serializers.DateTimeField(help_text="Завершення попереднього заняття")
+
+
+class PreviousLessonResponseSerializer(serializers.Serializer):
+    previous_lesson = PreviousLessonSerializer(
+        allow_null=True, help_text="Попереднє заняття в цій аудиторії того ж дня або null"
+    )
+    message = serializers.CharField(
+        allow_null=True, help_text="«Попередньої пари не було», якщо previous_lesson = null"
+    )

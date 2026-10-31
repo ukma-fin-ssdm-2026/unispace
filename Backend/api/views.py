@@ -17,8 +17,6 @@ test_rooms_crud.py і test_bookings_crud.py.
 test_room_alternatives.py, які закомічено раніше за реалізацію.
 """
 
-import uuid
-
 from django.db.models import Prefetch, Q
 from django.db.models import ProtectedError
 from drf_spectacular.utils import extend_schema
@@ -29,7 +27,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 
 from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
-from api.services import bookings, schedule
+from api.services import bookings, saz_import, schedule
 from api.services.room_suggestions import suggest_rooms
 from api.room_occupancy import get_previous_booking
 
@@ -48,6 +46,8 @@ from .serializers import (
     RoomWriteSerializer,
     BookingChangeRoomSerializer,
     RoomAlternativesQuerySerializer,
+    SazImportRequestSerializer,
+    SyncResultSerializer,
     RoomAlternativesResponseSerializer,
     AuditLogQuerySerializer,
     AuditLogEntrySerializer,
@@ -637,19 +637,30 @@ class SyncTriggerAPIView(APIView):
     permission_classes = [IsDispatcher]
 
     @extend_schema(
-        summary="Запустити імпорт розкладу",
-        description="Ручний запуск синхронізації.",
-        request=None,
-        responses={201: SyncLogSerializer, 429: ErrorResponseSerializer},
+        summary="Імпортувати розклад із САЗ",
+        description=(
+            "Ручна синхронізація (FR-004, FR-005). САЗ показує розклад лише після входу, тому диспетчер завантажує "
+            "збережену HTML-сторінку попереднього перегляду розкладу (multipart/form-data: file, semester_start). "
+            "Кожна спроба пишеться в журнал синхронізації; якщо сторінку не вдалося розібрати, статус failed, "
+            "а раніше імпортовані дані не змінюються (REL-002). Повторний імпорт того самого розкладу не дублює даних."
+        ),
+        request={"multipart/form-data": SazImportRequestSerializer},
+        responses={201: SyncResultSerializer, 400: ErrorResponseSerializer, 403: ErrorResponseSerializer},
     )
     def post(self, request, format=None):
-        mock_response = {
-            "id": uuid.uuid4(),
-            "started_at": "2026-10-15T09:27:00Z",
-            "finished_at": None,
-            "status": "in_progress",
-            "trigger": "manual",
-            "error_message": None,
+        form = SazImportRequestSerializer(data=request.data)
+        if not form.is_valid():
+            return Response(get_validation_error_response(form.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        html = form.validated_data["file"].read().decode("utf-8", errors="replace")
+        log, result = saz_import.run_sync(html, form.validated_data["semester_start"])
+        data = {
+            "id": log.id,
+            "started_at": log.started_at,
+            "finished_at": log.finished_at,
+            "status": log.status,
+            "trigger": log.trigger,
+            "error_message": log.error_message or None,
+            "summary": result.as_dict() if result else None,
         }
-        serializer = SyncLogSerializer(mock_response)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(SyncResultSerializer(data).data, status=status.HTTP_201_CREATED)

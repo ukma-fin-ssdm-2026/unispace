@@ -16,7 +16,7 @@ test_rooms_crud.py і test_bookings_crud.py.
 
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
-from .models import Room
+from .models import AuditLog, Room, User
 
 
 # --- Узгоджена структура помилок ---
@@ -111,6 +111,20 @@ class RoomAlternativesQuerySerializer(serializers.Serializer):
     building = serializers.CharField(
         max_length=20, required=False, help_text="Бажаний корпус; за замовчуванням - корпус поточної аудиторії"
     )
+    expand = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="false - лише бажаний корпус (FR-010); true - розширити пошук на інші корпуси",
+    )
+
+
+class RoomAlternativesResponseSerializer(serializers.Serializer):
+    """Результат підбору: аудиторії та повідомлення, якщо варіантів немає (FR-010, US-10)."""
+
+    building = serializers.CharField(help_text="Корпус, з якого почали пошук")
+    expanded = serializers.BooleanField(help_text="Чи розширено пошук на інші корпуси")
+    rooms = RoomSerializer(many=True, help_text="Вільні аудиторії: спершу бажаний корпус, далі найменша місткість")
+    message = serializers.CharField(allow_null=True, help_text="Пояснення, якщо вільних аудиторій немає; інакше null")
 
 
 class UserBookingsQuerySerializer(serializers.Serializer):
@@ -197,4 +211,64 @@ class ScheduleItemSerializer(serializers.Serializer):
     room_assigned = serializers.BooleanField(help_text="false, якщо бронювання скасовано або його немає")
     room_changed = serializers.BooleanField(
         help_text="Маркер «Змінено»: аудиторію змінено менш ніж за 24 години до початку заняття"
+    )
+
+
+# --- Ресурс: Аудит-лог (AuditLog, FR-017) ---
+class AuditLogQuerySerializer(serializers.Serializer):
+    booking_id = serializers.UUIDField(required=False, help_text="Лише записи цього бронювання")
+    room_id = serializers.UUIDField(required=False, help_text="Записи, де аудиторія була попередньою або новою")
+    action = serializers.ChoiceField(
+        choices=["room_changed", "cancelled"], required=False, help_text="Тип дії: перенесення чи скасування"
+    )
+    date_from = serializers.DateField(required=False, help_text="Початок періоду (включно)")
+    date_to = serializers.DateField(required=False, help_text="Кінець періоду (включно)")
+    limit = serializers.IntegerField(min_value=1, max_value=200, default=50, help_text="Кількість записів")
+    offset = serializers.IntegerField(min_value=0, default=0, help_text="Зсув")
+
+    def validate(self, attrs):
+        date_from = attrs.get("date_from")
+        date_to = attrs.get("date_to")
+        if date_from and date_to and date_from > date_to:
+            raise serializers.ValidationError("Початок періоду не може бути пізніше за його кінець.")
+        return attrs
+
+
+class AuditLogUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "email", "full_name"]
+
+
+class AuditLogEntrySerializer(serializers.ModelSerializer):
+    """Запис аудиту лише для читання: хто, коли, з якої аудиторії в яку і чому (FR-017)."""
+
+    booking_id = serializers.UUIDField(read_only=True)
+    subject = serializers.CharField(source="booking.lesson.subject", read_only=True, help_text="Назва дисципліни")
+    user = AuditLogUserSerializer(read_only=True, help_text="Автор дії")
+    previous_room = ScheduleRoomSerializer(read_only=True, allow_null=True, help_text="Попередня аудиторія")
+    new_room = ScheduleRoomSerializer(
+        read_only=True, allow_null=True, help_text="Нова аудиторія; null для скасування бронювання"
+    )
+
+    class Meta:
+        model = AuditLog
+        fields = ["id", "booking_id", "subject", "action", "user", "previous_room", "new_room", "reason", "created_at"]
+
+
+# --- Ресурс: Попередня пара в аудиторії (FR-019) ---
+class PreviousLessonSerializer(serializers.Serializer):
+    subject = serializers.CharField(help_text="Назва дисципліни")
+    group = serializers.CharField(help_text="Назва академічної групи")
+    teacher = serializers.CharField(help_text="ПІБ викладача попереднього заняття")
+    start_time = serializers.DateTimeField(help_text="Початок попереднього заняття")
+    end_time = serializers.DateTimeField(help_text="Завершення попереднього заняття")
+
+
+class PreviousLessonResponseSerializer(serializers.Serializer):
+    previous_lesson = PreviousLessonSerializer(
+        allow_null=True, help_text="Попереднє заняття в цій аудиторії того ж дня або null"
+    )
+    message = serializers.CharField(
+        allow_null=True, help_text="«Попередньої пари не було», якщо previous_lesson = null"
     )

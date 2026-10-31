@@ -4,12 +4,92 @@ info:
   version: 1.0.0
   description: API для системи керування аудиторним фондом UniSpace
 paths:
+  /api/v1/audit-logs/:
+    get:
+      operationId: api_v1_audit_logs_list
+      description: 'Диспетчер переглядає записи про перенесення й скасування бронювань:
+        час, автор, попередня та нова аудиторії, причина. Найновіші записи першими.
+        Тільки для читання: редагувати чи видаляти записи через API неможливо.'
+      summary: Історія змін бронювань (аудит-лог)
+      parameters:
+      - in: query
+        name: action
+        schema:
+          enum:
+          - room_changed
+          - cancelled
+          type: string
+          minLength: 1
+        description: |-
+          Тип дії: перенесення чи скасування
+
+          * `room_changed` - room_changed
+          * `cancelled` - cancelled
+      - in: query
+        name: booking_id
+        schema:
+          type: string
+          format: uuid
+        description: Лише записи цього бронювання
+      - in: query
+        name: date_from
+        schema:
+          type: string
+          format: date
+        description: Початок періоду (включно)
+      - in: query
+        name: date_to
+        schema:
+          type: string
+          format: date
+        description: Кінець періоду (включно)
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+        description: Кількість записів
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: Зсув
+      - in: query
+        name: room_id
+        schema:
+          type: string
+          format: uuid
+        description: Записи, де аудиторія була попередньою або новою
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLogEntry'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /api/v1/auth/me/:
     get:
-      operationId: v1_auth_me_retrieve
+      operationId: api_v1_auth_me_retrieve
       summary: Поточний користувач
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -22,10 +102,10 @@ paths:
           description: ''
   /api/v1/bookings/:
     post:
-      operationId: v1_bookings_create
+      operationId: api_v1_bookings_create
       summary: Створити бронювання
       tags:
-      - v1
+      - api
       requestBody:
         content:
           application/json:
@@ -80,7 +160,7 @@ paths:
           description: ''
   /api/v1/bookings/{id}/:
     get:
-      operationId: v1_bookings_retrieve
+      operationId: api_v1_bookings_retrieve
       summary: Отримати бронювання
       parameters:
       - in: path
@@ -90,7 +170,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -120,7 +200,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
     delete:
-      operationId: v1_bookings_destroy
+      operationId: api_v1_bookings_destroy
       description: 'Бронювання не видаляється: отримує статус cancelled, у журнал
         аудиту додається запис.'
       summary: Скасувати бронювання
@@ -132,7 +212,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -153,7 +233,7 @@ paths:
           description: ''
   /api/v1/bookings/{id}/alternatives/:
     get:
-      operationId: v1_bookings_alternatives_retrieve
+      operationId: api_v1_bookings_alternatives_retrieve
       description: 'Аудиторії, вільні на час заняття: доступні, не менші за потрібну
         місткість і без активних бронювань, що перетинаються з заняттям (FR-010).
         Початковий пошук обмежено бажаним корпусом; якщо там варіантів немає, у відповіді
@@ -188,7 +268,7 @@ paths:
           minimum: 1
         description: Мінімальна місткість; за замовчуванням - місткість поточної аудиторії
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -225,7 +305,7 @@ paths:
           description: ''
   /api/v1/bookings/{id}/change/:
     post:
-      operationId: v1_bookings_change_create
+      operationId: api_v1_bookings_change_create
       description: Переносить заняття в іншу аудиторію, пише запис в аудит і сповіщає
         групу.
       summary: Змінити аудиторію бронювання
@@ -237,7 +317,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - v1
+      - api
       requestBody:
         content:
           application/json:
@@ -292,7 +372,7 @@ paths:
           description: ''
   /api/v1/rooms/:
     get:
-      operationId: v1_rooms_list
+      operationId: api_v1_rooms_list
       summary: Отримати список аудиторій
       parameters:
       - in: query
@@ -334,7 +414,7 @@ paths:
           nullable: true
         description: Лише аудиторії зі справним проєктором
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -355,10 +435,10 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
     post:
-      operationId: v1_rooms_create
+      operationId: api_v1_rooms_create
       summary: Створити аудиторію
       tags:
-      - v1
+      - api
       requestBody:
         content:
           application/json:
@@ -395,7 +475,7 @@ paths:
           description: ''
   /api/v1/rooms/{id}/:
     get:
-      operationId: v1_rooms_retrieve
+      operationId: api_v1_rooms_retrieve
       summary: Отримати аудиторію
       parameters:
       - in: path
@@ -405,7 +485,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -424,7 +504,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
     patch:
-      operationId: v1_rooms_partial_update
+      operationId: api_v1_rooms_partial_update
       summary: Оновити аудиторію
       parameters:
       - in: path
@@ -434,7 +514,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - v1
+      - api
       requestBody:
         content:
           application/json:
@@ -475,7 +555,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
     delete:
-      operationId: v1_rooms_destroy
+      operationId: api_v1_rooms_destroy
       description: Аудиторію з бронюваннями, конфліктами чи записами аудиту видалити
         не можна.
       summary: Видалити аудиторію
@@ -487,7 +567,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -514,7 +594,7 @@ paths:
           description: ''
   /api/v1/rooms/available-slots/:
     get:
-      operationId: v1_rooms_available_slots_retrieve
+      operationId: api_v1_rooms_available_slots_retrieve
       summary: Пошук вільних слотів
       parameters:
       - in: query
@@ -530,7 +610,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -550,7 +630,7 @@ paths:
           description: ''
   /api/v1/schedule/:
     get:
-      operationId: v1_schedule_list
+      operationId: api_v1_schedule_list
       description: Студент бачить розклад своєї групи, викладач - власні заняття,
         диспетчер - будь-які (з можливістю відфільтрувати за групою). Тільки для читання.
       summary: Розклад занять
@@ -589,7 +669,7 @@ paths:
           default: 0
         description: Зсув
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -610,11 +690,11 @@ paths:
           description: ''
   /api/v1/sync/:
     post:
-      operationId: v1_sync_create
+      operationId: api_v1_sync_create
       description: Ручний запуск синхронізації.
       summary: Запустити імпорт розкладу
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -633,11 +713,11 @@ paths:
           description: ''
   /api/v1/sync-logs/:
     get:
-      operationId: v1_sync_logs_list
+      operationId: api_v1_sync_logs_list
       description: Повертає список логів імпорту розкладу із САЗ.
       summary: Отримати історію синхронізацій
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -652,7 +732,7 @@ paths:
           description: ''
   /api/v1/users/me/bookings/:
     get:
-      operationId: v1_users_me_bookings_list
+      operationId: api_v1_users_me_bookings_list
       summary: Бронювання поточного користувача
       parameters:
       - in: query
@@ -668,7 +748,7 @@ paths:
           minLength: 1
         description: Пагінація за курсором
       tags:
-      - v1
+      - api
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -695,6 +775,80 @@ paths:
           description: ''
 components:
   schemas:
+    AuditLogEntry:
+      type: object
+      description: 'Запис аудиту лише для читання: хто, коли, з якої аудиторії в яку
+        і чому (FR-017).'
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        booking_id:
+          type: string
+          format: uuid
+          readOnly: true
+        subject:
+          type: string
+          readOnly: true
+          description: Назва дисципліни
+        action:
+          type: string
+          title: Дія
+          maxLength: 50
+        user:
+          allOf:
+          - $ref: '#/components/schemas/AuditLogUser'
+          readOnly: true
+          description: Автор дії
+        previous_room:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleRoom'
+          readOnly: true
+          nullable: true
+          description: Попередня аудиторія
+        new_room:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleRoom'
+          readOnly: true
+          nullable: true
+          description: Нова аудиторія; null для скасування бронювання
+        reason:
+          type: string
+          title: Причина
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата дії
+      required:
+      - action
+      - booking_id
+      - created_at
+      - id
+      - new_room
+      - previous_room
+      - subject
+      - user
+    AuditLogUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Університетська електронна пошта
+          maxLength: 254
+        full_name:
+          type: string
+          title: Повне ім'я
+          maxLength: 255
+      required:
+      - email
+      - id
     AvailableSlotsResponse:
       type: object
       properties:

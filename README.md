@@ -33,17 +33,17 @@ UniSpace — вебзастосунок, який працює як шар ке�
   - **Windows:** `.\.venv\Scripts\activate`
   - **macOS / Linux:** `source .venv/bin/activate`
 - Налаштуйте змінні середовища:
-- Створіть копію файлу `.env.example` і назвіть її `.env`
-- Відкрийте `.env` і впишіть свої локальні налаштування для доступу до бази даних (логін, пароль) та `SECRET_KEY`, а також дані для інтеграції з Microsoft (за потреби `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET`).
+  - Створіть копію файлу `.env.example` і назвіть її `.env`
+  - Відкрийте `.env` і впишіть свої локальні налаштування для доступу до бази даних (логін, пароль) та `SECRET_KEY`, а також дані для інтеграції з Microsoft (за потреби `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET`).
 - **Важливо (Ізоляція кук сесій):** У режимі локальної розробки на `127.0.0.1` бекенд і фронтенд працюють на різних портах. Щоб уникнути перезапису сесійних кук між ними, переконайтеся, що у `settings.py` бекенду встановлено унікальне ім'я куки:
 ```python
 SESSION_COOKIE_NAME = "api_sessionid"
 CSRF_COOKIE_NAME = "api_csrftoken"
 ```
 - Підготуйте базу даних:
-- Запустіть PostgreSQL локально або скористайтеся конфігурацією з `Backend/docker-compose.yml`.
-- Створіть порожню базу даних (наприклад, `CREATE DATABASE unispace;`).
-- Увійдіть у створену базу даних та активуйте обов'язкове розширення для перевірки часових перетинів і унікальності бронювань (GiST-індекси):
+  - Запустіть PostgreSQL локально або скористайтеся конфігурацією з `Backend/docker-compose.yml`.
+  - Створіть порожню базу даних (наприклад, `CREATE DATABASE unispace;`).
+  - Увійдіть у створену базу даних та активуйте обов'язкове розширення для перевірки часових перетинів і унікальності бронювань (GiST-індекси):
 ```sql
 CREATE EXTENSION IF NOT EXISTS btree_gist;
 ```
@@ -63,8 +63,8 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
   - **Windows:** `.\.venv\Scripts\activate`
   - **macOS / Linux:** `source .venv/bin/activate`
 - Налаштуйте змінні середовища:
-- Створіть копію файлу `.env.example` і назвіть її `.env`
-- Відкрийте `.env` і впишіть туди свій `SECRET_KEY` та переконайтеся, що `BACKEND_API_URL` вказує на ваш локальний бекенд.
+  - Створіть копію файлу `.env.example` і назвіть її `.env`
+  - Відкрийте `.env` і впишіть туди свій `SECRET_KEY` та переконайтеся, що `BACKEND_API_URL` вказує на ваш локальний бекенд.
 - Встановіть залежності:
   - `pip install -r requirements.txt`
   - `pip install -r requirements-dev.txt`

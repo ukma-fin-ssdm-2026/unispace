@@ -89,6 +89,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8001",
     "http://localhost:8001",
     "https://unispace-front.onrender.com",
+    "https://unispace-wtf6.onrender.com",
 ]
 
 ROOT_URLCONF = "Backend.urls"

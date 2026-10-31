@@ -13,14 +13,18 @@ from api.models import Booking
 
 def get_day_bookings(room_id: int, target_date: date) -> List[Booking]:
     """
-    Повертає всі бронювання для вказаної аудиторії за конкретний день.
+    Повертає всі активні бронювання для вказаної аудиторії за конкретний день.
+    Скасовані бронювання не враховуються: вони звільнили аудиторію (FR-020).
     Сортує заняття хронологічно за часом їхнього початку.
     """
     return list(
         Booking.objects.filter(
             room_id=room_id,
             start_time__date=target_date,
-        ).order_by("start_time")
+            status=Booking.BookingStatus.ACTIVE,
+        )
+        .select_related("lesson__group", "lesson__teacher")
+        .order_by("start_time")
     )
 
 

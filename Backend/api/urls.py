@@ -9,6 +9,7 @@ urlpatterns = [
     path("bookings/<uuid:pk>/", views.BookingDetailAPIView.as_view(), name="booking-detail"),
     path("bookings/<uuid:pk>/change/", views.BookingChangeRoomAPIView.as_view(), name="booking-change-room"),
     path("bookings/<uuid:pk>/alternatives/", views.BookingAlternativesAPIView.as_view(), name="booking-alternatives"),
+    path("bookings/<uuid:pk>/previous/", views.BookingPreviousLessonAPIView.as_view(), name="booking-previous"),
     path("users/me/bookings/", views.UserBookingsAPIView.as_view(), name="user-bookings"),
     path("schedule/", views.ScheduleAPIView.as_view(), name="schedule"),
     path("sync-logs/", views.SyncLogListAPIView.as_view(), name="sync-log-list"),

@@ -4,6 +4,86 @@ info:
   version: 1.0.0
   description: API для системи керування аудиторним фондом UniSpace
 paths:
+  /api/v1/audit-logs/:
+    get:
+      operationId: v1_audit_logs_list
+      description: 'Диспетчер переглядає записи про перенесення й скасування бронювань:
+        час, автор, попередня та нова аудиторії, причина. Найновіші записи першими.
+        Тільки для читання: редагувати чи видаляти записи через API неможливо.'
+      summary: Історія змін бронювань (аудит-лог)
+      parameters:
+      - in: query
+        name: action
+        schema:
+          enum:
+          - room_changed
+          - cancelled
+          type: string
+          minLength: 1
+        description: |-
+          Тип дії: перенесення чи скасування
+
+          * `room_changed` - room_changed
+          * `cancelled` - cancelled
+      - in: query
+        name: booking_id
+        schema:
+          type: string
+          format: uuid
+        description: Лише записи цього бронювання
+      - in: query
+        name: date_from
+        schema:
+          type: string
+          format: date
+        description: Початок періоду (включно)
+      - in: query
+        name: date_to
+        schema:
+          type: string
+          format: date
+        description: Кінець періоду (включно)
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+        description: Кількість записів
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: Зсув
+      - in: query
+        name: room_id
+        schema:
+          type: string
+          format: uuid
+        description: Записи, де аудиторія була попередньою або новою
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLogEntry'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /api/v1/auth/me/:
     get:
       operationId: v1_auth_me_retrieve
@@ -153,10 +233,12 @@ paths:
           description: ''
   /api/v1/bookings/{id}/alternatives/:
     get:
-      operationId: v1_bookings_alternatives_list
+      operationId: v1_bookings_alternatives_retrieve
       description: 'Аудиторії, вільні на час заняття: доступні, не менші за потрібну
-        місткість і без активних бронювань, що перетинаються з заняттям. Спершу аудиторії
-        бажаного корпусу, далі - за найменшою достатньою місткістю.'
+        місткість і без активних бронювань, що перетинаються з заняттям (FR-010).
+        Початковий пошук обмежено бажаним корпусом; якщо там варіантів немає, у відповіді
+        є повідомлення з пропозицією повторити запит з expand=true. Після розширення
+        спершу йде бажаний корпус, далі - найменша достатня місткість.'
       summary: Підібрати вільні аудиторії для заміни
       parameters:
       - in: query
@@ -166,6 +248,13 @@ paths:
           maxLength: 20
           minLength: 1
         description: Бажаний корпус; за замовчуванням - корпус поточної аудиторії
+      - in: query
+        name: expand
+        schema:
+          type: boolean
+          default: false
+        description: false - лише бажаний корпус (FR-010); true - розширити пошук
+          на інші корпуси
       - in: path
         name: id
         schema:
@@ -188,9 +277,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Room'
+                $ref: '#/components/schemas/RoomAlternativesResponse'
           description: ''
         '400':
           content:
@@ -264,6 +351,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/bookings/{id}/previous/:
+    get:
+      operationId: v1_bookings_previous_retrieve
+      description: 'Блок «Попередня пара» для заняття (FR-019): дисципліна, група
+        й ПІБ викладача заняття, яке було в тій самій аудиторії того ж дня безпосередньо
+        перед цим (скасовані бронювання не враховуються). Якщо такого заняття не було,
+        previous_lesson = null, а message містить «Попередньої пари не було».'
+      summary: Попередня пара в аудиторії
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreviousLessonResponse'
           description: ''
         '403':
           content:
@@ -688,6 +820,80 @@ paths:
           description: ''
 components:
   schemas:
+    AuditLogEntry:
+      type: object
+      description: 'Запис аудиту лише для читання: хто, коли, з якої аудиторії в яку
+        і чому (FR-017).'
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        booking_id:
+          type: string
+          format: uuid
+          readOnly: true
+        subject:
+          type: string
+          readOnly: true
+          description: Назва дисципліни
+        action:
+          type: string
+          title: Дія
+          maxLength: 50
+        user:
+          allOf:
+          - $ref: '#/components/schemas/AuditLogUser'
+          readOnly: true
+          description: Автор дії
+        previous_room:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleRoom'
+          readOnly: true
+          nullable: true
+          description: Попередня аудиторія
+        new_room:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleRoom'
+          readOnly: true
+          nullable: true
+          description: Нова аудиторія; null для скасування бронювання
+        reason:
+          type: string
+          title: Причина
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата дії
+      required:
+      - action
+      - booking_id
+      - created_at
+      - id
+      - new_room
+      - previous_room
+      - subject
+      - user
+    AuditLogUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Університетська електронна пошта
+          maxLength: 254
+        full_name:
+          type: string
+          title: Повне ім'я
+          maxLength: 255
+      required:
+      - email
+      - id
     AvailableSlotsResponse:
       type: object
       properties:
@@ -875,6 +1081,47 @@ components:
         is_available:
           type: boolean
           title: Доступна для використання
+    PreviousLesson:
+      type: object
+      properties:
+        subject:
+          type: string
+          description: Назва дисципліни
+        group:
+          type: string
+          description: Назва академічної групи
+        teacher:
+          type: string
+          description: ПІБ викладача попереднього заняття
+        start_time:
+          type: string
+          format: date-time
+          description: Початок попереднього заняття
+        end_time:
+          type: string
+          format: date-time
+          description: Завершення попереднього заняття
+      required:
+      - end_time
+      - group
+      - start_time
+      - subject
+      - teacher
+    PreviousLessonResponse:
+      type: object
+      properties:
+        previous_lesson:
+          allOf:
+          - $ref: '#/components/schemas/PreviousLesson'
+          nullable: true
+          description: Попереднє заняття в цій аудиторії того ж дня або null
+        message:
+          type: string
+          nullable: true
+          description: «Попередньої пари не було», якщо previous_lesson = null
+      required:
+      - message
+      - previous_lesson
     RoleEnum:
       enum:
       - student
@@ -921,6 +1168,31 @@ components:
       - capacity
       - id
       - number
+    RoomAlternativesResponse:
+      type: object
+      description: 'Результат підбору: аудиторії та повідомлення, якщо варіантів немає
+        (FR-010, US-10).'
+      properties:
+        building:
+          type: string
+          description: Корпус, з якого почали пошук
+        expanded:
+          type: boolean
+          description: Чи розширено пошук на інші корпуси
+        rooms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Room'
+          description: 'Вільні аудиторії: спершу бажаний корпус, далі найменша місткість'
+        message:
+          type: string
+          nullable: true
+          description: Пояснення, якщо вільних аудиторій немає; інакше null
+      required:
+      - building
+      - expanded
+      - message
+      - rooms
     RoomWrite:
       type: object
       description: Вхідні дані для створення й редагування аудиторії диспетчером (FR-008).

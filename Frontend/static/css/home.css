@@ -1,4 +1,6 @@
-/* --- Анімації --- */
+/* =========================================
+   АНІМАЦІЇ
+   ========================================= */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -16,7 +18,9 @@
     100% { transform: translateY(0px) rotate(-5deg); }
 }
 
-/* --- Стилі головної картки --- */
+/* =========================================
+   ГОЛОВНА КАРТКА ПРИВІТАННЯ (HERO)
+   ========================================= */
 .home-hero-card {
     max-width: 720px;
     margin: 3rem auto;
@@ -38,7 +42,7 @@
     pointer-events: none;
 }
 
-/* --- Іконка-логотип --- */
+/* Іконка-логотип */
 .hero-icon-wrapper {
     width: 88px;
     height: 88px;
@@ -59,7 +63,7 @@
     transform: rotate(5deg);
 }
 
-/* --- Типографіка --- */
+/* Типографіка */
 .hero-title {
     margin-bottom: 1rem;
     letter-spacing: -1px;
@@ -78,7 +82,7 @@
     margin-right: auto;
 }
 
-/* --- Кнопки --- */
+/* Кнопки дій */
 .hero-actions {
     display: flex;
     gap: 1rem;
@@ -119,4 +123,100 @@
     background-color: var(--c-blue-50);
     border-color: rgba(15, 23, 42, 0.2);
     transform: translateY(-2px);
+}
+
+/* =========================================
+   ДАШБОРД (АВТОРИЗОВАНИЙ КОРИСТУВАЧ)
+   ========================================= */
+.dashboard-container {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+    align-items: start;
+}
+
+/* Заголовки панелей */
+.panel-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.15rem;
+    color: var(--c-blue-900);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+}
+
+.panel-title i {
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+
+/* Панель швидких дій */
+.quick-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.quick-actions-list .btn-primary-pill,
+.quick-actions-list .btn-secondary-pill {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+}
+
+/* Адаптивність для менших екранів */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================
+   ЗАГОЛОВОК ДАШБОРДУ
+   ========================================= */
+.dashboard-header {
+    margin-bottom: 2.5rem;
+}
+
+.dashboard-greeting {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    font-weight: normal;
+    margin: 0;
+}
+
+/* =========================================
+   ІНФОРМАЦІЙНА ПЛАШКА
+   ========================================= */
+.info-banner {
+    background-color: var(--c-blue-50);
+    border-left: 4px solid var(--color-primary);
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--c-blue-900);
+    font-size: 0.95rem;
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+.info-banner i {
+    color: var(--color-primary);
+    font-size: 1.4rem;
+}
+
+.sync-text {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 4px;
 }

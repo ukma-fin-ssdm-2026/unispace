@@ -121,7 +121,8 @@ WSGI_APPLICATION = "Backend.wsgi.application"
 # Якщо задано DATABASE_URL - використовується PostgreSQL (ADR-002):
 #   локально - Postgres у Docker (див. Backend/docker-compose.yml),
 #   на Render - Internal Database URL інстансу PostgreSQL.
-# Якщо DATABASE_URL не задано - SQLite (CI та швидкий старт без Docker).
+# Без DATABASE_URL лишається SQLite, але міграції на ній не пройдуть (btree_gist, ExclusionConstraint):
+# проєкт підтримує лише PostgreSQL, зокрема в CI (сервіс postgres:16).
 # Формат: postgresql://<user>:<password>@<host>:<port>/<db_name>
 DATABASE_URL = os.environ.get("DATABASE_URL")
 

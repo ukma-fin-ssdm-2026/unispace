@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const isLoginPage = window.location.pathname.includes('/login/');
 
-    // Визначаємо базовий URL бекенду динамічно (з вашої гілки)
+    // Адреса бекенду - з BACKEND_API_URL (<body data-backend-origin>), як у кнопці входу Microsoft,
+    // щоб запити йшли на той самий хост, де бекенд створив сесію. Запасний варіант - як було раніше.
     const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-    const BACKEND_BASE_URL = isLocalhost ? `http://${window.location.hostname}:8000` : 'https://unispace-wtf6.onrender.com';
+    const BACKEND_BASE_URL = document.body.dataset.backendOrigin
+        || (isLocalhost ? `http://${window.location.hostname}:8000` : 'https://unispace-wtf6.onrender.com');
 
     // 1. ЗАХИСТ СТОРІНОК ТА ОДЕРЖАННЯ ПРОФІЛЮ З БЕКЕНДУ
     if (!isLoginPage) {
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             // Отримуємо дані користувача з БД
             const userData = await response.json();
-            
+
             // Зберігаємо глобально (корисно з main) та диспачимо подію
             window.currentUser = userData;
 

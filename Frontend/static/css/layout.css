@@ -123,12 +123,31 @@ body {
 }
 
 .sidebar.collapsed .sidebar-header span,
-.sidebar.collapsed .nav-item span,
-.sidebar.collapsed .sidebar-heading {
+.sidebar.collapsed .nav-item span {
     opacity: 0;
     max-width: 0;
     overflow: hidden;
     pointer-events: none;
+}
+
+.sidebar.collapsed .sidebar-heading {
+    opacity: 0;
+    max-width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.sidebar.collapsed .js-admin-heading {
+    display: none !important;
+}
+
+.sidebar.collapsed .js-teacher-dispatcher-only,
+.sidebar.collapsed .js-dispatcher-only {
+    display: flex !important;
+    justify-content: center !important;
 }
 
 .sidebar.collapsed .sidebar-header {

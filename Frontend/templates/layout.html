@@ -41,27 +41,26 @@
                     <i class="fa-solid fa-door-open"></i> <span>Аудиторії</span>
                 </a>
 
-                <!-- Пункти для ролей приховано, доки layout.js не отримає роль із /api/v1/auth/me/ -->
-                <a href="{% url 'bookings' %}" class="nav-item {% if request.resolver_match.url_name == 'bookings' %}active{% endif %}" data-tooltip="Мої бронювання" data-roles="teacher dispatcher" hidden>
+                <!-- Пункт для викладача та диспетчера -->
+                <a href="{% url 'bookings' %}" class="nav-item js-teacher-dispatcher-only {% if request.resolver_match.url_name == 'bookings' %}active{% endif %}" data-tooltip="Мої бронювання" data-roles="teacher dispatcher" style="display: none;">
                     <i class="fa-solid fa-bookmark"></i> <span>Мої бронювання</span>
                 </a>
 
-                <div data-roles="dispatcher" hidden>
-                <div class="sidebar-heading">Адміністрування</div>
+                <!-- Адмін-блок для диспетчера -->
+                <div class="sidebar-heading js-admin-heading" style="display: none;">Адміністрування</div>
 
-                <a href="#" class="nav-item" data-tooltip="Конфлікти">
+                <a href="#" class="nav-item js-dispatcher-only" data-tooltip="Конфлікти" data-roles="dispatcher" style="display: none;">
                     <i class="fa-solid fa-triangle-exclamation"></i> <span>Конфлікти</span>
                 </a>
-                <a href="{% url 'saz-import' %}" class="nav-item {% if request.resolver_match.url_name == 'saz-import' %}active{% endif %}" data-tooltip="Імпорт із САЗ">
+                <a href="{% url 'saz-import' %}" class="nav-item js-dispatcher-only {% if request.resolver_match.url_name == 'saz-import' %}active{% endif %}" data-tooltip="Імпорт із САЗ" data-roles="dispatcher" style="display: none;">
                     <i class="fa-solid fa-cloud-arrow-down"></i> <span>Імпорт із САЗ</span>
                 </a>
-                <a href="#" class="nav-item" data-tooltip="Журнал аудиту">
+                <a href="#" class="nav-item js-dispatcher-only" data-tooltip="Журнал аудиту" data-roles="dispatcher" style="display: none;">
                     <i class="fa-solid fa-clipboard-list"></i> <span>Журнал аудиту</span>
                 </a>
-                <a href="#" class="nav-item" data-tooltip="Користувачі">
+                <a href="#" class="nav-item js-dispatcher-only" data-tooltip="Користувачі" data-roles="dispatcher" style="display: none;">
                     <i class="fa-solid fa-users-gear"></i> <span>Користувачі</span>
                 </a>
-                </div>
             </nav>
         </aside>
 

@@ -33,8 +33,10 @@ body {
     color: var(--text-muted);
     font-size: 1rem;
     line-height: 1.5;
+    margin-bottom: 2.5rem;
 }
 
+/* --- Загальний стиль для всіх кнопок входу --- */
 .login-btn {
     display: inline-flex;
     align-items: center;
@@ -50,13 +52,63 @@ body {
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-top: 2.5rem;
     text-decoration: none;
     font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 14px rgba(74, 119, 168, 0.3);
 }
 
 .login-btn:hover {
     background-color: var(--color-primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 119, 168, 0.3);
+    box-shadow: 0 6px 20px rgba(74, 119, 168, 0.4);
+}
+
+.login-btn i {
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+/* --- Блок локального тестування --- */
+.dev-login-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    text-align: center;
+}
+
+.dev-login-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.dev-login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-dev-login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: var(--radius-pill);
+    background-color: #f1f5f9;
+    color: #334155;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-dev-login:hover {
+    background-color: #e2e8f0;
+    border-color: rgba(15, 23, 42, 0.12);
+    transform: translateY(-1px);
 }

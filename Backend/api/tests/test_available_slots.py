@@ -153,3 +153,45 @@ def test_booking_until_end_of_day(api_client, room, make_booking):
 
     assert response.status_code == 200
     assert response.json()["available_slots"] == ["08:00-18:00"]
+
+
+@pytest.mark.parametrize(
+    "bookings, expected",
+    [
+        # Booking starts before working hours
+        (
+            [("07:00", "09:00")],
+            ["09:00-20:00"],
+        ),
+        # Booking ends after working hours
+        (
+            [("19:00", "21:00")],
+            ["08:00-19:00"],
+        ),
+        # Bookings completely outside working hours
+        (
+            [("06:00", "07:00"), ("21:00", "22:00")],
+            ["08:00-20:00"],
+        ),
+        # Overlapping bookings should not create false free slots
+        (
+            [("10:00", "12:00"), ("11:00", "13:00")],
+            ["08:00-10:00", "13:00-20:00"],
+        ),
+        # Booking covers the entire working day
+        (
+            [("07:00", "21:00")],
+            [],
+        ),
+        # Nested bookings should not move the end time backwards
+        (
+            [("10:00", "15:00"), ("11:00", "12:00")],
+            ["08:00-10:00", "15:00-20:00"],
+        ),
+    ],
+)
+@pytest.mark.req("USAB-001")
+def test_find_free_slots_boundary_and_overlap_cases(bookings, expected):
+    result = find_free_slots(bookings, "08:00", "20:00")
+
+    assert result == expected

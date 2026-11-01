@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 import os
+from datetime import date
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -201,14 +202,31 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# Email
+# Email-сповіщення (FR-015)
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+# Без EMAIL_HOST листи лише друкуються в консоль (локальна розробка, Render без SMTP), тож запит не падає.
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend" if EMAIL_HOST else "django.core.mail.backends.console.EmailBackend"
+)
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
+# Таймаут обовʼязковий: лист надсилається під час HTTP-запиту, і недоступний SMTP не має його підвішувати.
+EMAIL_TIMEOUT = 10
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "UniSpace <noreply@unispace.local>")
 
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
+# Адреса фронтенду для посилань у листах.
+FRONTEND_BASE_URL = os.environ.get("FRONTEND_BASE_URL", "https://unispace-front.onrender.com").rstrip("/")
+
+# До цієї дати (включно з нею лист уже йде) email про зміну аудиторії не надсилається (FR-015);
+# внутрішнє сповіщення створюється завжди. Порожнє значення - обмеження немає.
+_semester_start = os.environ.get("SEMESTER_START_DATE", "")
+try:
+    SEMESTER_START_DATE = date.fromisoformat(_semester_start) if _semester_start else None
+except ValueError as error:
+    raise ImproperlyConfigured("SEMESTER_START_DATE має бути датою у форматі РРРР-ММ-ДД") from error
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",

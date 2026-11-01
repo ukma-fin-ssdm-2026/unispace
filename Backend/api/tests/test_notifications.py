@@ -59,3 +59,17 @@ def test_start_time_is_shown_in_local_timezone():
     )
 
     assert "21.10.2026 10:00" in body
+
+
+def test_room_link_uses_configured_frontend_url(settings):
+    settings.FRONTEND_BASE_URL = "https://front.example.org"
+    teacher_mock = Mock(full_name="Тестовий Викладач")
+    lesson_mock = Mock(subject="Програмна інженерія", teacher=teacher_mock)
+    booking_mock = Mock(lesson=lesson_mock, start_time=datetime(2026, 10, 21, 7, 0, tzinfo=timezone.utc))
+
+    body = generate_room_change_email_body(
+        booking=booking_mock, previous_room=Mock(number="1-225"), new_room=Mock(id="room-id", number="1-226")
+    )
+
+    assert "https://front.example.org/rooms/room-id" in body
+    assert "unispace.com" not in body

@@ -170,6 +170,8 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 * Звіт зі статичного аналізу та безпеки [(Static Analysis)](docs/code-quality/static-analysis.md)
 * Прогрес реалізації проєкту [(Progress)](docs/code-quality/progress.md)
 * Звіт рефакторингу SonarQube Cloud [(SonarQube Report)](docs/refactoring/sonarcloud-report.md)
+* Журнал змін і релізи [(Changelog)](CHANGELOG.md)
+* Конфігурація проєкту та версія [(Frontend pyproject.toml)](Frontend/pyproject.toml)
 
 **Локальні перевірки (Pre-commit hooks):**
 Для підтримання стандартів коду в проєкті налаштовано автоматичні перевірки безпосередньо перед комітом 

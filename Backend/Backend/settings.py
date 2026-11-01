@@ -47,9 +47,21 @@ AUTH_USER_MODEL = "api.User"
 MS_TENANT_ID = os.environ.get("MS_TENANT_ID", "")
 MS_CLIENT_ID = os.environ.get("MS_CLIENT_ID", "")
 MS_CLIENT_SECRET = os.environ.get("MS_CLIENT_SECRET", "")
-MS_REDIRECT_URI = os.environ.get("MS_REDIRECT_URI", "https://unispace-wtf6.onrender.com/auth/microsoft/callback/")
-# Куди повертати користувача після входу (поки фронтенду немає - Swagger UI).
-LOGIN_REDIRECT_URL = os.environ.get("LOGIN_REDIRECT_URL", "https://unispace-front.onrender.com/")
+# Локально (DEBUG=True) типові значення ведуть на localhost, щоб забута змінна в .env не відправляла вхід на Render.
+# Хост має збігатися з Redirect URI в Entra: сесія з потоком входу прив'язана до хоста (localhost != 127.0.0.1).
+MS_REDIRECT_URI = os.environ.get(
+    "MS_REDIRECT_URI",
+    (
+        "http://localhost:8000/auth/microsoft/callback/"
+        if DEBUG
+        else "https://unispace-wtf6.onrender.com/auth/microsoft/callback/"
+    ),
+)
+# Куди повертати користувача після входу - головна сторінка фронтенду.
+LOGIN_REDIRECT_URL = os.environ.get(
+    "LOGIN_REDIRECT_URL",
+    "http://localhost:8001/" if DEBUG else "https://unispace-front.onrender.com/",
+)
 
 # Application definition
 

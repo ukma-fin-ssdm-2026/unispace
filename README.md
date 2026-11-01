@@ -55,7 +55,7 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
   - `pip install -r Backend/requirements-dev.txt`
   - `pre-commit install`
 - Застосуйте міграції бази даних: `python manage.py migrate`
-- Заповніть базу початковими даними (деталі про тестових користувачів див. у розділі нижче): python manage.py seed_demo
+- Заповніть базу початковими даними (деталі про тестових користувачів див. у розділі нижче): `python manage.py seed_demo`
 - Запустіть сервер розробки: `python manage.py runserver 8000`
 - *Специфікація OpenAPI генерується автоматично. Swagger UI доступний за адресою: `http://localhost:8000/api/docs/`*
 
@@ -103,8 +103,8 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 
 ### 2. Backend (REST API)
 * **Root Directory:** `Backend`
-* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-* **Start Command:** `python manage.py migrate --noinput && gunicorn Backend.wsgi:application --timeout 45`
+* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+* **Start Command:** `gunicorn Backend.wsgi:application --timeout 45`
 
 **Необхідні змінні середовища (Environment Variables):**
 * `PYTHON_VERSION` = `3.12.0`
@@ -112,15 +112,18 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 * `DEBUG` = `False`
 * `ALLOWED_HOSTS` = `unispace-wtf6.onrender.com`
 * `DATABASE_URL` = `<url-бази>` *(Internal Database URL від `unispace-db`)*
-* `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` = *(Дані з реєстрації застосунку в Microsoft Entra ID)*
+* **Дані для інтеграції з Microsoft (SSO).** Отримайте ці ключі, зареєструвавши застосунок у порталі Microsoft Entra ID (Azure AD):
+  * `MS_TENANT_ID` = `<ідентифікатор-організації>` *(Directory/Tenant ID)*
+  * `MS_CLIENT_ID` = `<ідентифікатор-застосунку>` *(Application/Client ID)*
+  * `MS_CLIENT_SECRET` = `<секретний-ключ>` *(Client Secret/Value)*
 * `MS_REDIRECT_URI` = `https://unispace-wtf6.onrender.com/auth/microsoft/callback/`
 * `LOGIN_REDIRECT_URL` = `https://unispace-front.onrender.com/`
 
 ### 3. Frontend (Web UI)
 Оскільки фронтенд також працює на базі Django, він розгортається аналогічно, використовуючи WhiteNoise для роздачі статичних файлів (CSS, JS).
 * **Root Directory:** `Frontend`
-* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-* **Start Command:** `python manage.py migrate && gunicorn Frontend.wsgi:application`
+* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+* **Start Command:** `gunicorn Frontend.wsgi:application`
 
 **Необхідні змінні середовища (Environment Variables):**
 * `PYTHON_VERSION` = `3.12.0`

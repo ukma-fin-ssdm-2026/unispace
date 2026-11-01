@@ -193,11 +193,12 @@ def test_limit_zero_returns_400(api_client, student):
 
 
 def test_schedule_item_contains_lesson_and_room_details(api_client, student, room, make_booking):
-    make_booking(at(10), at(11, 30))
+    booking = make_booking(at(10), at(11, 30))
     api_client.force_authenticate(user=student)
 
     item = get_schedule(api_client).json()[0]
 
+    assert item["booking_id"] == str(booking.id)
     assert item["subject"] == "Програмна інженерія"
     assert item["date"] == "2026-10-20"
     assert item["start_time"] == "10:00:00"
@@ -228,6 +229,7 @@ def test_cancelled_booking_keeps_lesson_without_room(api_client, student, make_b
 
     assert item["room"] is None
     assert item["room_assigned"] is False
+    assert item["booking_id"] is None
 
 
 def test_lesson_without_booking_has_no_room(api_client, student, make_lesson):
@@ -238,6 +240,7 @@ def test_lesson_without_booking_has_no_room(api_client, student, make_lesson):
 
     assert item["room"] is None
     assert item["room_assigned"] is False
+    assert item["booking_id"] is None
 
 
 def test_room_changed_marker_is_set_when_changed_within_24_hours_before_start(

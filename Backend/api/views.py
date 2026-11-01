@@ -17,9 +17,7 @@ test_rooms_crud.py і test_bookings_crud.py.
 test_room_alternatives.py, які закомічено раніше за реалізацію.
 """
 
-import uuid
-
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.db.models import ProtectedError
 from drf_spectacular.utils import extend_schema
 
@@ -29,8 +27,13 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 
 from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
-from api.services import bookings, schedule
+from api.services import bookings, saz_import, schedule
 from api.services.room_suggestions import suggest_rooms
+from api.room_occupancy import get_previous_booking
+
+from datetime import datetime, time, timedelta
+from django.utils import timezone
+from api.services.available_slots import find_free_slots
 
 from .serializers import (
     RoomSerializer,
@@ -47,7 +50,12 @@ from .serializers import (
     RoomWriteSerializer,
     BookingChangeRoomSerializer,
     RoomAlternativesQuerySerializer,
+    SazImportRequestSerializer,
+    SyncResultSerializer,
     RoomAlternativesResponseSerializer,
+    AuditLogQuerySerializer,
+    AuditLogEntrySerializer,
+    PreviousLessonResponseSerializer,
 )
 
 # ==========================================
@@ -127,9 +135,12 @@ def can_manage_lesson(user, lesson):
     """Диспетчер керує будь-якими заняттями, викладач - лише власними."""
     return user.role == User.RoleChoices.DISPATCHER or lesson.teacher_id == user.id
 
-    # ==========================================
-    # API Аудиторій (Rooms)
-    # ==========================================
+
+NO_PREVIOUS_LESSON_MESSAGE = "Попередньої пари не було"
+
+# ==========================================
+# API Аудиторій (Rooms)
+# ==========================================
 
 
 class RoomListAPIView(APIView):
@@ -252,23 +263,89 @@ class AvailableSlotsAPIView(APIView):
     @extend_schema(
         summary="Пошук вільних слотів",
         parameters=[AvailableSlotsQuerySerializer],
-        responses={200: AvailableSlotsResponseSerializer, 400: ErrorResponseSerializer},
+        responses={
+            200: AvailableSlotsResponseSerializer,
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
     )
     def get(self, request, format=None):
         query = AvailableSlotsQuerySerializer(data=request.query_params)
+
         if not query.is_valid():
-            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                get_validation_error_response(query.errors),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        mock_data = {
-            "room_id": query.validated_data["room_id"],
-            "date": query.validated_data["date"],
-            "available_slots": ["09:00-10:30", "12:00-13:30"],
-        }
-        return Response(mock_data, status=status.HTTP_200_OK)
+        room_id = query.validated_data["room_id"]
+        selected_date = query.validated_data["date"]
 
-    # ==========================================
-    # API Бронювань (Bookings)
-    # ==========================================
+        # Перевіряємо, чи існує аудиторія
+        room = Room.objects.filter(pk=room_id).first()
+
+        if room is None:
+            return not_found_response("Аудиторію", room_id)
+
+        # Недоступна аудиторія не має вільних слотів
+        if not room.is_available:
+            return Response(
+                {
+                    "room_id": room_id,
+                    "date": selected_date,
+                    "available_slots": [],
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        # Тимчасові межі доступності аудиторії
+        day_start = "08:00"
+        day_end = "20:00"
+
+        # Межі вибраної дати в часовому поясі Django
+        next_date = selected_date + timedelta(days=1)
+
+        start_datetime = timezone.make_aware(datetime.combine(selected_date, time.min))
+        end_datetime = timezone.make_aware(datetime.combine(next_date, time.min))
+
+        # Знаходимо тільки активні бронювання цієї аудиторії
+        bookings = Booking.objects.filter(
+            room=room,
+            status=Booking.BookingStatus.ACTIVE,
+            start_time__lt=end_datetime,
+            end_time__gt=start_datetime,
+        ).order_by("start_time")
+
+        occupied_intervals = []
+
+        for booking in bookings:
+            # Обрізаємо бронювання до меж вибраної дати
+            booking_start = max(booking.start_time, start_datetime)
+            booking_end = min(booking.end_time, end_datetime)
+
+            local_start = timezone.localtime(booking_start)
+            local_end = timezone.localtime(booking_end)
+
+            start_str = "00:00" if booking_start == start_datetime else local_start.strftime("%H:%M")
+            end_str = "24:00" if booking_end == end_datetime else local_end.strftime("%H:%M")
+
+            occupied_intervals.append((start_str, end_str))
+
+        # Обчислюємо вільні проміжки
+        free_slots = find_free_slots(
+            occupied_intervals,
+            day_start,
+            day_end,
+        )
+
+        return Response(
+            {
+                "room_id": room_id,
+                "date": selected_date,
+                "available_slots": free_slots,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class BookingListCreateAPIView(APIView):
@@ -402,6 +479,52 @@ class BookingAlternativesAPIView(APIView):
         return Response(RoomAlternativesResponseSerializer(result).data, status=status.HTTP_200_OK)
 
 
+class BookingPreviousLessonAPIView(APIView):
+    permission_classes = [IsTeacherOrDispatcher]
+
+    @extend_schema(
+        summary="Попередня пара в аудиторії",
+        description=(
+            "Блок «Попередня пара» для заняття (FR-019): дисципліна, група й ПІБ викладача заняття, яке було "
+            "в тій самій аудиторії того ж дня безпосередньо перед цим (скасовані бронювання не враховуються). "
+            "Якщо такого заняття не було, previous_lesson = null, а message містить «Попередньої пари не було»."
+        ),
+        responses={
+            200: PreviousLessonResponseSerializer,
+            403: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+            409: ErrorResponseSerializer,
+        },
+    )
+    def get(self, request, pk, format=None):
+        booking = Booking.objects.select_related("lesson").filter(pk=pk).first()
+        if booking is None:
+            return not_found_response("Бронювання", pk)
+
+        if not can_manage_lesson(request.user, booking.lesson):
+            return forbidden_response("Викладач бачить попередню пару лише для власних занять")
+
+        if booking.status != Booking.BookingStatus.ACTIVE:
+            return conflict_response("Для скасованого бронювання попередню пару не показують")
+
+        previous = get_previous_booking(booking)
+        if previous is None:
+            result = {"previous_lesson": None, "message": NO_PREVIOUS_LESSON_MESSAGE}
+        else:
+            lesson = previous.lesson
+            result = {
+                "previous_lesson": {
+                    "subject": lesson.subject,
+                    "group": lesson.group.name,
+                    "teacher": str(lesson.teacher),
+                    "start_time": previous.start_time,
+                    "end_time": previous.end_time,
+                },
+                "message": None,
+            }
+        return Response(PreviousLessonResponseSerializer(result).data, status=status.HTTP_200_OK)
+
+
 class BookingChangeRoomAPIView(APIView):
     permission_classes = [IsTeacherOrDispatcher]
 
@@ -520,6 +643,48 @@ class ScheduleAPIView(APIView):
 
 
 # ==========================================
+# API Аудит-логу (AuditLog, FR-017)
+# ==========================================
+
+
+class AuditLogListAPIView(APIView):
+    permission_classes = [IsDispatcher]
+
+    @extend_schema(
+        summary="Історія змін бронювань (аудит-лог)",
+        description=(
+            "Диспетчер переглядає записи про перенесення й скасування бронювань: час, автор, "
+            "попередня та нова аудиторії, причина. Найновіші записи першими. Тільки для читання: "
+            "редагувати чи видаляти записи через API неможливо."
+        ),
+        parameters=[AuditLogQuerySerializer],
+        responses={200: AuditLogEntrySerializer(many=True), 400: ErrorResponseSerializer},
+    )
+    def get(self, request, format=None):
+        query = AuditLogQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+        params = query.validated_data
+
+        logs = AuditLog.objects.select_related("user", "previous_room", "new_room", "booking__lesson")
+
+        if "booking_id" in params:
+            logs = logs.filter(booking_id=params["booking_id"])
+        if "room_id" in params:
+            logs = logs.filter(Q(previous_room_id=params["room_id"]) | Q(new_room_id=params["room_id"]))
+        if "action" in params:
+            logs = logs.filter(action=params["action"])
+        if "date_from" in params:
+            logs = logs.filter(created_at__date__gte=params["date_from"])
+        if "date_to" in params:
+            logs = logs.filter(created_at__date__lte=params["date_to"])
+
+        offset = params["offset"]
+        logs = logs.order_by("-created_at", "-id")[offset : offset + params["limit"]]
+        return Response(AuditLogEntrySerializer(logs, many=True).data, status=status.HTTP_200_OK)
+
+
+# ==========================================
 # API Синхронізації (Sync)
 # ==========================================
 
@@ -542,19 +707,30 @@ class SyncTriggerAPIView(APIView):
     permission_classes = [IsDispatcher]
 
     @extend_schema(
-        summary="Запустити імпорт розкладу",
-        description="Ручний запуск синхронізації.",
-        request=None,
-        responses={201: SyncLogSerializer, 429: ErrorResponseSerializer},
+        summary="Імпортувати розклад із САЗ",
+        description=(
+            "Ручна синхронізація (FR-004, FR-005). САЗ показує розклад лише після входу, тому диспетчер завантажує "
+            "збережену HTML-сторінку попереднього перегляду розкладу (multipart/form-data: file, semester_start). "
+            "Кожна спроба пишеться в журнал синхронізації; якщо сторінку не вдалося розібрати, статус failed, "
+            "а раніше імпортовані дані не змінюються (REL-002). Повторний імпорт того самого розкладу не дублює даних."
+        ),
+        request={"multipart/form-data": SazImportRequestSerializer},
+        responses={201: SyncResultSerializer, 400: ErrorResponseSerializer, 403: ErrorResponseSerializer},
     )
     def post(self, request, format=None):
-        mock_response = {
-            "id": uuid.uuid4(),
-            "started_at": "2026-10-15T09:27:00Z",
-            "finished_at": None,
-            "status": "in_progress",
-            "trigger": "manual",
-            "error_message": None,
+        form = SazImportRequestSerializer(data=request.data)
+        if not form.is_valid():
+            return Response(get_validation_error_response(form.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        html = form.validated_data["file"].read().decode("utf-8", errors="replace")
+        log, result = saz_import.run_sync(html, form.validated_data["semester_start"])
+        data = {
+            "id": log.id,
+            "started_at": log.started_at,
+            "finished_at": log.finished_at,
+            "status": log.status,
+            "trigger": log.trigger,
+            "error_message": log.error_message or None,
+            "summary": result.as_dict() if result else None,
         }
-        serializer = SyncLogSerializer(mock_response)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(SyncResultSerializer(data).data, status=status.HTTP_201_CREATED)

@@ -1,5 +1,8 @@
 # UniSpace [![CI Pipeline](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml/badge.svg)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml)
 
+**Жива система:**
+* Web UI (Фронтенд на Render) [(Відкрити застосунок)](https://unispace-front.onrender.com/)
+
 **Інтерактивна API Документація:**
 * Swagger UI [(Статична версія на GitHub Pages)](https://ukma-fin-ssdm-2026.github.io/unispace/)
 * Swagger UI [(Живий бекенд на Render)](https://unispace-wtf6.onrender.com/api/docs/)
@@ -20,7 +23,7 @@ UniSpace — вебзастосунок, який працює як шар ке�
 ## Стек технологій
 * **Backend:** Python (Django, Django REST Framework)
 * **Frontend:** HTML5, CSS, JS, Django Templates, WhiteNoise
-* **База даних:** PostgreSQL (локальна розробка через Docker Compose (`Backend/docker-compose.yml`) та продакшн на Render; міграції вимагають обов'язкової підтримки PostgreSQL та розширення GiST)
+* **База даних:** PostgreSQL (локальна розробка через Docker Compose (`Backend/docker-compose.yml`) та продакшн на Render; міграції вимагають обов'язкової підтримки PostgreSQL та розширення GiST) 
 * **CI/CD, Тестування & Інструменти якості:** GitHub Actions, GitHub Flow, pytest, coverage, Flake8, Black, Bandit, pip-audit, Pre-commit, mutmut, hypothesis
 
 ## Інструкція із запуску (Локально)
@@ -30,18 +33,23 @@ UniSpace — вебзастосунок, який працює як шар ке�
 - Клонуйте репозиторій та перейдіть у папку бекенду: `cd Backend`
 - Створіть віртуальне середовище: `python -m venv .venv`
 - Активуйте віртуальне середовище:
-   - **Windows:** `.\.venv\Scripts\activate`
-   - **macOS / Linux:** `source .venv/bin/activate`
+  - **Windows:** `.\.venv\Scripts\activate`
+  - **macOS / Linux:** `source .venv/bin/activate`
 - Налаштуйте змінні середовища:
-   - Створіть копію файлу `.env.example` і назвіть її `.env`
-   - Відкрийте `.env` і впишіть свої локальні налаштування для доступу до бази даних (логін, пароль) та `SECRET_KEY`, а також дані для інтеграції з Microsoft (за потреби `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET`).
+  - Створіть копію файлу `.env.example` і назвіть її `.env`
+  - Відкрийте `.env` і впишіть свої локальні налаштування для доступу до бази даних (логін, пароль) та `SECRET_KEY`, а також дані для інтеграції з Microsoft (за потреби `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET`).
+- **Важливо (Ізоляція кук сесій):** У режимі локальної розробки на `127.0.0.1` бекенд і фронтенд працюють на різних портах. Щоб уникнути перезапису сесійних кук між ними, переконайтеся, що у `settings.py` бекенду встановлено унікальне ім'я куки:
+```python
+SESSION_COOKIE_NAME = "api_sessionid"
+CSRF_COOKIE_NAME = "api_csrftoken"
+```
 - Підготуйте базу даних:
-   - Запустіть PostgreSQL локально або скористайтеся конфігурацією з `Backend/docker-compose.yml`.
-   - Створіть порожню базу даних (наприклад, `CREATE DATABASE unispace;`).
-   - Увійдіть у створену базу даних та активуйте обов'язкове розширення для перевірки часових перетинів і унікальності бронювань (GiST-індекси):
-     ```sql
-     CREATE EXTENSION IF NOT EXISTS btree_gist;
-     ```
+  - Запустіть PostgreSQL локально або скористайтеся конфігурацією з `Backend/docker-compose.yml`.
+  - Створіть порожню базу даних (наприклад, `CREATE DATABASE unispace;`).
+  - Увійдіть у створену базу даних та активуйте обов'язкове розширення для перевірки часових перетинів і унікальності бронювань (GiST-індекси):
+```sql
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+```
 - Встановіть залежності: `pip install -r requirements.txt`
 - Встановіть інструменти перевірки якості (виконайте ці дві команди **у корені проєкту**):
   - `pip install -r Backend/requirements-dev.txt`
@@ -55,49 +63,53 @@ UniSpace — вебзастосунок, який працює як шар ке�
 - Відкрийте нову вкладку терміналу та перейдіть у папку фронтенду: `cd Frontend`
 - Створіть віртуальне середовище: `python -m venv .venv`
 - Активуйте віртуальне середовище:
-   - **Windows:** `.\.venv\Scripts\activate`
-   - **macOS / Linux:** `source .venv/bin/activate`
+  - **Windows:** `.\.venv\Scripts\activate`
+  - **macOS / Linux:** `source .venv/bin/activate`
 - Налаштуйте змінні середовища:
-   - Створіть копію файлу `.env.example` і назвіть її `.env`
-   - Відкрийте `.env` і впишіть туди свій `SECRET_KEY` та переконайтеся, що `BACKEND_API_URL` вказує на ваш локальний бекенд.
+  - Створіть копію файлу `.env.example` і назвіть її `.env`
+  - Відкрийте `.env` і впишіть туди свій `SECRET_KEY` та переконайтеся, що `BACKEND_API_URL` вказує на ваш локальний бекенд.
 - Встановіть залежності:
-   - `pip install -r requirements.txt`
-   - `pip install -r requirements-dev.txt`
+  - `pip install -r requirements.txt`
+  - `pip install -r requirements-dev.txt`
 - *Примітка щодо якості коду:* Переконайтеся, що ви виконали команду `pre-commit install` у **корені всього репозиторію**, щоб активувати автоматичні перевірки для фронтенду.
 - Застосуйте міграції (для внутрішніх таблиць сесій Django): `python manage.py migrate`
 - Запустіть сервер розробки на іншому порту: `python manage.py runserver 8001`
-- *Клієнтський вебзастосунок доступний за адресою: `http://localhost:8001/`*
+- *Клієнтський вебзастосунок доступний за адресою: `http://127.0.0.1:8001/` (рекомендується використовувати `127.0.0.1` замість `localhost` для коректної передачі сесійних кук між серверами).*
 
 ## Розгортання на Render (Deployment)
-Обидва сервіси (Backend та Frontend) розгортаються на хмарній платформі Render як окремі вебсервіси (Web Services).
+Проєкт розгортається на хмарній платформі Render і складається з трьох пов'язаних компонентів: бази даних PostgreSQL (`unispace-db`), бекенду (`unispace`) та фронтенду (`unispace-front`).
 
-### 1. Backend (REST API)
+### 1. База даних (PostgreSQL)
+* Створіть новий PostgreSQL інстанс на Render (наприклад, `unispace-db`).
+* Скопіюйте **Internal Database URL** для підключення з бекенду.
+
+### 2. Backend (REST API)
 * **Root Directory:** `Backend`
 * **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-* **Start Command:** `gunicorn Backend.wsgi:application --timeout 45`
+* **Start Command:** `python manage.py migrate --noinput && gunicorn Backend.wsgi:application --timeout 45`
 
 **Необхідні змінні середовища (Environment Variables):**
 * `PYTHON_VERSION` = `3.12.0`
 * `SECRET_KEY` = `<ваш-унікальний-секретний-ключ>`
 * `DEBUG` = `False`
-* `ALLOWED_HOSTS` = `<unispace-wtf6.onrender.com>`
-* `DATABASE_URL` = `<url-бази>` *(Internal Database URL від вашого PostgreSQL інстансу на Render)*
+* `ALLOWED_HOSTS` = `unispace-wtf6.onrender.com`
+* `DATABASE_URL` = `<url-бази>` *(Internal Database URL від `unispace-db`)*
 * `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` = *(Дані з реєстрації застосунку в Microsoft Entra ID)*
-* `MS_REDIRECT_URI` = `https://<ваша-адреса-бекенду>.onrender.com/auth/microsoft/callback/`
-* `LOGIN_REDIRECT_URL` = `https://<ваша-адреса-фронтенду>.onrender.com/`
+* `MS_REDIRECT_URI` = `https://unispace-wtf6.onrender.com/auth/microsoft/callback/`
+* `LOGIN_REDIRECT_URL` = `https://unispace-front.onrender.com/`
 
-### 2. Frontend (Web UI)
+### 3. Frontend (Web UI)
 Оскільки фронтенд також працює на базі Django, він розгортається аналогічно, використовуючи WhiteNoise для роздачі статичних файлів (CSS, JS).
 * **Root Directory:** `Frontend`
 * **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-* **Start Command:** `gunicorn Frontend.wsgi:application`
+* **Start Command:** `python manage.py migrate && gunicorn Frontend.wsgi:application`
 
 **Необхідні змінні середовища (Environment Variables):**
 * `PYTHON_VERSION` = `3.12.0`
 * `SECRET_KEY` = `<ваш-унікальний-секретний-ключ>`
 * `DEBUG` = `False`
-* `ALLOWED_HOSTS` = `<unispace-front.onrender.com>`
-* `BACKEND_API_URL` = `https://<ваша-адреса-бекенду>.onrender.com/api/v1/`
+* `ALLOWED_HOSTS` = `unispace-front.onrender.com`
+* `BACKEND_API_URL` = `https://unispace-wtf6.onrender.com/api/v1/`
 
 > **Важлива примітка щодо безпеки:** Щоб авторизація запрацювала, адресу, вказану в `MS_REDIRECT_URI` вашого бекенду, необхідно обов'язково додати до списку дозволених "Redirect URIs" у налаштуваннях застосунку на порталі Microsoft Entra ID.
 

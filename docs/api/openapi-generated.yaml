@@ -4,6 +4,86 @@ info:
   version: 1.0.0
   description: API для системи керування аудиторним фондом UniSpace
 paths:
+  /api/v1/audit-logs/:
+    get:
+      operationId: v1_audit_logs_list
+      description: 'Диспетчер переглядає записи про перенесення й скасування бронювань:
+        час, автор, попередня та нова аудиторії, причина. Найновіші записи першими.
+        Тільки для читання: редагувати чи видаляти записи через API неможливо.'
+      summary: Історія змін бронювань (аудит-лог)
+      parameters:
+      - in: query
+        name: action
+        schema:
+          enum:
+          - room_changed
+          - cancelled
+          type: string
+          minLength: 1
+        description: |-
+          Тип дії: перенесення чи скасування
+
+          * `room_changed` - room_changed
+          * `cancelled` - cancelled
+      - in: query
+        name: booking_id
+        schema:
+          type: string
+          format: uuid
+        description: Лише записи цього бронювання
+      - in: query
+        name: date_from
+        schema:
+          type: string
+          format: date
+        description: Початок періоду (включно)
+      - in: query
+        name: date_to
+        schema:
+          type: string
+          format: date
+        description: Кінець періоду (включно)
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+        description: Кількість записів
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: Зсув
+      - in: query
+        name: room_id
+        schema:
+          type: string
+          format: uuid
+        description: Записи, де аудиторія була попередньою або новою
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLogEntry'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /api/v1/auth/me/:
     get:
       operationId: v1_auth_me_retrieve
@@ -290,6 +370,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+  /api/v1/bookings/{id}/previous/:
+    get:
+      operationId: v1_bookings_previous_retrieve
+      description: 'Блок «Попередня пара» для заняття (FR-019): дисципліна, група
+        й ПІБ викладача заняття, яке було в тій самій аудиторії того ж дня безпосередньо
+        перед цим (скасовані бронювання не враховуються). Якщо такого заняття не було,
+        previous_lesson = null, а message містить «Попередньої пари не було».'
+      summary: Попередня пара в аудиторії
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreviousLessonResponse'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /api/v1/rooms/:
     get:
       operationId: v1_rooms_list
@@ -548,6 +673,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /api/v1/schedule/:
     get:
       operationId: v1_schedule_list
@@ -611,10 +742,21 @@ paths:
   /api/v1/sync/:
     post:
       operationId: v1_sync_create
-      description: Ручний запуск синхронізації.
-      summary: Запустити імпорт розкладу
+      description: 'Ручна синхронізація (FR-004, FR-005). САЗ показує розклад лише
+        після входу, тому диспетчер завантажує збережену HTML-сторінку попереднього
+        перегляду розкладу (multipart/form-data: file, semester_start). Кожна спроба
+        пишеться в журнал синхронізації; якщо сторінку не вдалося розібрати, статус
+        failed, а раніше імпортовані дані не змінюються (REL-002). Повторний імпорт
+        того самого розкладу не дублює даних.'
+      summary: Імпортувати розклад із САЗ
       tags:
       - v1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SazImportRequest'
+        required: true
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -623,9 +765,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SyncLog'
+                $ref: '#/components/schemas/SyncResult'
           description: ''
-        '429':
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
           content:
             application/json:
               schema:
@@ -695,6 +843,80 @@ paths:
           description: ''
 components:
   schemas:
+    AuditLogEntry:
+      type: object
+      description: 'Запис аудиту лише для читання: хто, коли, з якої аудиторії в яку
+        і чому (FR-017).'
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        booking_id:
+          type: string
+          format: uuid
+          readOnly: true
+        subject:
+          type: string
+          readOnly: true
+          description: Назва дисципліни
+        action:
+          type: string
+          title: Дія
+          maxLength: 50
+        user:
+          allOf:
+          - $ref: '#/components/schemas/AuditLogUser'
+          readOnly: true
+          description: Автор дії
+        previous_room:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleRoom'
+          readOnly: true
+          nullable: true
+          description: Попередня аудиторія
+        new_room:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleRoom'
+          readOnly: true
+          nullable: true
+          description: Нова аудиторія; null для скасування бронювання
+        reason:
+          type: string
+          title: Причина
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата дії
+      required:
+      - action
+      - booking_id
+      - created_at
+      - id
+      - new_room
+      - previous_room
+      - subject
+      - user
+    AuditLogUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Університетська електронна пошта
+          maxLength: 254
+        full_name:
+          type: string
+          title: Повне ім'я
+          maxLength: 255
+      required:
+      - email
+      - id
     AvailableSlotsResponse:
       type: object
       properties:
@@ -756,7 +978,7 @@ components:
           readOnly: true
         status:
           allOf:
-          - $ref: '#/components/schemas/BookingResponseStatusEnum'
+          - $ref: '#/components/schemas/BookingStatusEnum'
           readOnly: true
         title:
           type: string
@@ -778,7 +1000,7 @@ components:
       - start_time
       - status
       - title
-    BookingResponseStatusEnum:
+    BookingStatusEnum:
       enum:
       - active
       - cancelled
@@ -882,6 +1104,47 @@ components:
         is_available:
           type: boolean
           title: Доступна для використання
+    PreviousLesson:
+      type: object
+      properties:
+        subject:
+          type: string
+          description: Назва дисципліни
+        group:
+          type: string
+          description: Назва академічної групи
+        teacher:
+          type: string
+          description: ПІБ викладача попереднього заняття
+        start_time:
+          type: string
+          format: date-time
+          description: Початок попереднього заняття
+        end_time:
+          type: string
+          format: date-time
+          description: Завершення попереднього заняття
+      required:
+      - end_time
+      - group
+      - start_time
+      - subject
+      - teacher
+    PreviousLessonResponse:
+      type: object
+      properties:
+        previous_lesson:
+          allOf:
+          - $ref: '#/components/schemas/PreviousLesson'
+          nullable: true
+          description: Попереднє заняття в цій аудиторії того ж дня або null
+        message:
+          type: string
+          nullable: true
+          description: «Попередньої пари не було», якщо previous_lesson = null
+      required:
+      - message
+      - previous_lesson
     RoleEnum:
       enum:
       - student
@@ -989,12 +1252,62 @@ components:
       - building
       - capacity
       - number
+    SazImportRequest:
+      type: object
+      description: 'Ручний імпорт розкладу САЗ (FR-004, FR-005): збережена сторінка
+        попереднього перегляду розкладу.'
+      properties:
+        file:
+          type: string
+          format: uri
+          description: HTML-сторінка розкладу з my.ukma.edu.ua/schedule/preview/...
+            (до 5 МБ)
+        semester_start:
+          type: string
+          format: date
+          description: Будь-який день першого навчального тижня семестру
+      required:
+      - file
+      - semester_start
+    SazImportSummary:
+      type: object
+      properties:
+        lessons_created:
+          type: integer
+        lessons_updated:
+          type: integer
+        bookings_created:
+          type: integer
+        conflicts_created:
+          type: integer
+        teachers_created:
+          type: integer
+        online_lessons:
+          type: integer
+        warnings:
+          type: array
+          items:
+            type: string
+      required:
+      - bookings_created
+      - conflicts_created
+      - lessons_created
+      - lessons_updated
+      - online_lessons
+      - teachers_created
+      - warnings
     ScheduleItem:
       type: object
       properties:
         lesson_id:
           type: string
           format: uuid
+        booking_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Активне бронювання заняття (для зміни аудиторії чи скасування)
+            або null
         subject:
           type: string
           description: Назва дисципліни
@@ -1026,6 +1339,7 @@ components:
           description: 'Маркер «Змінено»: аудиторію змінено менш ніж за 24 години
             до початку заняття'
       required:
+      - booking_id
       - date
       - end_time
       - group
@@ -1073,7 +1387,7 @@ components:
           description: Час завершення синхронізації
         status:
           allOf:
-          - $ref: '#/components/schemas/SyncLogStatusEnum'
+          - $ref: '#/components/schemas/SyncStatusEnum'
           description: |-
             Поточний статус синхронізації
 
@@ -1097,7 +1411,56 @@ components:
       - started_at
       - status
       - trigger
-    SyncLogStatusEnum:
+    SyncResult:
+      type: object
+      description: Запис журналу синхронізації та підсумок імпорту (null, якщо імпорт
+        не вдався).
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        started_at:
+          type: string
+          format: date-time
+          description: Час початку синхронізації
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Час завершення синхронізації
+        status:
+          allOf:
+          - $ref: '#/components/schemas/SyncStatusEnum'
+          description: |-
+            Поточний статус синхронізації
+
+            * `in_progress` - in_progress
+            * `success` - success
+            * `failed` - failed
+        trigger:
+          allOf:
+          - $ref: '#/components/schemas/TriggerEnum'
+          description: |-
+            Джерело запуску (ручний диспетчером чи за розкладом)
+
+            * `manual` - manual
+            * `scheduled` - scheduled
+        error_message:
+          type: string
+          nullable: true
+          description: Текст помилки парсингу або мережі, якщо статус failed
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/SazImportSummary'
+          nullable: true
+      required:
+      - id
+      - started_at
+      - status
+      - summary
+      - trigger
+    SyncStatusEnum:
       enum:
       - in_progress
       - success
@@ -1122,4 +1485,4 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: sessionid
+      name: api_sessionid

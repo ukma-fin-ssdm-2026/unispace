@@ -4,6 +4,7 @@ from django.views.decorators.http import require_GET
 
 @require_GET
 def login_view(request):
+    request.session.pop("has_seen_welcome", None)
     return render(request, "login.html")
 
 

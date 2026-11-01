@@ -144,12 +144,6 @@ body {
     display: none !important;
 }
 
-.sidebar.collapsed .js-teacher-dispatcher-only,
-.sidebar.collapsed .js-dispatcher-only {
-    display: flex !important;
-    justify-content: center !important;
-}
-
 .sidebar.collapsed .sidebar-header {
     padding: 2.5rem 0 2rem;
     justify-content: center;

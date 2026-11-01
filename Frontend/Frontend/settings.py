@@ -38,7 +38,11 @@ if not DEBUG:
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,unispace-front.onrender.com").split(",")
 
-BACKEND_API_URL = os.environ.get("BACKEND_API_URL", "https://unispace-wtf6.onrender.com/api/v1/")
+# Локально (DEBUG=True) - бекенд на localhost:8000, щоб без змінної в .env вхід не йшов на Render.
+BACKEND_API_URL = os.environ.get(
+    "BACKEND_API_URL",
+    "http://localhost:8000/api/v1/" if DEBUG else "https://unispace-wtf6.onrender.com/api/v1/",
+)
 
 # Application definition
 

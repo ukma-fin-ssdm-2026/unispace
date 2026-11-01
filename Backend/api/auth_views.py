@@ -4,6 +4,8 @@
 Примітка щодо використання ШІ: модуль згенеровано ШІ (Claude); перевірено тестами test_microsoft_auth.py.
 """
 
+from urllib.parse import urlsplit
+
 from django.conf import settings
 from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect, JsonResponse
@@ -38,6 +40,16 @@ def microsoft_login(request):
     """Перенаправляє браузер на сторінку входу Microsoft."""
     if not microsoft_auth.is_configured():
         return _error("AUTH_NOT_CONFIGURED", "Вхід через Microsoft не налаштовано на сервері", 503)
+
+    # Потік входу зберігається в сесійній cookie, а cookie прив'язана до хоста. Якщо вхід почато на 127.0.0.1,
+    # а Microsoft повертає на localhost (Redirect URI), callback не побачить сесію -> LOGIN_NOT_STARTED.
+    # Тому спершу переходимо на той самий хост, що й у MS_REDIRECT_URI.
+    redirect = urlsplit(settings.MS_REDIRECT_URI or "")
+    if redirect.scheme not in ("http", "https") or not redirect.netloc:
+        # Некоректна змінна середовища: не перенаправляємо "кудись", а одразу повідомляємо про помилку конфігурації
+        return _error("AUTH_NOT_CONFIGURED", "MS_REDIRECT_URI має бути повною адресою http(s)://хост/шлях", 503)
+    if request.get_host() != redirect.netloc:
+        return HttpResponseRedirect(f"{redirect.scheme}://{redirect.netloc}{request.get_full_path()}")
 
     flow = microsoft_auth.start_login()
     request.session[microsoft_auth.SESSION_FLOW_KEY] = flow

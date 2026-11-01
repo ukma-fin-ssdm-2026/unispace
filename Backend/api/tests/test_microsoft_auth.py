@@ -34,6 +34,7 @@ def microsoft_settings(settings):
     settings.MS_CLIENT_ID = "client-id"
     settings.MS_CLIENT_SECRET = FAKE_CREDENTIAL
     settings.LOGIN_REDIRECT_URL = "/after-login/"
+    settings.MS_REDIRECT_URI = "http://testserver/auth/microsoft/callback/"
     return settings
 
 
@@ -140,6 +141,77 @@ def test_login_redirects_to_microsoft_and_remembers_flow(client, fake_msal):
     assert response.status_code == status.HTTP_302_FOUND
     assert response["Location"] == AUTH_URI
     assert client.session[SESSION_FLOW_KEY]["state"] == "xyz"
+
+
+def test_login_on_other_host_first_moves_to_redirect_uri_host(client, fake_msal, settings):
+    # Arrange: вхід почато на 127.0.0.1, а Redirect URI в Entra - на localhost
+    settings.MS_REDIRECT_URI = "http://localhost:8000/auth/microsoft/callback/"
+
+    # Act
+    response = client.get(reverse("microsoft-login"), HTTP_HOST="127.0.0.1:8000")
+
+    # Assert: спершу перехід на localhost, потік входу ще не розпочато
+    assert response.status_code == status.HTTP_302_FOUND
+    assert response["Location"] == "http://localhost:8000" + reverse("microsoft-login")
+    assert SESSION_FLOW_KEY not in client.session
+    fake_msal.initiate_auth_code_flow.assert_not_called()
+
+
+def test_login_on_redirect_uri_host_starts_flow(client, fake_msal, settings):
+    # Arrange
+    settings.MS_REDIRECT_URI = "http://localhost:8000/auth/microsoft/callback/"
+
+    # Act
+    response = client.get(reverse("microsoft-login"), HTTP_HOST="localhost:8000")
+
+    # Assert
+    assert response["Location"] == AUTH_URI
+    assert client.session[SESSION_FLOW_KEY]["state"] == "xyz"
+
+
+@pytest.mark.parametrize(
+    "redirect_uri",
+    ["", "not-a-url", "localhost:8000/auth/microsoft/callback/", "/auth/microsoft/callback/", "ftp://localhost/cb/"],
+)
+def test_login_with_malformed_redirect_uri_returns_503_without_redirect(client, fake_msal, settings, redirect_uri):
+    # Arrange: помилка в змінній середовища MS_REDIRECT_URI
+    settings.MS_REDIRECT_URI = redirect_uri
+
+    # Act
+    response = start_login(client)
+
+    # Assert: жодного перенаправлення, потік входу не розпочато
+    assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+    assert response.json()["error"]["code"] == "AUTH_NOT_CONFIGURED"
+    assert "Location" not in response
+    fake_msal.initiate_auth_code_flow.assert_not_called()
+
+
+def test_production_login_on_render_host_starts_flow_over_https(client, fake_msal, settings):
+    # Arrange: налаштування як на Render
+    settings.MS_REDIRECT_URI = "https://unispace-wtf6.onrender.com/auth/microsoft/callback/"
+
+    # Act
+    response = client.get(reverse("microsoft-login"), HTTP_HOST="unispace-wtf6.onrender.com", secure=True)
+
+    # Assert: хост збігається - одразу на Microsoft, MSAL отримує https Redirect URI
+    assert response["Location"] == AUTH_URI
+    fake_msal.initiate_auth_code_flow.assert_called_once()
+    assert fake_msal.initiate_auth_code_flow.call_args.kwargs["redirect_uri"].startswith("https://")
+
+
+def test_production_login_on_other_host_keeps_https(client, fake_msal, settings):
+    # Arrange: запит прийшов на інший дозволений хост
+    settings.MS_REDIRECT_URI = "https://unispace-wtf6.onrender.com/auth/microsoft/callback/"
+    settings.ALLOWED_HOSTS = ["unispace-wtf6.onrender.com", "alias.example.com"]
+
+    # Act
+    response = client.get(reverse("microsoft-login"), HTTP_HOST="alias.example.com")
+
+    # Assert: навіть із http-запиту переходимо на https-хост із MS_REDIRECT_URI
+    assert response.status_code == status.HTTP_302_FOUND
+    assert response["Location"] == "https://unispace-wtf6.onrender.com" + reverse("microsoft-login")
+    fake_msal.initiate_auth_code_flow.assert_not_called()
 
 
 def test_login_without_configuration_returns_503(client, settings):

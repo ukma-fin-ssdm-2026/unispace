@@ -1,7 +1,7 @@
 # UniSpace [![CI Pipeline](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml/badge.svg)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/workflows/ci.yml)
 
 **Жива система:**
-* Web UI (Фронтенд на Render) [(Відкрити застосунок)](https://unispace-front.onrender.com/)
+* Web UI (Фронтенд на Render) [(Відкрити застосунок)](https://unispace-front.onrender.com/login/)
 
 **Інтерактивна API Документація:**
 * Swagger UI [(Статична версія на GitHub Pages)](https://ukma-fin-ssdm-2026.github.io/unispace/)
@@ -38,7 +38,8 @@ UniSpace — вебзастосунок, який працює як шар ке�
 - Налаштуйте змінні середовища:
   - Створіть копію файлу `.env.example` і назвіть її `.env`
   - Відкрийте `.env` і впишіть свої локальні налаштування для доступу до бази даних (логін, пароль) та `SECRET_KEY`, а також дані для інтеграції з Microsoft (за потреби `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET`).
-- **Важливо (Ізоляція кук сесій):** У режимі локальної розробки на `127.0.0.1` бекенд і фронтенд працюють на різних портах. Щоб уникнути перезапису сесійних кук між ними, переконайтеся, що у `settings.py` бекенду встановлено унікальне ім'я куки:
+- Для локального входу через Microsoft у `Backend/.env` мають бути `DEBUG=True`, `MS_REDIRECT_URI=http://localhost:8000/auth/microsoft/callback/` та `LOGIN_REDIRECT_URL=http://localhost:8001/` (саме `localhost`: Microsoft Entra не приймає `http://127.0.0.1` як Redirect URI). Без `DEBUG=True` cookie стають `Secure` і браузер не зберігає їх по `http`.
+- **Важливо (Ізоляція кук сесій):** У режимі локальної розробки бекенд і фронтенд працюють на різних портах. Щоб уникнути перезапису сесійних кук між ними, переконайтеся, що у `settings.py` бекенду встановлено унікальне ім'я куки:
 ```python
 SESSION_COOKIE_NAME = "api_sessionid"
 CSRF_COOKIE_NAME = "api_csrftoken"
@@ -55,7 +56,7 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
   - `pip install -r Backend/requirements-dev.txt`
   - `pre-commit install`
 - Застосуйте міграції бази даних: `python manage.py migrate`
-- Заповніть базу початковими даними (аудиторії, розклад, тестові користувачі ролей студента, викладача та диспетчера): `python manage.py seed_demo`.
+- Заповніть базу початковими даними (деталі про тестових користувачів див. у розділі нижче): `python manage.py seed_demo`
 - Запустіть сервер розробки: `python manage.py runserver 8000`
 - *Специфікація OpenAPI генерується автоматично. Swagger UI доступний за адресою: `http://localhost:8000/api/docs/`*
 
@@ -67,14 +68,32 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
   - **macOS / Linux:** `source .venv/bin/activate`
 - Налаштуйте змінні середовища:
   - Створіть копію файлу `.env.example` і назвіть її `.env`
-  - Відкрийте `.env` і впишіть туди свій `SECRET_KEY` та переконайтеся, що `BACKEND_API_URL` вказує на ваш локальний бекенд.
+  - Відкрийте `.env` і впишіть туди свій `SECRET_KEY` та переконайтеся, що `BACKEND_API_URL` вказує на ваш локальний бекенд: `BACKEND_API_URL=http://localhost:8000/api/v1/` (без цієї змінної кнопка входу веде на бекенд на Render).
 - Встановіть залежності:
   - `pip install -r requirements.txt`
   - `pip install -r requirements-dev.txt`
 - *Примітка щодо якості коду:* Переконайтеся, що ви виконали команду `pre-commit install` у **корені всього репозиторію**, щоб активувати автоматичні перевірки для фронтенду.
 - Застосуйте міграції (для внутрішніх таблиць сесій Django): `python manage.py migrate`
 - Запустіть сервер розробки на іншому порту: `python manage.py runserver 8001`
-- *Клієнтський вебзастосунок доступний за адресою: `http://127.0.0.1:8001/` (рекомендується використовувати `127.0.0.1` замість `localhost` для коректної передачі сесійних кук між серверами).*
+- *Клієнтський вебзастосунок доступний за адресою: `http://localhost:8001/`. Використовуйте `localhost`, а не `127.0.0.1`: сесійні cookie прив'язані до хоста, а Microsoft повертає браузер на `localhost` (Redirect URI). Якщо вхід через Microsoft почати на `127.0.0.1`, бекенд спершу перенаправить на `localhost`, і після входу ви опинитеся на `http://localhost:8001/`.*
+
+### Локальна авторизація та тестові дані
+
+* **Локальний вхід у систему (без Microsoft):**
+  Для зручної розробки ви можете авторизуватися без корпоративного акаунта. На сторінці логіну фронтенду натисніть потрібну роль у блоці "Локальне тестування (Dev Login)". Система автоматично створить тестову сесію та пустить вас у застосунок.
+  
+  > **Примітка щодо безпеки:** Оскільки ця функція призначена виключно для розробки, блок Dev Login автоматично приховується на продакшені (Render), де `DEBUG=False`. Вхід на живому сайті здійснюється виключно через Microsoft Entra ID.
+
+* **Наповнення бази демонстраційними даними:**
+  Щоб після входу система не була порожньою, ви можете згенерувати розклад, приміщення та тестові бронювання. **Увага:** Ця команда працює лише в режимі локальної розробки, коли встановлено `DEBUG=True`.
+  
+  Виконайте команду:
+  `python manage.py seed_demo`
+  
+  Команда (знаходиться у [`Backend/api/management/commands/seed_demo.py`](Backend/api/management/commands/seed_demo.py)) створить необхідну структуру (аудиторії, заняття, групи) та синхронізує її з тестовими користувачами локального входу:
+  - **Студент:** `demo.student@example.com` (Андрій Петренко, група ІПЗ-31)
+  - **Викладач:** `demo.teacher@example.com` (Олена Коваль)
+  - **Диспетчер:** `demo.dispatcher@example.com` (Марія Шевченко)
 
 ## Розгортання на Render (Deployment)
 Проєкт розгортається на хмарній платформі Render і складається з трьох пов'язаних компонентів: бази даних PostgreSQL (`unispace-db`), бекенду (`unispace`) та фронтенду (`unispace-front`).
@@ -85,8 +104,8 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 
 ### 2. Backend (REST API)
 * **Root Directory:** `Backend`
-* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-* **Start Command:** `python manage.py migrate --noinput && gunicorn Backend.wsgi:application --timeout 45`
+* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+* **Start Command:** `gunicorn Backend.wsgi:application --timeout 45`
 
 **Необхідні змінні середовища (Environment Variables):**
 * `PYTHON_VERSION` = `3.12.0`
@@ -94,15 +113,18 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 * `DEBUG` = `False`
 * `ALLOWED_HOSTS` = `unispace-wtf6.onrender.com`
 * `DATABASE_URL` = `<url-бази>` *(Internal Database URL від `unispace-db`)*
-* `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` = *(Дані з реєстрації застосунку в Microsoft Entra ID)*
+* **Дані для інтеграції з Microsoft (SSO).** Отримайте ці ключі, зареєструвавши застосунок у порталі Microsoft Entra ID (Azure AD):
+  * `MS_TENANT_ID` = `<ідентифікатор-організації>` *(Directory/Tenant ID)*
+  * `MS_CLIENT_ID` = `<ідентифікатор-застосунку>` *(Application/Client ID)*
+  * `MS_CLIENT_SECRET` = `<секретний-ключ>` *(Client Secret/Value)*
 * `MS_REDIRECT_URI` = `https://unispace-wtf6.onrender.com/auth/microsoft/callback/`
 * `LOGIN_REDIRECT_URL` = `https://unispace-front.onrender.com/`
 
 ### 3. Frontend (Web UI)
 Оскільки фронтенд також працює на базі Django, він розгортається аналогічно, використовуючи WhiteNoise для роздачі статичних файлів (CSS, JS).
 * **Root Directory:** `Frontend`
-* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-* **Start Command:** `python manage.py migrate && gunicorn Frontend.wsgi:application`
+* **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+* **Start Command:** `gunicorn Frontend.wsgi:application`
 
 **Необхідні змінні середовища (Environment Variables):**
 * `PYTHON_VERSION` = `3.12.0`

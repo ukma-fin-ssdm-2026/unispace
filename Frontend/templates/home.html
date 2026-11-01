@@ -1,11 +1,11 @@
 {% extends 'layout.html' %}
 {% load static %}
 
-<!-- Статичний заголовок сторінки перенесено сюди -->
 {% block title %}Dashboard - UniSpace{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pages.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -16,13 +16,10 @@
             <div class="hero-icon-wrapper">
                 <i class="fa-solid fa-layer-group"></i>
             </div>
-
-            <!-- Текст привітання зашито прямо в HTML -->
             <h1 class="hero-title">Ласкаво просимо до UniSpace!</h1>
             <p class="hero-subtitle">
                 Сучасний простір для керування аудиторним фондом. Переглядайте розклад, знаходьте кабінети та запобігайте накладкам пар без жодних зусиль.
             </p>
-
             <div class="hero-actions">
                 <a href="#" class="btn-primary-pill">
                     <i class="fa-solid fa-calendar-check"></i> Розклад занять
@@ -33,10 +30,45 @@
             </div>
         </div>
     {% else %}
-        <!-- Справжня головна сторінка (показується при перезавантаженні або поверненні) -->
+        <!-- Справжня головна сторінка (Дашборд) -->
         <div class="dashboard-container">
-            <h2>Огляд системи</h2>
-            <p>Тут буде ваш дашборд, віджети статистики, найближчі заняття тощо.</p>
+            <!-- Оновлений заголовок -->
+            <div class="dashboard-header">
+                <p id="dashboard-greeting" class="dashboard-greeting">Завантаження профілю...</p>
+            </div>
+
+            <div class="dashboard-grid">
+
+                <!-- Головна колонка: Розклад -->
+                <div class="dashboard-main">
+
+                    <div id="student-summary-banner" class="info-banner" hidden>
+                        <i class="fa-solid fa-circle-info"></i>
+                        <div>
+                            <span id="summary-lessons-count" style="font-weight: 600;">...</span>
+                            <span class="sync-text">Останнє оновлення із САЗ: <strong id="summary-sync-time">...</strong></span>
+                        </div>
+                    </div>
+
+                    <section class="panel">
+                        <h2 class="panel-title"><i class="fa-regular fa-calendar-days"></i> Ваші найближчі заняття</h2>
+                        <div id="dashboard-lessons">
+                            <div class="state-message"><i class="fa-solid fa-spinner fa-spin"></i> Отримання розкладу...</div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Бічна колонка: Швидкі дії -->
+                <div class="dashboard-side">
+                    <section class="panel">
+                        <h2 class="panel-title"><i class="fa-solid fa-bolt"></i> Швидкі дії</h2>
+                        <div id="quick-actions" class="quick-actions-list">
+                            <!-- Кнопки генеруватимуться через JS залежно від ролі -->
+                        </div>
+                    </section>
+                </div>
+
+            </div>
         </div>
     {% endif %}
 {% endblock %}

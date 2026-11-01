@@ -54,7 +54,9 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
-#htmlcov/
+**/htmlcov/
+**/*.html
+.coverage
 .tox/
 .nox/
 .coverage
@@ -136,6 +138,11 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.venv312/
+**/.venv/
+**/venv/
+.venv/
+venv/
 .env
 .venv
 env/

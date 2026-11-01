@@ -7,11 +7,14 @@
 """
 
 from datetime import timedelta
+from django.utils import timezone
+from functools import partial
 
 from django.db import IntegrityError, OperationalError, transaction
 from api.models import Booking, AuditLog, Notification, User
 
 from .scheduling import intervals_overlap
+from . import notifications
 
 # Бронювання не триває довше доби, тож кандидатів на перетин досить шукати в цьому вікні.
 _OVERLAP_SEARCH_WINDOW = timedelta(days=1)
@@ -81,6 +84,8 @@ def change_booking_room(booking, new_room, reason, user):
                 reason=reason,
             )
             _notify_group(booking, previous_room, new_room)
+            # Лист іде лише після успішного коміту: при відкаті (409) його немає.
+            transaction.on_commit(partial(notifications.send_room_change_emails, booking, previous_room, new_room))
         return booking
     except IntegrityError as e:
         raise BookingConflictError("Нова аудиторія вже заброньована на цей час") from e
@@ -123,7 +128,7 @@ def busy_room_ids(booking):
 def _notify_group(booking, previous_room, new_room):
     """Створює сповіщення для кожного користувача академічної групи заняття (FR-015)."""
     message = (
-        f"Заняття «{booking.lesson.subject}» ({booking.start_time:%d.%m.%Y %H:%M}) "
+        f"Заняття «{booking.lesson.subject}» ({timezone.localtime(booking.start_time):%d.%m.%Y %H:%M}) "
         f"перенесено: {previous_room} → {new_room}"
     )
     recipients = User.objects.filter(group=booking.lesson.group)

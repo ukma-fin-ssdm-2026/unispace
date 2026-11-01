@@ -34,6 +34,7 @@ def microsoft_settings(settings):
     settings.MS_CLIENT_ID = "client-id"
     settings.MS_CLIENT_SECRET = FAKE_CREDENTIAL
     settings.LOGIN_REDIRECT_URL = "/after-login/"
+    settings.MS_REDIRECT_URI = "http://testserver/auth/microsoft/callback/"
     return settings
 
 
@@ -138,6 +139,32 @@ def test_login_redirects_to_microsoft_and_remembers_flow(client, fake_msal):
 
     # Assert
     assert response.status_code == status.HTTP_302_FOUND
+    assert response["Location"] == AUTH_URI
+    assert client.session[SESSION_FLOW_KEY]["state"] == "xyz"
+
+
+def test_login_on_other_host_first_moves_to_redirect_uri_host(client, fake_msal, settings):
+    # Arrange: вхід почато на 127.0.0.1, а Redirect URI в Entra - на localhost
+    settings.MS_REDIRECT_URI = "http://localhost:8000/auth/microsoft/callback/"
+
+    # Act
+    response = client.get(reverse("microsoft-login"), HTTP_HOST="127.0.0.1:8000")
+
+    # Assert: спершу перехід на localhost, потік входу ще не розпочато
+    assert response.status_code == status.HTTP_302_FOUND
+    assert response["Location"] == "http://localhost:8000" + reverse("microsoft-login")
+    assert SESSION_FLOW_KEY not in client.session
+    fake_msal.initiate_auth_code_flow.assert_not_called()
+
+
+def test_login_on_redirect_uri_host_starts_flow(client, fake_msal, settings):
+    # Arrange
+    settings.MS_REDIRECT_URI = "http://localhost:8000/auth/microsoft/callback/"
+
+    # Act
+    response = client.get(reverse("microsoft-login"), HTTP_HOST="localhost:8000")
+
+    # Assert
     assert response["Location"] == AUTH_URI
     assert client.session[SESSION_FLOW_KEY]["state"] == "xyz"
 

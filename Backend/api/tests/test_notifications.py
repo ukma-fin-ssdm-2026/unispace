@@ -9,6 +9,7 @@ TP-01: Перевірка генерації Email-шаблону.
 
 from datetime import datetime, timezone
 from unittest.mock import Mock
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -26,7 +27,7 @@ def test_generate_room_change_email_body_contains_all_required_fields():
     teacher_mock = Mock(full_name="Тестовий Викладач")
     lesson_mock = Mock(subject="Програмна інженерія", teacher=teacher_mock)
 
-    booking_mock = Mock(lesson=lesson_mock, start_time=datetime(2026, 10, 21, 10, 0, tzinfo=timezone.utc))
+    booking_mock = Mock(lesson=lesson_mock, start_time=datetime(2026, 10, 21, 10, 0, tzinfo=ZoneInfo("Europe/Kyiv")))
 
     previous_room_mock = Mock(number="1-225")
     new_room_mock = Mock(id="123e4567-e89b-12d3-a456-426614174000", number="1-226")
@@ -45,3 +46,16 @@ def test_generate_room_change_email_body_contains_all_required_fields():
 
     # Перевіряємо, що room_id дійсно підставився у посилання
     assert "123e4567-e89b-12d3-a456-426614174000" in email_body
+
+
+def test_start_time_is_shown_in_local_timezone():
+    # 07:00 UTC = 10:00 за Києвом (літній час, UTC+3)
+    teacher_mock = Mock(full_name="Тестовий Викладач")
+    lesson_mock = Mock(subject="Програмна інженерія", teacher=teacher_mock)
+    booking_mock = Mock(lesson=lesson_mock, start_time=datetime(2026, 10, 21, 7, 0, tzinfo=timezone.utc))
+
+    body = generate_room_change_email_body(
+        booking=booking_mock, previous_room=Mock(number="1-225"), new_room=Mock(id="room-id", number="1-226")
+    )
+
+    assert "21.10.2026 10:00" in body

@@ -5,6 +5,8 @@
 для реалізації вимог FR-015 та TP-01. Код верифіковано та адаптовано відповідно до бізнес-логіки проєкту.
 """
 
+from django.utils import timezone
+
 # ==========================================
 # Генерація Email-шаблонів
 # ==========================================
@@ -17,7 +19,7 @@ def generate_room_change_email_body(booking, previous_room, new_room):
     """
     subject = booking.lesson.subject
     teacher_name = booking.lesson.teacher.full_name
-    start_time_str = booking.start_time.strftime("%d.%m.%Y %H:%M")
+    start_time_str = timezone.localtime(booking.start_time).strftime("%d.%m.%Y %H:%M")
 
     # Використовуємо room_id з користю: генеруємо посилання, а не показуємо сирий UUID
     room_link = f"https://unispace.com/rooms/{new_room.id}"

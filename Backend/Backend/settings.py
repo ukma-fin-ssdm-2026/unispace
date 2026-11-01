@@ -204,4 +204,9 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API для системи керування аудиторним фондом UniSpace",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    # Однакові назви полів «status» у різних ресурсах: явні назви перелічень замість автоматичних (StatusA69Enum).
+    "ENUM_NAME_OVERRIDES": {
+        "SyncStatusEnum": ["in_progress", "success", "failed"],
+        "BookingStatusEnum": ["active", "cancelled"],
+    },
 }

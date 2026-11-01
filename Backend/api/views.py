@@ -31,6 +31,10 @@ from api.services import bookings, saz_import, schedule
 from api.services.room_suggestions import suggest_rooms
 from api.room_occupancy import get_previous_booking
 
+from datetime import datetime, time, timedelta
+from django.utils import timezone
+from api.services.available_slots import find_free_slots
+
 from .serializers import (
     RoomSerializer,
     AvailableSlotsResponseSerializer,
@@ -259,23 +263,89 @@ class AvailableSlotsAPIView(APIView):
     @extend_schema(
         summary="Пошук вільних слотів",
         parameters=[AvailableSlotsQuerySerializer],
-        responses={200: AvailableSlotsResponseSerializer, 400: ErrorResponseSerializer},
+        responses={
+            200: AvailableSlotsResponseSerializer,
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
     )
     def get(self, request, format=None):
         query = AvailableSlotsQuerySerializer(data=request.query_params)
+
         if not query.is_valid():
-            return Response(get_validation_error_response(query.errors), status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                get_validation_error_response(query.errors),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        mock_data = {
-            "room_id": query.validated_data["room_id"],
-            "date": query.validated_data["date"],
-            "available_slots": ["09:00-10:30", "12:00-13:30"],
-        }
-        return Response(mock_data, status=status.HTTP_200_OK)
+        room_id = query.validated_data["room_id"]
+        selected_date = query.validated_data["date"]
 
-    # ==========================================
-    # API Бронювань (Bookings)
-    # ==========================================
+        # Перевіряємо, чи існує аудиторія
+        room = Room.objects.filter(pk=room_id).first()
+
+        if room is None:
+            return not_found_response("Аудиторію", room_id)
+
+        # Недоступна аудиторія не має вільних слотів
+        if not room.is_available:
+            return Response(
+                {
+                    "room_id": room_id,
+                    "date": selected_date,
+                    "available_slots": [],
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        # Тимчасові межі доступності аудиторії
+        day_start = "08:00"
+        day_end = "20:00"
+
+        # Межі вибраної дати в часовому поясі Django
+        next_date = selected_date + timedelta(days=1)
+
+        start_datetime = timezone.make_aware(datetime.combine(selected_date, time.min))
+        end_datetime = timezone.make_aware(datetime.combine(next_date, time.min))
+
+        # Знаходимо тільки активні бронювання цієї аудиторії
+        bookings = Booking.objects.filter(
+            room=room,
+            status=Booking.BookingStatus.ACTIVE,
+            start_time__lt=end_datetime,
+            end_time__gt=start_datetime,
+        ).order_by("start_time")
+
+        occupied_intervals = []
+
+        for booking in bookings:
+            # Обрізаємо бронювання до меж вибраної дати
+            booking_start = max(booking.start_time, start_datetime)
+            booking_end = min(booking.end_time, end_datetime)
+
+            local_start = timezone.localtime(booking_start)
+            local_end = timezone.localtime(booking_end)
+
+            start_str = "00:00" if booking_start == start_datetime else local_start.strftime("%H:%M")
+            end_str = "24:00" if booking_end == end_datetime else local_end.strftime("%H:%M")
+
+            occupied_intervals.append((start_str, end_str))
+
+        # Обчислюємо вільні проміжки
+        free_slots = find_free_slots(
+            occupied_intervals,
+            day_start,
+            day_end,
+        )
+
+        return Response(
+            {
+                "room_id": room_id,
+                "date": selected_date,
+                "available_slots": free_slots,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class BookingListCreateAPIView(APIView):

@@ -9,6 +9,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 from django.urls import reverse
+from django.conf import settings
 from rest_framework import status
 
 from api.services.microsoft_auth import SESSION_FLOW_KEY, MicrosoftLoginError, user_from_claims
@@ -253,3 +254,13 @@ def test_logout_ends_session(client, teacher):
     # Assert
     assert response.status_code == status.HTTP_200_OK
     assert "_auth_user_id" not in client.session
+
+
+def test_csrf_endpoint_returns_token_and_sets_cookie(client):
+    # Act: фронтенд на іншому домені отримує CSRF-токен для POST/DELETE
+    response = client.get(reverse("csrf-token"))
+
+    # Assert
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["csrfToken"]
+    assert settings.CSRF_COOKIE_NAME in response.cookies

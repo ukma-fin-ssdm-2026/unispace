@@ -92,6 +92,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://unispace-wtf6.onrender.com",
 ]
 
+SESSION_COOKIE_NAME = "api_sessionid"
+CSRF_COOKIE_NAME = "api_csrftoken"
+
 ROOT_URLCONF = "Backend.urls"
 
 TEMPLATES = [
@@ -204,4 +207,9 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API для системи керування аудиторним фондом UniSpace",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    # Однакові назви полів «status» у різних ресурсах: явні назви перелічень замість автоматичних (StatusA69Enum).
+    "ENUM_NAME_OVERRIDES": {
+        "SyncStatusEnum": ["in_progress", "success", "failed"],
+        "BookingStatusEnum": ["active", "cancelled"],
+    },
 }

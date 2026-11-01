@@ -20,9 +20,25 @@
         </p>
 
         <!-- Справжній запит на бекенд для авторизації -->
-        <a href="https://unispace-wtf6.onrender.com/auth/microsoft/login/" class="login-btn">
+        <a href="{{ backend_origin }}/auth/microsoft/login/" class="login-btn">
             <i class="fa-brands fa-microsoft"></i> Увійти через Microsoft
         </a>
+
+        <!-- НОВИЙ БЛОК ДЛЯ ЛОКАЛЬНОГО ТЕСТУВАННЯ -->
+        <div class="dev-login-section">
+            <p class="dev-login-title">🛠 Локальне тестування (Dev Login)</p>
+            <div class="dev-login-buttons">
+                <button onclick="window.location.href=`http://${window.location.hostname}:8000/auth/dev-login/?role=dispatcher`" class="btn-dev-login">
+                    Увійти як Диспетчер
+                </button>
+                <button onclick="window.location.href=`http://${window.location.hostname}:8000/auth/dev-login/?role=teacher`" class="btn-dev-login">
+                    Увійти як Викладач
+                </button>
+                <button onclick="window.location.href=`http://${window.location.hostname}:8000/auth/dev-login/?role=student`" class="btn-dev-login">
+                    Увійти як Студент
+                </button>
+            </div>
+        </div>
     </div>
 </body>
 </html>

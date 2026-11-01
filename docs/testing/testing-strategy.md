@@ -10,23 +10,35 @@
 Доменні правила, на яких робили TDD, мутаційне тестування й тести властивостей, зведено в одне місце й підключено до кінцевих точок: правило місткості (`services/booking_rules.py`) використовує підбір аудиторій, перетин інтервалів (`services/scheduling.py`) визначає зайняті аудиторії в `GET /bookings/{id}/alternatives/`, а маркер «Змінено» (`is_recently_changed`) — розклад. Тож тести цих правил покривають код, який справді працює в API.
 
 ## Підсумок покриття
-Дані — зі звіту `Backend/htmlcov/index.html` (згенеровано 29.10.2026 командою `pytest --cov=api --cov-branch --cov-report=html`; CI будує такий самий звіт на кожен PR і зберігає як артефакт coverage-html).
+Дані — з прогону `python -m pytest --cov=api --cov-branch --cov-report=term` на `main` (коміт `c2bdd8e`, 01.11.2026, PostgreSQL 16 у Docker): 303 тести, усі пройшли. CI будує такий самий звіт на кожен PR і зберігає його як артефакт `coverage-html`. Тести, додані в гілці `fix/local-login-host` (перевірка хоста й `MS_REDIRECT_URI` у `test_microsoft_auth.py`), у цей прогін ще не входять.
 
-> **Увага:** звіт у репозиторії згенеровано 29.10.2026, до додавання тестів `test_audit_log_api.py`, `test_booking_previous_lesson.py`, `test_concurrent_bookings.py`, `test_seed_demo.py`, `test_saz_parser.py`, `test_saz_import.py`, `test_booking_concurrency_errors.py`, перевірки `GET /api/v1/auth/csrf/` та відповідного коду (`previous/`, `audit-logs/`, `saz_parser.py`, `saz_import.py`, `import_saz`, обробка deadlock у `services/bookings.py`). Наведені нижче цифри описують той стан і мають бути оновлені після наступного прогону CI (артефакт `coverage-html`).
-
-* **Загальне покриття: 97%** (рядки й гілки разом): рядки — 747 з 768 (97%), гілки — 120 з 130 (92%). Це вище за поріг 75%, на якому CI валить збірку (`--cov-fail-under=75`).
-* 14 з 17 модулів покрито на 100%, зокрема всі доменні сервіси (`booking_rules.py`, `bookings.py`, `scheduling.py`, `room_suggestions.py`, `schedule.py`, `notifications.py`), `serializers.py`, `auth_views.py` і `room_occupancy.py`.
+* **Загальне покриття: 92%** (рядки й гілки разом): рядки — 1319 з 1407 (94%), гілок 290, з них 18 покрито частково. Це вище за поріг 75%, на якому CI валить збірку (`--cov-fail-under=75`).
+* Порівняно з попереднім звітом (29.10.2026: 768 рядків, 97%) код майже подвоївся: додано імпорт із САЗ (`saz_parser.py`, `saz_import.py`, `import_saz`), `seed_demo`, `available_slots.py`, `admin.py`, журнал аудиту й обробку deadlock. Нові сервіси покрито на 91–100%, а загальний відсоток знизився переважно через `admin.py` і команду `import_saz`.
+* 13 з 24 модулів покрито на 100%, зокрема доменні сервіси `booking_rules.py`, `scheduling.py`, `room_suggestions.py`, `schedule.py`, `notifications.py`, а також `seed_demo.py` і `room_occupancy.py`.
 
 | Модуль | Покриття | Непокриті рядки | Частково покриті гілки |
 |---|---:|---:|---:|
-| `api/views.py` | 96% | 8 | 5 |
-| `api/models.py` | 93% | 10 | 1 |
+| `api/management/commands/import_saz.py` | 0% | 26 | 0 |
+| `api/auth_views.py` | 77% | 12 | 0 |
+| `api/admin.py` | 80% | 22 | 0 |
+| `api/services/available_slots.py` | 91% | 1 | 1 |
 | `api/services/microsoft_auth.py` | 92% | 3 | 2 |
-| решта 14 модулів | 100% | 0 | 0 |
-| **Разом** | **97%** | **21** | **8** |
+| `api/models.py` | 93% | 10 | 1 |
+| `api/services/saz_parser.py` | 95% | 6 | 6 |
+| `api/services/bookings.py` | 96% | 1 | 1 |
+| `api/views.py` | 98% | 5 | 5 |
+| `api/services/saz_import.py` | 98% | 1 | 1 |
+| `api/serializers.py` | 99% | 1 | 1 |
+| решта 13 модулів | 100% | 0 | 0 |
+| **Разом** | **92%** | **88** | **18** |
 
 **Що залишилося непокритим і чому:**
-* `views.py`: на момент звіту ручний запуск синхронізації (`POST /api/v1/sync/`) був заглушкою без тестів; тепер він виконує справжній імпорт і покритий `test_saz_import.py` (звіт треба перегенерувати). Також не перевірено фільтр `has_computers` у списку аудиторій, 400 на невалідне тіло `POST /bookings/` і `POST /bookings/{id}/change/`, 400 на невалідні параметри `GET /users/me/bookings/` і 409 при зміні на недоступну аудиторію. Це прості гілки, і їх варто дописати першими.
+* `management/commands/import_saz.py`: обгортка командного рядка над `run_sync()`; саму логіку імпорту перевіряє `test_saz_import.py`, а тесту на виклик команди (`call_command`) ще немає. Його варто дописати першим.
+* `auth_views.py` (рядки 113–137): `dev_login` — вхід без Microsoft лише для локальної розробки (`DEBUG=True`), тестів на нього немає.
+* `admin.py`: налаштування адмінки Django (відображення, inline, заборона редагування журналу) — свідомо не тестуємо, бо це не бізнес-логіка.
+* `views.py`: фільтр `has_computers` у списку аудиторій, 400 на невалідне тіло `POST /bookings/` і `POST /bookings/{id}/change/`, 409 при зміні на недоступну аудиторію і 400 на невалідні параметри `GET /users/me/bookings/`. Прості гілки, їх варто дописати.
+* `saz_parser.py` і `saz_import.py`: рідкісні гілки розбору (комірка з кількома абзацами, предмет без викладача, рядок без дня чи часу, сторінка без заголовка спеціальності, повторний пропуск уже зайнятої аудиторії).
+* `serializers.py`: відмова для файлу розкладу понад 5 МБ; `bookings.py`: повторне підняття помилки бази, що не є конфліктом конкурентності (сама гілка перевірена в `test_booking_concurrency_errors.py` через `create_booking`, а для зміни аудиторії — ні).
 * `models.py`: методи `__str__` моделей (використовуються лише в адмінці) — свідомо не тестуємо, бо вони не містять бізнес-логіки.
 * `services/microsoft_auth.py`: `build_msal_app()` створює справжній клієнт MSAL, а в тестах його підмінено заглушкою, щоб не звертатися до Microsoft; також не перевірено відповідь Microsoft без `id_token` і збереження імені для вже наявного користувача без імені.
 

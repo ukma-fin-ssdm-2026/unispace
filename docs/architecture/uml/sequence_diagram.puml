@@ -29,39 +29,45 @@ end box
 Teacher -> UI : Обирає нову аудиторію та підтверджує перенесення
 activate UI
 
-UI -> Gateway : POST /api/v1/bookings/change\n{lesson_id, new_room_id, reason}
+UI -> Gateway : POST /api/v1/bookings/{id}/change/\n{room_id, reason}
 activate Gateway
 
-Gateway -> Booking : changeRoom(lesson_id, new_room_id, teacher_id, reason)
+Gateway -> Booking : change_booking_room(booking, new_room, reason, user)
 activate Booking
 
 group #FloralWhite Database Transaction [transaction.atomic()]
-    Booking -> DAL : executeBookingChange(...)
+    Booking -> DAL : booking.save(update_fields=["room"])
     activate DAL
-    
-    DAL -> DB : BEGIN TRANSACTION
+
+    DAL -> DB : BEGIN
     activate DB
 
-    DAL -> DB : SELECT * FROM bookings\nWHERE room_id = :new_room_id AND timeslot && :slot\nFOR UPDATE
+    DAL -> DB : UPDATE bookings SET room_id = :new_room_id\nWHERE id = :booking_id
     note right of DB
-      FOR UPDATE блокує записи відразу.
-      Паралельний запит чекатиме звільнення блокування.
+      Накладкам запобігає сама база:
+      ExclusionConstraint booking_active_room_time_excl
+      (btree_gist) забороняє два активні бронювання
+      однієї аудиторії з перетином [start, end).
+      Без SELECT ... FOR UPDATE: паралельна транзакція
+      чекає на індекс обмеження й отримує помилку.
     end note
-    DB --> DAL : locked_conflicts_list
-    DAL --> Booking : conflicts_count
 
-    alt #LightGreen Аудиторія вільна (conflicts_count == 0)
-        Booking -> DAL : updateRoom(booking_id, new_room_id)
-        DAL -> DB : UPDATE bookings SET room_id = :new_room_id WHERE id = :booking_id
+    alt #LightGreen Обмеження не порушено
         DB --> DAL : row_updated
 
-        Booking -> Audit : logAction(teacher_id, "ROOM_CHANGE", old_room, new_room, reason)
+        Booking -> Audit : AuditLog.objects.create(room_changed, previous_room, new_room, reason)
         activate Audit
-        Audit -> DAL : insertAuditRecord(...)
-        DAL -> DB : INSERT INTO audit_logs (...)
-        DB --> DAL : audit_saved
+        Audit -> DAL : INSERT INTO audit_logs (...)
+        DAL -> DB : INSERT
         Audit --> Booking : log_recorded
         deactivate Audit
+
+        Booking -> Notif : _notify_group(booking, previous_room, new_room)
+        activate Notif
+        Notif -> DAL : Notification.objects.bulk_create(...) (FR-015)
+        DAL -> DB : INSERT INTO notifications (...)
+        Notif --> Booking : notifications_created
+        deactivate Notif
 
         DAL -> DB : COMMIT
         DB --> DAL : transaction_committed
@@ -69,34 +75,30 @@ group #FloralWhite Database Transaction [transaction.atomic()]
         DAL --> Booking : change_committed
         deactivate DAL
 
-        Booking -> Notif : dispatchRoomChangeAlert(lesson_id, new_room_id)
-        activate Notif
-        Notif ->> SMTP : Send Email to students (async)
-        Notif --> Booking : notifications_queued
-        deactivate Notif
-
-        Booking --> Gateway : 200 OK {status: "success", room: new_room_id}
+        Booking --> Gateway : booking
         deactivate Booking
-        Gateway --> UI : 200 OK (JSON)
+        Gateway --> UI : 200 OK (JSON бронювання)
         deactivate Gateway
-        UI --> Teacher : Відображення успішно оновленого розкладу
+        UI --> Teacher : Відображення оновленого бронювання
 
-    else #Pink Виявлено накладку (conflicts_count > 0)
-        Booking -> DAL : abortTransaction()
-        activate DAL
+    else #Pink Перетин з іншим активним бронюванням
+        DB --> DAL : IntegrityError (exclusion_violation, 23P01)
         DAL -> DB : ROLLBACK
-        activate DB
-        DB --> DAL : transaction_rolled_back
         deactivate DB
-        DAL --> Booking : rolled_back
+        DAL --> Booking : IntegrityError
         deactivate DAL
+        note right of Booking
+          IntegrityError -> BookingConflictError.
+          Deadlock (40P01) і serialization failure (40001)
+          при одночасних запитах теж дають 409 (REL-001).
+        end note
 
-        Booking --> Gateway : 409 Conflict {"error": "Аудиторія зайнята іншим заняттям"}
+        Booking --> Gateway : BookingConflictError
         activate Gateway
         deactivate Booking
-        Gateway --> UI : 409 Conflict
+        Gateway --> UI : 409 Conflict {"error": {"code": "CONFLICT", ...}}
         deactivate Gateway
-        UI --> Teacher : Валідаційне сповіщення: "Аудиторія зайнята" (без помилки 500)
+        UI --> Teacher : Сповіщення «Аудиторія зайнята» (без помилки 500)
         deactivate UI
     end
 end

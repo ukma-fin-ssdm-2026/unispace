@@ -33,7 +33,7 @@
 Взаємодія між компонентами та зовнішніми системами відбувається через такі інтерфейси:
 - **Client Web UI ↔ Backend API:** Внутрішній HTTP / REST (обмін даними у форматі JSON).
 - **Auth & User Service ↔ Microsoft Identity Platform:** HTTPS / OAuth 2.0 (OpenID Connect) для обміну авторизаційними токенами.
-- **CA3 Parser Service ↔ CA3 System:** HTTPS (GET-запити) з подальшим парсингом HTML-розмітки.
+- **CA3 Parser Service ↔ CA3 System:** прямого з'єднання немає. САЗ показує розклад лише після входу, тому диспетчер зберігає сторінку розкладу в браузері й завантажує її в UniSpace (`POST /api/v1/sync/`, `multipart/form-data`), а `CA3 Parser Service` розбирає її HTML.
 - **Notification Service ↔ SMTP Server:** Протокол SMTP (із шифруванням TLS) для передачі сформованих email-повідомлень.
 - **Django ORM ↔ PostgreSQL Database:** TCP/IP (протокол PostgreSQL/psycopg) для виконання транзакційних SQL-запитів.
 

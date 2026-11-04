@@ -144,6 +144,29 @@ def _generate_lesson_source_key(schedule, entry, lesson_date):
     )
 
 
+def _upsert_lesson(key, entry, lesson_date, teacher, group, result):
+    """
+    Створює заняття або оновлює вже імпортоване з тим самим source_key і рахує його в result.
+    Повторний імпорт того самого розкладу лише оновлює заняття, тож дублікатів не буде.
+    """
+    lesson, created = Lesson.objects.update_or_create(
+        source_key=key,
+        defaults={
+            "subject": entry.subject[:255],
+            "date": lesson_date,
+            "start_time": entry.start,
+            "end_time": entry.end,
+            "teacher": teacher,
+            "group": group,
+        },
+    )
+    if created:
+        result.lessons_created += 1
+    else:
+        result.lessons_updated += 1
+    return lesson
+
+
 def import_schedule(schedule, semester_start: date):
     """Імпортує розклад; semester_start - будь-який день першого навчального тижня семестру."""
     week_one_monday = semester_start - timedelta(days=semester_start.weekday())
@@ -166,21 +189,7 @@ def import_schedule(schedule, semester_start: date):
                 lesson_date = _calculate_lesson_date(week_one_monday, week, entry.weekday)
                 key = _generate_lesson_source_key(schedule, entry, lesson_date)
 
-                lesson, created = Lesson.objects.update_or_create(
-                    source_key=key,
-                    defaults={
-                        "subject": entry.subject[:255],
-                        "date": lesson_date,
-                        "start_time": entry.start,
-                        "end_time": entry.end,
-                        "teacher": teacher,
-                        "group": group,
-                    },
-                )
-                if created:
-                    result.lessons_created += 1
-                else:
-                    result.lessons_updated += 1
+                lesson = _upsert_lesson(key, entry, lesson_date, teacher, group, result)
                 if room is not None:
                     _book_or_record_conflict(lesson, room, result)
 

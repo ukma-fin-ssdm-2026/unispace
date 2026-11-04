@@ -80,3 +80,29 @@
 ### Фінальний прогін на `main` (після злиття A, B, C)
 
 _Заповнити після злиття всіх цілей: результат `python -m pytest -q` і покриття `python -m pytest --cov=api --cov-branch --cov-report=term -q`._
+
+## Бонуси
+
+### Характеризаційні тести перед рефакторингом
+
+Що зроблено. Команда `python manage.py import_saz` (`Backend/api/management/commands/import_saz.py`) до Лаб 8 не мала жодного тесту: покриття 0% (26 рядків, 8 гілок). Спершу написано характеризаційні тести `Backend/api/tests/test_import_saz_command.py` (11 тестів), які фіксують її поточну поведінку, і лише після цього окремим комітом виконано рефакторинг Extract Method.
+
+| Крок | Коміт | Результат тестів |
+|---|---|---|
+| 1. Характеризаційні тести (команда ще не змінена) | [`3cb4e7e` test: add characterization tests for import_saz command](https://github.com/ukma-fin-ssdm-2026/unispace/commit/3cb4e7e) | 11 passed; покриття `import_saz.py` 0% → 100% |
+| 2. Рефакторинг (Extract Method) | [`d50bb2a` refactor: extract helpers from import_saz handle [REFACTOR]](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d50bb2a) | ті самі 11 passed; повний набір 338 passed |
+
+Зафіксована поведінка, зокрема та, що виглядає дивно:
+
+* друкується рівно 5 лічильників у сталому порядку (`lessons_created`, `lessons_updated`, `bookings_created`, `conflicts_created`, `teachers_created`), далі попередження й рядок «Імпорт завершено»;
+* лічильник `online_lessons` імпорт рахує, але команда його не друкує;
+* існування файлу перевіряється раніше за дату: якщо погані обидва аргументи, повідомлення лише «Файл не знайдено»;
+* невалідні байти UTF-8 у збереженій сторінці замінюються (`errors="replace"`), імпорт проходить;
+* для нерозпізнаної сторінки команда падає з `CommandError «Імпорт не вдався: ...»`, але запис `failed` у `SyncLog` лишається;
+* повторний імпорт друкує `lessons_created: 0`, `lessons_updated: 13`; без `--semester-start` команду відхиляє парсер аргументів.
+
+Рефакторинг. Запах — довгий метод `handle`, що водночас перевіряв аргументи, читав файл і друкував підсумок. Техніка — Extract Method: `_existing_file`, `_parse_semester_start`, `_read_page` і `_write_summary`, перелік лічильників — константа `SUMMARY_COUNTERS`. Незмінними лишилися порядок перевірок, тексти помилок, формат виводу, заміна невалідних байтів і запис у журнал синхронізації; це доводять ті самі 11 тестів, зелені до і після.
+
+Запуск: `cd Backend && python -m pytest api/tests/test_import_saz_command.py -v`.
+
+Відповідальна: Ольга Михайлик.

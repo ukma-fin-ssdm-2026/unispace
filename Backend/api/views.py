@@ -735,8 +735,10 @@ class SyncTriggerAPIView(APIView):
         }
         return Response(SyncResultSerializer(data).data, status=status.HTTP_201_CREATED)
 
+from django.db import connection
 
-def dummy_function():
-    secret_token = "123456789"  # Погана практика
-    unused_var = 42  # Невикористана змінна
-    return True
+def dummy_function(user_input):
+    # КРИТИЧНА ВРАЗЛИВІСТЬ: SQL Ін'єкція
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT * FROM api_user WHERE username = '{user_input}'")
+    return cursor.fetchall()

@@ -69,7 +69,12 @@ FrontendApp -down-> BackendAPI : HTTPS (Port 8000 / REST)\n[TB-1: Client/Fronten
 
 BackendAPI -down-> DB : TCP:5432 (SQL / Django ORM)\n[TB-3: Backend API ↔ PostgreSQL]
 
-BackendAPI .right.> CA3 : HTTPS (HTML Parsing / Read-Only)\n[TB-4: Backend API ↔ САЗ]
+BrowserUI .right.> CA3 : HTTPS (dispatcher opens & saves schedule page)\n[TB-4: САЗ ↔ UniSpace via uploaded page]
+note bottom of CA3
+  Прямого з'єднання Backend API ↔ САЗ немає:
+  диспетчер завантажує збережену сторінку
+  через POST /api/v1/sync/ (multipart/form-data).
+end note
 BackendAPI .right.> MS_Auth : HTTPS (OAuth2 / OIDC)\n[TB-2: Backend API ↔ Microsoft Identity]
 BackendAPI .right.> SMTP : SMTP Protocol (TLS)\n[TB-5: Backend API ↔ SMTP Server]
 @enduml

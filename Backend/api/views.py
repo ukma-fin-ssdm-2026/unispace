@@ -58,6 +58,10 @@ from .serializers import (
     PreviousLessonResponseSerializer,
 )
 
+# Межі дня стали константами в межах рефакторингу технікою Replace Magic Number with Constant
+DEFAULT_DAY_START_TIME = "08:00"
+DEFAULT_DAY_END_TIME = "20:00"
+
 # ==========================================
 # Дозволи (Permissions)
 # ==========================================
@@ -299,8 +303,8 @@ class AvailableSlotsAPIView(APIView):
             )
 
         # Тимчасові межі доступності аудиторії
-        day_start = "08:00"
-        day_end = "20:00"
+        day_start = DEFAULT_DAY_START_TIME
+        day_end = DEFAULT_DAY_END_TIME
 
         # Межі вибраної дати в часовому поясі Django
         next_date = selected_date + timedelta(days=1)

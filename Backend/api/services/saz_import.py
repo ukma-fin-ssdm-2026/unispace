@@ -126,6 +126,24 @@ def _book_or_record_conflict(lesson, room, result):
         result.conflicts_created += 1
 
 
+def _calculate_lesson_date(week_one_monday, week, weekday):
+    """Обчислює точну дату заняття для конкретного тижня."""
+    return week_one_monday + timedelta(weeks=week - 1, days=weekday)
+
+
+def _generate_lesson_source_key(schedule, entry, lesson_date):
+    """Генерує унікальний ключ заняття для уникнення дублів."""
+    return "saz:lesson:" + _digest(
+        schedule.specialty,
+        schedule.year,
+        entry.group,
+        lesson_date,
+        entry.start,
+        entry.subject,
+        entry.teacher,
+    )
+
+
 def import_schedule(schedule, semester_start: date):
     """Імпортує розклад; semester_start - будь-який день першого навчального тижня семестру."""
     week_one_monday = semester_start - timedelta(days=semester_start.weekday())
@@ -145,16 +163,9 @@ def import_schedule(schedule, semester_start: date):
                 result.online_lessons += len(entry.weeks)
 
             for week in entry.weeks:
-                lesson_date = week_one_monday + timedelta(weeks=week - 1, days=entry.weekday)
-                key = "saz:lesson:" + _digest(
-                    schedule.specialty,
-                    schedule.year,
-                    entry.group,
-                    lesson_date,
-                    entry.start,
-                    entry.subject,
-                    entry.teacher,
-                )
+                lesson_date = _calculate_lesson_date(week_one_monday, week, entry.weekday)
+                key = _generate_lesson_source_key(schedule, entry, lesson_date)
+
                 lesson, created = Lesson.objects.update_or_create(
                     source_key=key,
                     defaults={

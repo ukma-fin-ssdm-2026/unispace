@@ -5,6 +5,31 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.2.1] - 2026-11-04
+
+### Added
+- **Security Testing:** додано вимірюваний тест `test_sec001_write_access.py` для перевірки вимоги SEC-001 (заборона створення та зміни бронювань для студентів і анонімів).
+- **Characterization Testing:** додано 11 тестувальних сценаріїв у `test_import_saz_command.py` для фіксації поточної поведінки команди `import_saz` перед її рефакторингом (покриття підвищено з 0% до 100%).
+
+### Changed
+- Оновлено `TeamCharter.md`: затверджено нові ролі та обов'язки команди для Лабораторної роботи №8.
+- Оновлено архітектурну документацію та вимоги: задокументовано перехід від автоматичної синхронізації до ручного імпорту розкладу САЗ диспетчером (оновлено `ADR-003`, UML-діаграми, `threat-model.md`, `traceability-matrix.md`, `requirements.md` та `README.md`).
+- Оновлено звіт `sonarcloud-report.md`:
+  - Задокументовано виправлення вразливостей CI/CD, що дозволило покращити Security Rating у SonarQube Cloud з C до A.
+  - Додано комплексний аналіз безпеки (Security Analyst Role): проаналізовано знахідки SonarQube, залишкові ризики та встановлено traceability з моделлю загроз STRIDE (Lab 3) і статичним аналізом (Lab 5).
+  - Додано секцію бонусів: зафіксовано налаштування SonarQube Quality Gate як обов'язкової перевірки для гілки `main`.
+  - Додано бонус "Характеризаційні тести перед рефакторингом" для модуля `import_saz`.
+- Оновлено тестову документацію (`test-plan.md`, `quality-attributes.md`, `rtm.md`, `testing-strategy.md`): відображено актуальний стан покриття вимог, додано посилання на новий вимірюваний тест SEC-001 та виправлено таблицю плану тестування.
+
+### Refactoring
+- **Replace Magic Number with Constant:** винесено межі робочого дня ("08:00"/"20:00") у константи в `AvailableSlotsAPIView.get` (Ціль A1).
+- **Extract Method:** винесено логіку обчислення зайнятих інтервалів з `AvailableSlotsAPIView.get` у виділений сервіс `services/available_slots.py` (Ціль A2).
+- **Extract Method:** винесено логіку обчислення дати заняття та формування `source_key` з функції `import_schedule` у допоміжні функції в `services/saz_import.py` (Ціль B1).
+- **Extract Method:** винесено блок `update_or_create` з підрахунком лічильників з `import_schedule` в окрему функцію `_upsert_lesson` (Ціль B2).
+- **Extract Method:** замінено 11 однакових блоків перевірки `is_valid()` з поверненням помилки 400 на єдиний загальний хелпер у `views.py` (Ціль C).
+- **Extract Method:** виділено допоміжні функції `_existing_file`, `_parse_semester_start`, `_read_page` та `_write_summary` з довгого методу `handle` команди `import_saz`.
+- **Extract Method:** виділено спільну перевірку автентифікації та ролей у функцію `has_allowed_role` у `views.py` (для `IsTeacherOrDispatcher` та `IsDispatcher`).
+
 ## [0.2.0] - 2026-11-01
 
 ### Added (Новий функціонал)

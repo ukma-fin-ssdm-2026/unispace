@@ -734,11 +734,3 @@ class SyncTriggerAPIView(APIView):
             "summary": result.as_dict() if result else None,
         }
         return Response(SyncResultSerializer(data).data, status=status.HTTP_201_CREATED)
-
-from django.db import connection
-
-def dummy_function(user_input):
-    # КРИТИЧНА ВРАЗЛИВІСТЬ: SQL Ін'єкція
-    cursor = connection.cursor()
-    cursor.execute(f"SELECT * FROM api_user WHERE username = '{user_input}'")
-    return cursor.fetchall()

@@ -734,3 +734,9 @@ class SyncTriggerAPIView(APIView):
             "summary": result.as_dict() if result else None,
         }
         return Response(SyncResultSerializer(data).data, status=status.HTTP_201_CREATED)
+
+
+def dummy_function():
+    secret_token = "123456789"  # Погана практика
+    unused_var = 42  # Невикористана змінна
+    return True

@@ -11,26 +11,235 @@
 | Reliability    | A                | 0 проблем               |
 | Security       | C                |12 вразливостей          |
 
-### Обрані критерії
-* Code Smells
-* Technical Debt
-* Duplications
+## 3. Обрані критерії
+ 
+1. **Code Smells**
+2. **Technical Debt**
+3. **Duplications**
+
+Обґрунтування: це три метрики підтримуваності, які вимагає лабораторна 8. Усі три вже мали
+найкращу оцінку (A / 0) до рефакторингу, тому в них нема що покращувати за метриками Sonar —
+вони виступають як **контрольні**: рефакторинг не повинен їх погіршити.
 
 ## Аналіз проблем безпеки
 
-| № | Проблема | Локація | Рівень небезпеки | План виправлення |
-|---|---|---|:---:|---|
-| 1 | Make sure that no untrusted code is executed from a fork. | `.github/workflows/pages.yml` (L30) | **High** | Додати перевірку репозиторію та гілки (`if: github.repository == '...' && github.ref == 'refs/heads/main'`) або обмежити права токена `permissions`, щоб запобігти виконанню довільного коду з форків. |
-| 2 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L65) | **Medium** | Зафіксувати точні версії залежностей бекенду за допомогою lock-файлу (`pip-compile` / `requirements.lock`) замість плаваючих версій. |
-| 3 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L65) | **Medium** | Додати прапорець `--only-binary :all:` до команди `pip install`, щоб встановлювати виключно pre-built wheels і блокувати запуск сторонніх `setup.py`. |
-| 4 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L68) | **Medium** | Зафіксувати точні версії для `requirements-dev.txt` у бекенді через lock-файл із хешами пакетів. |
-| 5 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L68) | **Medium** | Заборонити збірку tarball-пакетів при встановленні dev-залежностей бекенду, додавши прапорець `--only-binary :all:`. |
-| 6 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L195) | **Medium** | Створити та підключити окремий lock-файл із зафіксованими версіями для основного середовища фронтенду. |
-| 7 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L195) | **Medium** | Використати `--only-binary :all:` під час встановлення продакшн-пакетів фронтенду для унеможливлення RCE через вразливі setup-скрипти. |
-| 8 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L198) | **Medium** | Зафіксувати повне дерево транзитивних залежностей розробника для фронтенду (`requirements-dev.lock`). |
-| 9 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L198) | **Medium** | Додати параметр `--only-binary :all:` при встановленні dev-інструментів фронтенду в CI-раннері. |
-| 10 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` (L7) | **Low** | Додати атрибути SRI (`integrity="sha384-..."` та `crossorigin="anonymous"`) до тегу підключення зовнішнього CSS/JS або завантажити ресурс локально. |
-| 11 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` (L14) | **Low** | Додати криптографічний хеш `integrity` та `crossorigin="anonymous"` для валідації цілісності завантажуваного CDN-файлу. |
-| 12 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` | **Low** | Захистити підключення третього зовнішнього ресурсу документації шляхом додавання перевірки SRI (`integrity` + `crossorigin="anonymous"`). |
+| № | Проблема | Локація | Рівень небезпеки | План виправлення | Статус після рефакторингу |
+|---|---|---|---|---|---|
+| 1 | Make sure that no untrusted code is executed from a fork. | `.github/workflows/pages.yml` (L30) | **High** | Додати перевірку репозиторію та гілки (`if: github.repository == '...' && github.ref == 'refs/heads/main'`) або обмежити права токена `permissions`, щоб запобігти виконанню довільного коду з форків. | ✅ Виправлено |
+| 2 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L65) | **Medium** | Зафіксувати точні версії залежностей бекенду за допомогою lock-файлу (`pip-compile` / `requirements.lock`) замість плаваючих версій. | ✅ Виправлено |
+| 3 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L65) | **Medium** | Додати прапорець `--only-binary :all:` до команди `pip install`, щоб встановлювати виключно pre-built wheels і блокувати запуск сторонніх `setup.py`. | ✅ Виправлено |
+| 4 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L68) | **Medium** | Зафіксувати точні версії для `requirements-dev.txt` у бекенді через lock-файл із хешами пакетів. | ✅ Виправлено |
+| 5 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L68) | **Medium** | Заборонити збірку tarball-пакетів при встановленні dev-залежностей бекенду, додавши прапорець `--only-binary :all:`. | ✅ Виправлено |
+| 6 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L195) | **Medium** | Створити та підключити окремий lock-файл із зафіксованими версіями для основного середовища фронтенду. | ✅ Виправлено |
+| 7 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L195) | **Medium** | Використати `--only-binary :all:` під час встановлення продакшн-пакетів фронтенду для унеможливлення RCE через вразливі setup-скрипти. | ✅ Виправлено |
+| 8 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L198) | **Medium** | Зафіксувати повне дерево транзитивних залежностей розробника для фронтенду (`requirements-dev.lock`). | ✅ Виправлено |
+| 9 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L198) | **Medium** | Додати параметр `--only-binary :all:` при встановленні dev-інструментів фронтенду в CI-раннері. | ✅ Виправлено |
+| 10 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` (L7) | **Low** | Додати атрибути SRI (`integrity="sha384-..."` та `crossorigin="anonymous"`) до тегу підключення зовнішнього CSS/JS або завантажити ресурс локально. | 🚫 Файл виключено з аналізу, код не змінювався |
+| 11 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` (L14) | **Low** | Додати криптографічний хеш `integrity` та `crossorigin="anonymous"` для валідації цілісності завантажуваного CDN-файлу. | 🚫 Файл виключено з аналізу, код не змінювався |
+| 12 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` (L15) | **Low** | Захистити підключення третього зовнішнього ресурсу документації шляхом додавання перевірки SRI (`integrity` + `crossorigin="anonymous"`). | 🚫 Файл виключено з аналізу, код не змінювався |
+
+### Security Analysis — Role 5 (Security Analyst)
+
+**Відповідальна:** Дар'я Спіріна  
+**Лабораторна робота:** №8 — Рефакторинг і технічний борг  
+**Проєкт:** UniSpace  
+**Інструменти:** SonarQube Cloud, GitHub, Bandit, аналіз залежностей  
+**Пов'язані документи:** [Static Analysis — Lab 5](../code-quality/static-analysis.md), [Threat Model — Lab 3](../architecture/threat-model.md)
+
+#### 1. Аналіз Security Rating до та після рефакторингу
+
+У межах лабораторної роботи було проаналізовано результати статичного аналізу безпеки UniSpace в SonarQube Cloud. Метою аналізу є визначення причин початкового Security Rating, оцінка змін після рефакторингу та встановлення зв'язку з раніше виявленими проблемами безпеки.
+
+**Порівняння результатів:**
+
+| Метрика | До | Після |
+|---|---|---|
+| Security Rating | C | A |
+| Кількість security-знахідок за командним звітом | 12 | 0 у поточному scope аналізу |
+| Початковий розподіл за severity | 1 High, 8 Medium, 3 Low | Не підтверджено окремим історичним зрізом Issues |
+| Основні категорії проблем | CI/CD, Python dependencies, external resources | Частину проблем виправлено, частину виключено з аналізу |
+| Джерело показників | Початкові результати, зафіксовані командою | Повторні результати, зафіксовані командою |
+
+**Security Rating покращився з C до A** відповідно до командного звіту SonarQube Cloud.
+
+Початкові 12 знахідок стосувалися переважно безпеки GitHub Actions, встановлення Python-залежностей та використання зовнішніх JavaScript/CSS-ресурсів без перевірки їхньої цілісності.
+
+Покращення показників пов'язане зі змінами в CI/CD, управлінні залежностями та налаштуваннях аналізу. Водночас частина проблем перестала відображатися після виключення відповідних файлів зі scope SonarQube.
+
+Тому рейтинг A характеризує поточний стан проаналізованого коду, але не є підтвердженням повного усунення всіх security-ризиків.
+
+Окремо слід розрізняти security issues та security hotspots: потенційно небезпечна конструкція, що потребує ручного перегляду, не обов'язково є підтвердженою вразливістю. Кількість findings та їхню severity не можна автоматично ототожнювати з алгоритмом розрахунку Security Rating.
+
+#### 2. Причини початкового рейтингу та виконані зміни
+
+##### 2.1. Виконання недовіреного коду в GitHub Actions
+
+**Файл:** `.github/workflows/pages.yml`
+
+Початковий аналіз виявив ризик виконання коду з недовіреного fork у середовищі GitHub Actions.
+
+Потенційні наслідки:
+
+- виконання стороннього коду в CI-середовищі;
+- використання надмірних дозволів GitHub Actions;
+- ризик доступу до секретів за наявності небезпечної конфігурації workflow.
+
+**Оцінка:** командний звіт позначає проблему як виправлену. Для підтвердження необхідно перевірити актуальні тригери workflow, дозволи `GITHUB_TOKEN` та правила доступу до секретів.
+
+**Рекомендація:** дотримуватися принципу найменших привілеїв, обмежувати `permissions` і не запускати недовірений код у привілейованому контексті.
+
+##### 2.2. Ризики встановлення Python-залежностей
+
+**Файли:** `.github/workflows/ci.yml`, `Backend/requirements.txt`
+
+SonarQube зафіксував проблеми, пов'язані з недостатньою фіксацією залежностей та можливістю виконання setup-скриптів під час встановлення пакетів.
+
+Потенційні наслідки:
+
+- supply-chain атаки;
+- встановлення підмінених або небажаних версій пакетів;
+- виконання стороннього коду під час встановлення залежностей.
+
+**Підтверджені зміни в GitHub:**
+
+- [Коміт `6afac50260`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/6afac50260f31cbb87089c2869f5acf3e8d6e5e3) — зафіксовано версію pip та додано параметр `--only-binary=:all:` під час його встановлення.
+- [Коміт `113cae885d`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/113cae885d8bb23c74b2e02de1499681824a662d) — оновлено хеші залежностей у `Backend/requirements.txt`.
+- [Коміт `a2093b6`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/a2093b6a8933ffb830b00185357915c0fb5208c4) — оновлено Django з `5.1.6` до `5.2.17`.
+- [Коміт `c96405a`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/c96405a3955bbd3fc50db795cf5398012fccc394) — оновлено Django REST Framework з `3.18.1` до `3.18.2`.
+
+Зазначені коміти підтверджують виконання заходів із контролю залежностей. Проте оновлення бібліотеки саме по собі не доводить усунення конкретної CVE без окремої перевірки.
+
+**Оцінка:** зміни зменшують ризики supply chain, але достатність виправлень для кожної початкової знахідки SonarQube потребує окремої перевірки.
+
+##### 2.3. Відсутність Subresource Integrity (SRI)
+
+**Файл:** `docs/api/index.html`
+
+У початковому аналізі було зафіксовано три знахідки, пов'язані з використанням зовнішніх ресурсів без атрибутів `integrity` та `crossorigin`.
+
+Відсутність SRI може створювати ризик завантаження зміненого або скомпрометованого ресурсу зі стороннього CDN.
+
+**Підтверджена зміна:**
+
+[Коміт `5ea3391`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/5ea339131fedacfeaf18979eea3efa0e57321082) додає атрибути `integrity` та `crossorigin` для Font Awesome у `Frontend/templates/layout.html`.
+
+Однак цей коміт змінює інший файл і не підтверджує усунення трьох початкових знахідок у `docs/api/index.html`.
+
+За командним звітом, `docs/api/index.html` було виключено з аналізу без виправлення відповідного коду.
+
+**Оцінка:** виключення файлу зі сканування зменшує кількість відображених знахідок, але не усуває потенційний ризик у самому файлі.
+
+**Рекомендація:** якщо документація продовжує використовувати зовнішні CDN-ресурси, додати коректні SRI-хеші або перейти на локальні перевірені ресурси.
+
+#### 3. Traceability із лабораторною роботою №5 — Static Analysis
+
+Під час Лаб 5 команда виконувала статичний аналіз із використанням Bandit та перевірку залежностей. Отримані результати задокументовано у [`static-analysis.md`](../code-quality/static-analysis.md).
+
+| ID | Знахідка Lab 5 | Зв'язок із Lab 8 | Статус / висновок |
+|---|---|---|---|
+| S-1 | Bandit B101 — використання `assert` у тестовому коді | Попередня знахідка статичного аналізу; не є прямим поясненням поточного Security Rating | За Lab 5 проблему закрито |
+| S-2 | Недостатня перевірка ролей у `IsTeacherOrDispatcher` | Контроль доступу, RBAC, `SEC-001`; важливий інваріант для рефакторингу | Необхідно зберегти виправлену поведінку |
+| D-1 | Вразлива версія pip у середовищі | Тематичний зв'язок із безпекою Python-залежностей та CI/CD | Не тотожна всім findings SonarQube |
+
+Особливу увагу приділено знахідці **S-2**, оскільки вона безпосередньо стосується авторизації користувачів UniSpace.
+
+Після рефакторингу перевірки прав доступу мають забезпечувати ту саму поведінку, що й до нього. Студент або анонімний користувач не повинен отримати можливість виконувати дії, призначені для викладача чи диспетчера.
+
+Додатковим підтвердженням регресійного контролю є [коміт `31b37cf`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/31b37cffdaf7e276a6cad30c333d634da916d1f1), у якому додано перевірки заборони видалення бронювань студентом та анонімним користувачем.
+
+Отже, Lab 8 продовжує роботу Lab 5: раніше виявлені проблеми використовуються для оцінки ризиків рефакторингу та визначення необхідних регресійних перевірок.
+
+#### 4. Traceability із лабораторною роботою №3 — STRIDE Threat Model
+
+Модель загроз UniSpace задокументована в [`threat-model.md`](../architecture/threat-model.md).
+
+Порівняння результатів SonarQube з моделлю STRIDE дає змогу визначити, які ризики пов'язані з виконаними змінами, а які залишаються поза межами поточного статичного аналізу.
+
+| Threat ID | Загроза Lab 3 | Зв'язок із Lab 5 / Lab 8 | Залишковий ризик |
+|---|---|---|---|
+| TM-02 | Elevation of Privilege — обхід рольових обмежень | S-2, `SEC-001`, перевірки RBAC | Регресія контролю доступу після рефакторингу |
+| TM-01 | Spoofing токенів і сесій | Перевірки автентифікації та захисту сесій | Security Rating A не доводить усунення |
+| TM-05 | Розкриття даних PostgreSQL | Управління секретами, права доступу, конфігурація БД | Потребує окремого контролю |
+| TM-10 | Зловживання запуском синхронізації | Авторизація endpoint та обмеження доступу | Потребує окремих перевірок |
+| TM-11 | Шкідливий або надмірно великий HTML | Валідація вхідних даних та обмеження ресурсів | Не усувається автоматично виправленням SRI |
+
+Найпряміший зв'язок між попередніми лабораторними — **TM-02 → S-2 → SEC-001 → регресійна перевірка RBAC у Lab 8**.
+
+Інші зіставлення відображають тематично пов'язані ризики, а не підтверджують, що SonarQube безпосередньо виявив або усунув відповідні STRIDE-загрози.
+
+Це важливо, оскільки статичний аналіз не замінює моделювання загроз, тестування авторизації та перевірку конфігурації інфраструктури.
+
+#### 5. Оцінка залишкових ризиків
+
+Попри покращення Security Rating, після повторного аналізу залишаються питання, які потребують окремої уваги.
+
+| Ризик | Пріоритет | Рекомендована дія |
+|---|---|---|
+| SRI-знахідки у виключеній HTML-документації | Medium | Виправити вихідний код, а не лише scope сканування |
+| Виконання недовіреного коду в CI | High | Перевірити workflow permissions, тригери та доступ до секретів |
+| Регресія рольових обмежень | High | Зберегти та регулярно виконувати тести `SEC-001` |
+| Вразливі або неконтрольовані залежності | Medium | Продовжувати dependency scanning і контроль версій |
+| Неповне покриття статичним аналізом | Medium | Перевірити SonarQube exclusions та analysis warnings |
+
+Наведені пріоритети є аналітичною оцінкою для подальшої роботи, а не severity, автоматично присвоєною SonarQube.
+
+Для коректної оцінки результатів необхідно враховувати не лише кількість відображених issues, а й фактичні зміни коду, обсяг сканування та результати регресійних тестів.
+
+#### 6. Висновки
+
+За командним звітом, Security Rating UniSpace покращився з **C до A**, а кількість відображених security-знахідок зменшилася з 12 до 0 у поточному scope аналізу.
+
+Історія GitHub підтверджує виконання заходів із покращення безпеки залежностей, конфігурації CI та перевірки цілісності окремих зовнішніх ресурсів.
+
+Водночас частина findings перестала відображатися після виключення файлів із SonarQube. Тому покращення рейтингу не можна вважати доказом повного усунення всіх початкових ризиків.
+
+Зіставлення з Lab 5 та Lab 3 демонструє зв'язок між статичним аналізом, контролем доступу й моделлю загроз STRIDE. Особливо важливим залишається забезпечення коректності RBAC, задокументованої через `S-2`, `TM-02` та `SEC-001`.
+
+**Підсумок:** рефакторинг і покращення показників статичного аналізу мають супроводжуватися регресійними тестами, перевіркою реальних змін у коді та документуванням залишкових ризиків. Security Rating є індикатором якості аналізованого коду, а не абсолютною гарантією безпеки системи.
+
+#### 7. Використання ШІ
+
+ШІ використовувався для структурування security-аналізу, підготовки порівняння результатів SonarQube та встановлення зв'язків між Lab 3, Lab 5 і Lab 8. Аналіз був перевірений та затверджений аналітиком безпеки (Спіріною Дарʼєю).
+
+## Метрики до та після
+ 
+| Критерій | До | Після | Зміна |
+|---|---|---|---|
+| Security Rating | C (12 проблем: 1 High, 8 Medium, 3 Low) | A (0 проблем) | С -> А |
+| Code Smells | A / 0 | A / 0 | - |
+| Technical Debt | A / 0 г | A / 0 г | - |
+| Duplications | A / 0.0% | A / 0.0% | - |
+| Reliability | A / 0 | A / 0 | - |
 
 > **Примітка щодо використання ШІ:** ШІ-агент (Gemini) використовувався для аналізу проблем безпеки та створення плану виправлень. Результати перевірено людиною (Тимохина Ксенія).
+
+## Результат регресійного тестування
+
+Відповідальна: Ольга Михайлик (інженерка з тестування). Тести запускалися локально командою `python -m pytest -q` у `Backend/` на PostgreSQL 16 у Docker; ті самі тести проганяє CI на кожен PR.
+
+### Базовий прогін (до рефакторингу)
+
+| Гілка / коміт | Команда | Результат |
+|---|---|---|
+| `main`, `1f0ddfa` | `python -m pytest -q` | **327 passed** |
+
+### Прогони за цілями
+
+| Ціль | Гілка | Цільові тести | До | Після | Повний набір після |
+|---|---|---|---|---|---|
+| A (A1 + A2) | `refactor/available-slots` | `test_available_slots.py` | 16 passed | 16 passed | спершу збій (див. нижче), після виправлення **327 passed** |
+| B (B1 + B2) | `refactor/import-schedule` | `test_saz_import.py`, `test_saz_parser.py` | 37 passed | 37 passed | **327 passed** |
+| C | _ще не створено_ | `test_bookings_crud.py`, `test_room_alternatives.py`, `test_booking_previous_lesson.py`, `test_views.py` | — | — | — |
+
+### Виявлений збій і його причина (ціль A)
+
+* **Симптом:** на гілці `refactor/available-slots` повний прогін переривався на етапі збору тестів: `ERROR api/tests/test_saz_import.py - FileNotFoundError: ... fixtures/saz/schedule_preview.html`. Без цього модуля результат був `309 passed, 4 errors`; усі 4 помилки в `test_saz_parser.py` мали ту саму причину.
+* **Причина:** коміт `0b90eda` («[REFACTOR] Extract Method: get_occupied_intervals з AvailableSlotsAPIView.get», виконаний з ШІ-агентом) разом із рефакторингом видалив файли, не пов'язані зі зміною: анонімізовану фікстуру САЗ `Backend/api/tests/fixtures/saz/schedule_preview.html`, а також `Backend/htmlcov/`, `Backend/coverage.json` і `Backend/test-results.xml`.
+* **Глибша причина:** з коміту `17baf1e` (01.11.2026) `.gitignore` містить правило `**/*.html`, тож git вважає фікстуру САЗ (і будь-які нові HTML-шаблони фронтенду) ігнорованими файлами. Під час прибирання ігнорованих звітів покриття фікстура потрапила під те саме правило й була видалена з репозиторію.
+* **Чи зламав рефакторинг поведінку:** ні. Тести самого рефакторингу (`test_available_slots.py`, 16 passed) і решта набору, що не залежить від фікстури (309 passed), зелені.
+* **Виправлення:** фікстуру відновлено з `main` (коміт `0e66aab`) (`git restore --source origin/main -- api/tests/fixtures/saz/schedule_preview.html`) і примусово додано в репозиторій (`git add -f`), повторний повний прогін — **327 passed**. Правило `**/*.html` у `.gitignore` варто звузити (наприклад, до `**/htmlcov/`), щоб воно не зачіпало фікстури й шаблони.
+* **Висновок:** зміни, згенеровані агентом, потрібно переглядати не лише за змістом, а й за списком змінених файлів (`git diff --stat`) — регресійний прогін виявив видалення, яке не помітно в diff самого методу.
+
+### Фінальний прогін на `main` (після злиття A, B, C)
+
+_Заповнити після злиття всіх цілей: результат `python -m pytest -q` і покриття `python -m pytest --cov=api --cov-branch --cov-report=term -q`._

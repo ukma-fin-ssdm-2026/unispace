@@ -201,17 +201,114 @@ SonarQube зафіксував проблеми, пов'язані з недос
 
 ШІ використовувався для структурування security-аналізу, підготовки порівняння результатів SonarQube та встановлення зв'язків між Lab 3, Lab 5 і Lab 8. Аналіз був перевірений та затверджений аналітиком безпеки (Спіріною Дарʼєю).
 
+## Рефакторинги
+
+> Рефакторинги виконано малими кроками від гілки `pre-refactor` (базовий прогін на `main`, `1f0ddfa`: **327 passed**).
+> Зовнішня поведінка API та команди не змінювалась: кожну зміну підтверджено тестами, зеленими до і після.
+> Результати прогонів по цілях і виявлений збій описано в розділі «Результат регресійного тестування».
+
+| № | Автор | Ціль | Техніка | Коміт / PR |
+|---|---|---|---|---|
+| 1 | Тимохина Ксенія | `AvailableSlotsAPIView.get` (`views.py`) | Replace Magic Number with Constant | [`7637a25`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7637a25) |
+| 2 | Трекурова Анастасія (ШІ-агент) | `AvailableSlotsAPIView.get` (`views.py`, `services/available_slots.py`) | Extract Method | [`0b90eda`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/0b90eda) |
+| 3 | Мельник Дар'я | `import_schedule` (`services/saz_import.py`) | Extract Method | [`4543d23`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/4543d23) |
+| 4 | Михайлик Ольга | `import_schedule` (`services/saz_import.py`) | Extract Method | [`9e50729`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/9e50729) |
+| 5 | Спіріна Дар'я | `IsTeacherOrDispatcher`, `IsDispatcher` (`views.py`) | Extract Method (усунення дублювання умови) | [`bd76043`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/bd76043) |
+| Бонус | Михайлик Ольга | `import_saz.Command.handle` (`management/commands/import_saz.py`) | Extract Method | [`d50bb2a`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d50bb2a), тести [`3cb4e7e`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/3cb4e7e); деталі в розділі «Бонуси» |
+
+Злиття в `main` (PR-гілки): ціль A (`refactor/available-slots`) — [`8512cb7`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/8512cb7), ціль B (`refactor/import-schedule`) — [`9287de5`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/9287de5), ціль C (`refactor/security-role-checks`) — [`a404af1`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/a404af1).
+
+### Рефакторинг 1. Межі дня як константи
+
+- **Запах:** магічні рядки `"08:00"` і `"20:00"` прямо в тілі `AvailableSlotsAPIView.get`.
+- **Техніка:** Replace Magic Number with Constant.
+- **Що змінилось у структурі:** значення винесено в іменовані константи `DEFAULT_DAY_START_TIME` і `DEFAULT_DAY_END_TIME` на рівні модуля `views.py`; робочий день тепер змінюється в одному місці.
+- **Що лишилось незмінним:** самі значення (08:00 та 20:00), формат слотів у відповіді, HTTP-статуси, OpenAPI-схема.
+- **Який тест це доводить:** `api/tests/test_available_slots.py` (16 passed до і після): `test_active_booking_blocks_time` та `test_booking_until_end_of_day` очікують слоти `"08:00-…"` і `"…-20:00"`.
+
+### Рефакторинг 2. Винесення обчислення зайнятих інтервалів (ШІ-агент)
+
+- **Запах:** довга функція. `AvailableSlotsAPIView.get` (77 рядків) поєднувала валідацію входу, пошук аудиторії, запит до бази, обрізання бронювань до меж доби й формування відповіді.
+- **Техніка:** Extract Method.
+- **Що змінилось у структурі:** запит і обчислення інтервалів винесено в `get_occupied_intervals(room, selected_date)` у `api/services/available_slots.py`. View лишилось оркестратором: перевіряє вхід, викликає сервіс і `find_free_slots`, формує відповідь. Змінні `day_start`/`day_end` стали зайвими, тож у виклик підставлено константи з рефакторингу 1. Імпорти `datetime`, `time`, `timedelta`, `timezone` у `views.py` після винесення не використовувались і їх видалено.
+- **Що лишилось незмінним:** коди відповідей 200, 400 і 404; формат тіла; обрізання бронювань на межі доби до `00:00` і `24:00`; врахування лише активних бронювань; часовий пояс Django; `extend_schema` та OpenAPI-схема.
+- **Який тест це доводить:** `api/tests/test_available_slots.py`: `test_active_booking_blocks_time`, `test_cancelled_booking_does_not_block_time`, `test_other_room_booking_does_not_block_time`, `test_other_day_booking_does_not_block_time`, `test_booking_until_end_of_day` (через endpoint) і `test_find_free_slots_boundary_and_overlap_cases`.
+
+### Рефакторинг 3. `import_schedule`: дата заняття та ключ
+
+- **Запах:** висока складність і вкладеність: цикл по тижнях у `import_schedule` містив обчислення дати, ключа й запис у базу в одному тілі.
+- **Техніка:** Extract Method.
+- **Що змінилось у структурі:** формулу дати винесено в `_calculate_lesson_date(week_one_monday, week, weekday)`, побудову ключа в `_generate_lesson_source_key(schedule, entry, lesson_date)`.
+- **Що лишилось незмінним:** формула дати та формат ключа `"saz:lesson:" + _digest(...)` з тим самим набором полів. Якби ключ змінився, повторний імпорт створив би дублікати.
+- **Який тест це доводить:** `api/tests/test_saz_import.py`: `test_each_week_becomes_a_lesson_on_the_right_date`, `test_repeated_import_creates_no_duplicates`. Цільові тести цілі B (`test_saz_import.py`, `test_saz_parser.py`): 37 passed до і після.
+
+### Рефакторинг 4. `import_schedule`: запис заняття
+
+- **Запах:** той самий, що в рефакторингу 3: блок `update_or_create` з лічильниками займав частину тіла вкладеного циклу.
+- **Техніка:** Extract Method.
+- **Що змінилось у структурі:** `update_or_create` і оновлення лічильників винесено в `_upsert_lesson(key, entry, lesson_date, teacher, group, result)`.
+- **Що лишилось незмінним:** значення `defaults` (зокрема обрізання `subject` до 255 символів), лічильники `lessons_created` / `lessons_updated`, створення бронювання або запис конфлікту після виклику.
+- **Який тест це доводить:** `api/tests/test_saz_import.py`: `test_repeated_import_creates_no_duplicates`, `test_reimport_keeps_room_changed_by_teacher`, `test_default_bookings_are_created_only_for_rooms_in_directory`, `test_overlapping_lessons_in_same_room_are_recorded_as_conflicts`.
+
+### Рефакторинг 5. Дублювання перевірки ролі в дозволах
+
+- **Запах:** дублювання коду. `IsTeacherOrDispatcher.has_permission` та `IsDispatcher.has_permission` містили майже однаковий вираз `user and user.is_authenticated and getattr(user, "role", None) ...`.
+- **Техніка:** Extract Method.
+- **Що змінилось у структурі:** спільну перевірку винесено в функцію `has_allowed_role(user, allowed_roles)`; обидва класи викликають її зі своїм набором ролей (`("teacher", "dispatcher")` та `("dispatcher",)`).
+- **Що лишилось незмінним:** хто має доступ: автентифіковані викладачі та диспетчери до змін бронювань, лише диспетчери до журналів; студенти й анонімні користувачі, як і раніше, отримують 403; тексти `message` у класах дозволів.
+- **Який тест це доводить:** гілка `refactor/security-role-checks`; тести `test_bookings_crud.py`, `test_room_alternatives.py`, `test_booking_previous_lesson.py` і `test_views.py` (зокрема `BookingSecurityTests`, `SyncLogSecurityTests`): зелені в базовому прогоні (327 passed), 90 passed на `main` після злиття. Додатково `test_sec001_write_access.py` (6 спроб запису анонімом і студентом, усі мають дати 403).
+
+### Вплив на складність функцій
+
+SonarQube Cloud показував 0 запахів, 0 год боргу й 0.0% дублювання ще до змін, тож ці значення не могли покращитись (0 → 0). Ефект рефакторингів виміряно складністю та довжиною функцій. Обидва стовпці пораховано одним інструментом (цикломатична складність за підрахунком розгалужень у `ast`) на `pre-refactor` і на поточному `main`.
+
+| Функція | Складність до → після | Довжина до → після (рядки) |
+|---|---|---|
+| `AvailableSlotsAPIView.get` | 7 → 4 | 77 → 40 |
+| `import_schedule` | 12 → 11 | 50 → 29 |
+| `has_permission` (`IsTeacherOrDispatcher`, `IsDispatcher`) | 3 → 1 у кожному | 3 → 5 у кожному |
+| `import_saz.Command.handle` | 6 → 2 | 19 → 8 |
+
+Складність `import_schedule` майже не зменшилась: у ній лишились вкладені цикли й умови, а винесено лише обчислення дати, ключа та запис заняття. Довжина зменшилась помітніше (50 → 29 рядків), хоч і не вдвічі. Нові функції мають складність 1–4 і окремо перевіряються. `has_permission` став трохи довшим за рядками (виклик у кілька рядків), зате умова існує в одному місці.
+
+---
+
+## Використання ШІ
+
+> З допомогою ШІ-агента (Claude, Anthropic) виконано **рефакторинг 2**. `<Рефакторинги 1, 3, 4, 5: виконувала кожна учасниця команди самостійно>`.
+
+**Завдання агенту.** Запах (довга функція `AvailableSlotsAPIView.get`), техніка (Extract Method) і те, що має лишитися незмінним: HTTP-статуси й тіла відповідей, `extend_schema`, обрізання `00:00`/`24:00`, часовий пояс, публічний API, міграції.
+
+**Що згенеровано.**
+- Функцію `get_occupied_intervals(room, selected_date)` в `api/services/available_slots.py`.
+- Заміну тіла `AvailableSlotsAPIView.get` на виклик цієї функції та `find_free_slots`.
+- Перелік імпортів у `views.py`, які після винесення стали зайвими.
+
+Логіку перенесено без змін: відрізняється лише місце розташування, а вираз `selected_date + timedelta(days=1)` підставлено безпосередньо замість проміжної змінної `next_date`.
+
+**Як верифіковано.**
+- Дифф переглянуто людиною й порівняно з оригіналом (Трекуровою Анастасією).
+- Цільові тести `test_available_slots.py`: 16 passed до і після.
+- Повний набір: на `main` до змін 327 passed; на гілці `refactor/available-slots` спершу збій (див. нижче), після виправлення 327 passed. Фінальний прогін на `main` (`42faad0`) після злиття всіх цілей: 344 passed, 0 failed, 0 errors, покриття 95%.
+- `black`, `flake8`, `bandit` і порівняння OpenAPI-схеми: [у CI на PR](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/41975884568) ; результат зелений.
+
+**Що пішло не так і чого це навчило.** Коміт `0b90eda`, створений з агентом, окрім рефакторингу видалив файли, не пов'язані зі зміною: фікстуру САЗ `Backend/api/tests/fixtures/saz/schedule_preview.html`, а також `Backend/htmlcov/`, `Backend/coverage.json` і `Backend/test-results.xml`. Через це повний прогін переривався на збиранні тестів (`FileNotFoundError`, `309 passed, 4 errors`). Тести самого рефакторингу при цьому були зеленими. Фікстуру відновлено з `main` (коміт `0e66aab`). Правило `**/*.html` у `.gitignore` зробило фікстуру «ігнорованою», тому вона потрапила під прибирання звітів покриття. Висновок: зміни агента треба перевіряти не лише за змістом, а й за списком змінених файлів (`git diff --stat`), а повний регресійний прогін потрібен навіть тоді, коли цільові тести зелені.
+
+**Обмеження та ризики.**
+- Агент не запускав тести: усі прогони виконано командою локально на PostgreSQL 16 у Docker.
+- Типові ризики такої заміни: зміна поведінки часових поясів у `make_aware`/`localtime` на переході літнього часу і побічні зміни у файлах поза рефакторингом; обидва закрито тестами й переглядом `git diff --stat`.
+
+**Інше використання ШІ в роботі.** Характеризаційні тести `test_import_saz_command.py` написано з ШІ (Claude), запуск виконує авторка PR (Ольга Михайлик). План розподілу рефакторингів і чернетку цього розділу підготовлено з ШІ (Claude); зміст перевірено людиною (`<ім'я>`).
+
 ## Метрики до та після
  
-| Критерій | До | Після | Зміна |
-|---|---|---|---|
+| Критерій        | До                                      | Після         | Зміна  |
+|-----------------|-----------------------------------------|---------------|--------|
 | Security Rating | C (12 проблем: 1 High, 8 Medium, 3 Low) | A (0 проблем) | С -> А |
-| Code Smells | A / 0 | A / 0 | - |
-| Technical Debt | A / 0 г | A / 0 г | - |
-| Duplications | A / 0.0% | A / 0.0% | - |
-| Reliability | A / 0 | A / 0 | - |
-
-> **Примітка щодо використання ШІ:** ШІ-агент (Gemini) використовувався для аналізу проблем безпеки та створення плану виправлень. Результати перевірено людиною (Тимохина Ксенія).
+| Code Smells     | A / 0                                   | A / 0         | -      |
+| Technical Debt  | A / 0 г                                 | A / 0 г       | -      |
+| Duplications    | A / 0.0%                                | A / 0.0%      | -      |
+| Reliability     | A / 0                                   | A / 0         | -      |
 
 ## Результат регресійного тестування
 
@@ -229,7 +326,7 @@ SonarQube зафіксував проблеми, пов'язані з недос
 |---|---|---|---|---|---|
 | A (A1 + A2) | `refactor/available-slots` | `test_available_slots.py` | 16 passed | 16 passed | спершу збій (див. нижче), після виправлення **327 passed** |
 | B (B1 + B2) | `refactor/import-schedule` | `test_saz_import.py`, `test_saz_parser.py` | 37 passed | 37 passed | **327 passed** |
-| C | _ще не створено_ | `test_bookings_crud.py`, `test_room_alternatives.py`, `test_booking_previous_lesson.py`, `test_views.py` | — | — | — |
+| C | `refactor/security-role-checks` | `test_bookings_crud.py`, `test_room_alternatives.py`, `test_booking_previous_lesson.py`, `test_views.py` | зелені в базовому прогоні (`1f0ddfa`, 327 passed) | 90 passed (на `main` після злиття) | **344 passed** |
 
 ### Виявлений збій і його причина (ціль A)
 
@@ -242,4 +339,56 @@ SonarQube зафіксував проблеми, пов'язані з недос
 
 ### Фінальний прогін на `main` (після злиття A, B, C)
 
-_Заповнити після злиття всіх цілей: результат `python -m pytest -q` і покриття `python -m pytest --cov=api --cov-branch --cov-report=term -q`._
+Прогін на `main`, коміт `42faad0` (05.11.2026), після злиття цілей A, B, C і бонусних тестів.
+
+| Що | Команда | До (`1f0ddfa`) | Після (`42faad0`) |
+|---|---|---|---|
+| Повний набір тестів | `python -m pytest -q` | 327 passed | **344 passed**, 0 failed, 0 errors |
+| Цільові тести цілі C | `python -m pytest api/tests/test_bookings_crud.py api/tests/test_room_alternatives.py api/tests/test_booking_previous_lesson.py api/tests/test_views.py -q` | — | **90 passed** |
+| Покриття | `python -m pytest --cov=api --cov-branch --cov-report=term -q` | 93% (01.11.2026, 88 непокритих рядків) | **95%**, 62 непокриті рядки з 1459 |
+
+* Приріст тестів (+17): `test_sec001_write_access.py` (6, вимірюваний тест SEC-001) і `test_import_saz_command.py` (11, характеризаційні тести). Жоден наявний тест не змінювали, щоб «підігнати» під рефакторинг.
+* Єдиний збій за весь цикл — видалена фікстура на гілці цілі A (див. вище); він не пов'язаний зі зміною поведінки й виправлений до злиття.
+* Висновок: усі три рефакторинги (A, B, C) зберегли поведінку, підтверджену повним набором тестів.
+
+## Бонуси
+
+### Характеризаційні тести перед рефакторингом
+
+Що зроблено. Команда `python manage.py import_saz` (`Backend/api/management/commands/import_saz.py`) до Лаб 8 не мала жодного тесту: покриття 0% (26 рядків, 8 гілок). Спершу написано характеризаційні тести `Backend/api/tests/test_import_saz_command.py` (11 тестів), які фіксують її поточну поведінку, і лише після цього окремим комітом виконано рефакторинг Extract Method.
+
+| Крок | Коміт | Результат тестів |
+|---|---|---|
+| 1. Характеризаційні тести (команда ще не змінена) | [`3cb4e7e` test: add characterization tests for import_saz command](https://github.com/ukma-fin-ssdm-2026/unispace/commit/3cb4e7e) | 11 passed; покриття `import_saz.py` 0% → 100% |
+| 2. Рефакторинг (Extract Method) | [`d50bb2a` refactor: extract helpers from import_saz handle [REFACTOR]](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d50bb2a) | ті самі 11 passed; повний набір 338 passed |
+
+Зафіксована поведінка, зокрема та, що виглядає дивно:
+
+* друкується рівно 5 лічильників у сталому порядку (`lessons_created`, `lessons_updated`, `bookings_created`, `conflicts_created`, `teachers_created`), далі попередження й рядок «Імпорт завершено»;
+* лічильник `online_lessons` імпорт рахує, але команда його не друкує;
+* існування файлу перевіряється раніше за дату: якщо погані обидва аргументи, повідомлення лише «Файл не знайдено»;
+* невалідні байти UTF-8 у збереженій сторінці замінюються (`errors="replace"`), імпорт проходить;
+* для нерозпізнаної сторінки команда падає з `CommandError «Імпорт не вдався: ...»`, але запис `failed` у `SyncLog` лишається;
+* повторний імпорт друкує `lessons_created: 0`, `lessons_updated: 13`; без `--semester-start` команду відхиляє парсер аргументів.
+
+Рефакторинг. Запах — довгий метод `handle`, що водночас перевіряв аргументи, читав файл і друкував підсумок. Техніка — Extract Method: `_existing_file`, `_parse_semester_start`, `_read_page` і `_write_summary`, перелік лічильників — константа `SUMMARY_COUNTERS`. Незмінними лишилися порядок перевірок, тексти помилок, формат виводу, заміна невалідних байтів і запис у журнал синхронізації; це доводять ті самі 11 тестів, зелені до і після.
+
+Запуск: `cd Backend && python -m pytest api/tests/test_import_saz_command.py -v`.
+
+Відповідальна: Ольга Михайлик.
+
+
+### Quality Gate як обов'язкова перевірка PR
+Для забезпечення високих стандартів коду, ми налаштували **SonarQube Quality Gate** як обов'язкову перевірку (branch protection) для злиття змін у гілку `main`. Тепер жоден Pull Request не може бути прийнятий, якщо він містить критичні вразливості або не відповідає метрикам надійності.
+
+**Доказ 1: Блокування небезпечного коду**
+Під час тестування ми навмисно створили коміт із критичною вразливістю (SQL-ін'єкція). Перевірка SonarCloud автоматично встановила статус *Quality Gate Failed* та заблокувала можливість злиття цього коду в `main`.
+- 🔗 **Посилання на заблокований PR:** [PR #297 (Failed Status)](https://github.com/ukma-fin-ssdm-2026/unispace/pull/297)
+- 🔗 **Звіт про знайдену вразливість:** [Code Scanning Alert #29](https://github.com/ukma-fin-ssdm-2026/unispace/security/code-scanning/29)
+
+**Доказ 2: Прогін після виправлення**
+Після видалення вразливого коду, автоматизований аналіз запустився повторно. Quality Gate змінив статус на *Passed*, і злиття було успішно розблоковано.
+- 🔗 **Посилання на розблокований PR:** [PR #297 (Passed Status після виправлення)](https://github.com/ukma-fin-ssdm-2026/unispace/pull/297)
+
+> **Примітка щодо використання ШІ:** ШІ-агент (Gemini) використовувався для аналізу проблем безпеки та створення плану виправлень. Результати перевірено людиною (Тимохина Ксенія). Також ШІ був використаний для стилізації та написання тексту для блоку першого бонусного завдання. Результати перевірено людиною (Мельник Дар'я).
+

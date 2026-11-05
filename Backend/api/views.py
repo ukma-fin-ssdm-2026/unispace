@@ -65,6 +65,11 @@ DEFAULT_DAY_END_TIME = "20:00"
 # ==========================================
 
 
+def has_allowed_role(user, allowed_roles):
+    """Check authentication and role."""
+    return bool(user and user.is_authenticated and getattr(user, "role", None) in allowed_roles)
+
+
 class IsTeacherOrDispatcher(BasePermission):
     """
     Only authenticated teachers and dispatchers
@@ -74,16 +79,20 @@ class IsTeacherOrDispatcher(BasePermission):
     message = "Only teachers and dispatchers can manage bookings."
 
     def has_permission(self, request, view):
-        user = request.user
-        return bool(user and user.is_authenticated and getattr(user, "role", None) in ("teacher", "dispatcher"))
+        return has_allowed_role(
+            request.user,
+            ("teacher", "dispatcher"),
+        )
 
 
 class IsDispatcher(BasePermission):
     message = "Only dispatchers can access sync logs."
 
     def has_permission(self, request, view):
-        user = request.user
-        return bool(user and user.is_authenticated and getattr(user, "role", None) == "dispatcher")
+        return has_allowed_role(
+            request.user,
+            ("dispatcher",),
+        )
 
     # ==========================================
     # Допоміжні функції (Форматування відповідей)

@@ -1,3 +1,47 @@
+from datetime import datetime, time, timedelta
+
+from django.utils import timezone
+
+from api.models import Booking
+
+
+def get_occupied_intervals(room, selected_date):
+    """
+    Повертає активні бронювання аудиторії за вибрану дату як список кортежів ("HH:MM", "HH:MM").
+
+    Бронювання, що виходить за межі доби, обрізається: початок "00:00", кінець "24:00".
+    Скасовані бронювання не враховуються.
+    """
+    # Межі вибраної дати в часовому поясі Django
+    start_datetime = timezone.make_aware(datetime.combine(selected_date, time.min))
+    end_datetime = timezone.make_aware(datetime.combine(selected_date + timedelta(days=1), time.min))
+
+    # Знаходимо тільки активні бронювання цієї аудиторії
+    bookings = Booking.objects.filter(
+        room=room,
+        status=Booking.BookingStatus.ACTIVE,
+        start_time__lt=end_datetime,
+        end_time__gt=start_datetime,
+    ).order_by("start_time")
+
+    occupied_intervals = []
+
+    for booking in bookings:
+        # Обрізаємо бронювання до меж вибраної дати
+        booking_start = max(booking.start_time, start_datetime)
+        booking_end = min(booking.end_time, end_datetime)
+
+        local_start = timezone.localtime(booking_start)
+        local_end = timezone.localtime(booking_end)
+
+        start_str = "00:00" if booking_start == start_datetime else local_start.strftime("%H:%M")
+        end_str = "24:00" if booking_end == end_datetime else local_end.strftime("%H:%M")
+
+        occupied_intervals.append((start_str, end_str))
+
+    return occupied_intervals
+
+
 def find_free_slots(bookings, day_start, day_end):
     """
     Повертає вільні проміжки часу між бронюваннями.

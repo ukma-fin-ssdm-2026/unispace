@@ -31,9 +31,7 @@ from api.services import bookings, saz_import, schedule
 from api.services.room_suggestions import suggest_rooms
 from api.room_occupancy import get_previous_booking
 
-from datetime import datetime, time, timedelta
-from django.utils import timezone
-from api.services.available_slots import find_free_slots
+from api.services.available_slots import find_free_slots, get_occupied_intervals
 
 from .serializers import (
     RoomSerializer,
@@ -57,6 +55,10 @@ from .serializers import (
     AuditLogEntrySerializer,
     PreviousLessonResponseSerializer,
 )
+
+# Межі дня стали константами в межах рефакторингу технікою Replace Magic Number with Constant
+DEFAULT_DAY_START_TIME = "08:00"
+DEFAULT_DAY_END_TIME = "20:00"
 
 # ==========================================
 # Дозволи (Permissions)
@@ -298,45 +300,8 @@ class AvailableSlotsAPIView(APIView):
                 status=status.HTTP_200_OK,
             )
 
-        # Тимчасові межі доступності аудиторії
-        day_start = "08:00"
-        day_end = "20:00"
-
-        # Межі вибраної дати в часовому поясі Django
-        next_date = selected_date + timedelta(days=1)
-
-        start_datetime = timezone.make_aware(datetime.combine(selected_date, time.min))
-        end_datetime = timezone.make_aware(datetime.combine(next_date, time.min))
-
-        # Знаходимо тільки активні бронювання цієї аудиторії
-        bookings = Booking.objects.filter(
-            room=room,
-            status=Booking.BookingStatus.ACTIVE,
-            start_time__lt=end_datetime,
-            end_time__gt=start_datetime,
-        ).order_by("start_time")
-
-        occupied_intervals = []
-
-        for booking in bookings:
-            # Обрізаємо бронювання до меж вибраної дати
-            booking_start = max(booking.start_time, start_datetime)
-            booking_end = min(booking.end_time, end_datetime)
-
-            local_start = timezone.localtime(booking_start)
-            local_end = timezone.localtime(booking_end)
-
-            start_str = "00:00" if booking_start == start_datetime else local_start.strftime("%H:%M")
-            end_str = "24:00" if booking_end == end_datetime else local_end.strftime("%H:%M")
-
-            occupied_intervals.append((start_str, end_str))
-
-        # Обчислюємо вільні проміжки
-        free_slots = find_free_slots(
-            occupied_intervals,
-            day_start,
-            day_end,
-        )
+        occupied_intervals = get_occupied_intervals(room, selected_date)
+        free_slots = find_free_slots(occupied_intervals, DEFAULT_DAY_START_TIME, DEFAULT_DAY_END_TIME)
 
         return Response(
             {

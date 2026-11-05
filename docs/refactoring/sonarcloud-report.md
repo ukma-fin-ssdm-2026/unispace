@@ -227,7 +227,7 @@ SonarQube зафіксував проблеми, пов'язані з недос
 |---|---|---|---|---|---|
 | A (A1 + A2) | `refactor/available-slots` | `test_available_slots.py` | 16 passed | 16 passed | спершу збій (див. нижче), після виправлення **327 passed** |
 | B (B1 + B2) | `refactor/import-schedule` | `test_saz_import.py`, `test_saz_parser.py` | 37 passed | 37 passed | **327 passed** |
-| C | _ще не створено_ | `test_bookings_crud.py`, `test_room_alternatives.py`, `test_booking_previous_lesson.py`, `test_views.py` | — | — | — |
+| C | `refactor/security-role-checks` | `test_bookings_crud.py`, `test_room_alternatives.py`, `test_booking_previous_lesson.py`, `test_views.py` | зелені в базовому прогоні (`1f0ddfa`, 327 passed) | 90 passed (на `main` після злиття) | **344 passed** |
 
 ### Виявлений збій і його причина (ціль A)
 
@@ -240,7 +240,17 @@ SonarQube зафіксував проблеми, пов'язані з недос
 
 ### Фінальний прогін на `main` (після злиття A, B, C)
 
-_Заповнити після злиття всіх цілей: результат `python -m pytest -q` і покриття `python -m pytest --cov=api --cov-branch --cov-report=term -q`._
+Прогін на `main`, коміт `42faad0` (05.11.2026), після злиття цілей A, B, C і бонусних тестів.
+
+| Що | Команда | До (`1f0ddfa`) | Після (`42faad0`) |
+|---|---|---|---|
+| Повний набір тестів | `python -m pytest -q` | 327 passed | **344 passed**, 0 failed, 0 errors |
+| Цільові тести цілі C | `python -m pytest api/tests/test_bookings_crud.py api/tests/test_room_alternatives.py api/tests/test_booking_previous_lesson.py api/tests/test_views.py -q` | — | **90 passed** |
+| Покриття | `python -m pytest --cov=api --cov-branch --cov-report=term -q` | 93% (01.11.2026, 88 непокритих рядків) | **95%**, 62 непокриті рядки з 1459 |
+
+* Приріст тестів (+17): `test_sec001_write_access.py` (6, вимірюваний тест SEC-001) і `test_import_saz_command.py` (11, характеризаційні тести). Жоден наявний тест не змінювали, щоб «підігнати» під рефакторинг.
+* Єдиний збій за весь цикл — видалена фікстура на гілці цілі A (див. вище); він не пов'язаний зі зміною поведінки й виправлений до злиття.
+* Висновок: усі три рефакторинги (A, B, C) зберегли поведінку, підтверджену повним набором тестів.
 
 ## Бонуси
 

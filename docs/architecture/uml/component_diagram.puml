@@ -48,7 +48,8 @@ package "UniSpace" {
             FR-004, FR-005, A-001, REL-002:
             - HTML parser for САЗ schedule (read-only)
             - Creates default room bookings
-            - Manual & periodic sync management
+            - Manual import of saved schedule page
+              (dispatcher upload, no automatic sync)
         end note
 
         [Classroom Directory Service\n(Auditorium Registry)] as RoomService
@@ -136,6 +137,6 @@ DAL --> SQL_Interface
 SQL_Interface --> DB
 
 AuthService ..> MSSO : Validate tokens (OAuth2/OIDC)
-SyncService ..> CA3 : HTTP GET / HTML Parsing (Read-Only)
+SyncService ..> CA3 : HTML page saved by dispatcher\n(uploaded, no direct connection)
 NotificationService ..> SMTP : Dispatch emails (SMTP)
 @enduml

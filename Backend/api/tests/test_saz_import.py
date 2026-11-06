@@ -158,6 +158,23 @@ def test_failed_sync_is_logged_and_keeps_previously_imported_data(saz_rooms):
     assert Lesson.objects.count() == lessons_before
 
 
+@pytest.mark.req("REL-002")
+def test_page_with_invalid_colspan_is_logged_as_failed_and_keeps_data(saz_rooms):
+    # Arrange (REL-H04): попередній імпорт успішний, нова сторінка має роздутий colspan
+    run_import()
+    lessons_before = Lesson.objects.count()
+    broken = HTML.replace('colspan="4"', 'colspan="1000000"', 1)
+
+    # Act
+    log, result = run_sync(broken, SEMESTER_START)
+
+    # Assert: швидка відмова з зрозумілим повідомленням, наявні дані не змінено
+    assert result is None
+    assert log.status == SyncLog.SyncStatus.FAILED
+    assert "Некоректний атрибут colspan" in log.error_message
+    assert Lesson.objects.count() == lessons_before
+
+
 # --- POST /api/v1/sync/ ---
 
 

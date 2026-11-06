@@ -14,7 +14,7 @@
 | REL-H01 | B/E | `Frontend/static/js/api.js` | `fetch()` без явного тайм-ауту | Висока |
 | REL-H02 | A/D | `Frontend/static/js/api.js` | Помилка JSON-парсингу перетворюється на `null` навіть для HTTP 200 | Середня |
 | REL-H03 | A/C | `Frontend/static/js/api.js` | CSRF-відповідь не перевіряється перед використанням токена | Середня |
-| REL-H04 | C | `Backend/api/services/saz_parser.py` | `rowspan`/`colspan` без перевірки типу й меж | Висока |
+| REL-H04 | C | `Backend/api/services/saz_parser.py` | `rowspan`/`colspan` без перевірки типу й меж | Висока · ✅ Виправлено |
 | REL-H05 | C | `Backend/api/services/saz_parser.py` | Некоректний час може викликати необроблений `ValueError` | Середня |
 | REL-H06 | C/E | `Backend/api/services/saz_parser.py` | Необмежений діапазон тижнів | Висока |
 | REL-H07 | A/D | `Backend/api/services/saz_import.py` | Неочікувана помилка імпорту залишає `SyncLog` у `in_progress` | Висока |
@@ -91,7 +91,7 @@ csrfToken = (await response.json()).csrfToken;
 - **Критичність:** середня.
 - **Рекомендація:** перевіряти HTTP-статус і непорожній рядковий токен, кидати контрольовану помилку.
 
-## REL-H04 — Некоректні `rowspan` і `colspan` у HTML
+## REL-H04 — Некоректні `rowspan` і `colspan` у HTML ✅ Виправлено
 
 **Категорія:** C — валідація входу.  
 **Файл:** [`Backend/api/services/saz_parser.py`](https://github.com/ukma-fin-ssdm-2026/unispace/blob/main/Backend/api/services/saz_parser.py)
@@ -112,6 +112,23 @@ self._cell = [[], span]
 - **Відмова:** розклад не імпортується, можлива затримка відповіді.
 - **Критичність:** висока.
 - **Рекомендація:** перевіряти числові значення та розумні межі, некоректний HTML відхиляти через `SazParseError`.
+
+**✅ Виправлено (Етап 3, Ольга Михайлик).**
+
+- **Тип відмови — швидка.** Некоректний `rowspan` зсуває день і час у всіх наступних рядках, тож «безпечне» значення за замовчуванням дало б хибний розклад і хибні бронювання. Неправильна відповідь тут гірша за відсутність відповіді, тому сторінку відхиляємо, а вже імпортовані дані лишаються без змін (REL-002).
+- **Перевірка входу (guard clause):** нова функція `_span` приймає лише ціле число в межах `1…MAX_ROWSPAN` (200) і `1…MAX_COLSPAN` (20). Межі взято з запасом відносно справжньої сторінки САЗ (`rowspan` до 19, `colspan` до 6).
+- **Чітка помилка замість сирого винятку:** `SazParseError «Некоректний атрибут colspan=«1000000» у таблиці розкладу (дозволено 1–20)»` замість `ValueError: invalid literal for int()`; роздута сітка більше не створюється.
+- **Логування:** `run_sync` записує спробу в `SyncLog` зі статусом `failed` і цим повідомленням, тож диспетчер бачить причину.
+
+```python
+def _span(attrs, name, limit):
+    raw = (attrs.get(name) or "1").strip()
+    if not raw.isdigit() or not 1 <= int(raw) <= limit:
+        raise SazParseError(f"Некоректний атрибут {name}=«{raw[:20]}» у таблиці розкладу (дозволено 1–{limit})")
+    return int(raw)
+```
+
+**Тести:** `test_saz_parser.py::test_invalid_span_rejects_page_with_clear_parse_error` (10 випадків: `abc`, `-1`, `0`, `2.5`, `1000000` для обох атрибутів), `test_saz_parser.py::test_span_with_spaces_and_upper_limit_is_accepted`, `test_saz_import.py::test_page_with_invalid_colspan_is_logged_as_failed_and_keeps_data`.
 
 ## REL-H05 — Некоректний час із HTML не перетворюється на попередження
 

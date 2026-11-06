@@ -105,3 +105,34 @@ def test_room_formats_from_saz_are_recognized(text, expected):
 def test_page_without_schedule_table_is_rejected():
     with pytest.raises(SazParseError):
         parse_schedule("<html><body><h1>Увійдіть, щоб переглянути розклад</h1></body></html>")
+
+
+# --- REL-H04: некоректні rowspan / colspan ---
+
+FIXTURE_HTML = FIXTURE.read_text(encoding="utf-8")
+
+
+@pytest.mark.req("REL-002")
+@pytest.mark.parametrize("attribute", ["rowspan", "colspan"])
+@pytest.mark.parametrize("value", ["abc", "-1", "0", "2.5", "1000000"])
+def test_invalid_span_rejects_page_with_clear_parse_error(attribute, value):
+    # Arrange: перша клітинка з таким атрибутом отримує некоректне значення
+    original = f'{attribute}="4"' if attribute == "colspan" else 'rowspan="2"'
+    html = FIXTURE_HTML.replace(original, f'{attribute}="{value}"', 1)
+    assert html != FIXTURE_HTML
+
+    # Act / Assert: SazParseError (а не сирий ValueError з int() і не роздута сітка)
+    with pytest.raises(SazParseError, match=f"Некоректний атрибут {attribute}"):
+        parse_schedule(html)
+
+
+@pytest.mark.req("REL-002")
+def test_span_with_spaces_and_upper_limit_is_accepted():
+    # Arrange: пробіли довкола числа й межове значення дозволені
+    html = FIXTURE_HTML.replace('rowspan="2"', 'rowspan=" 2 "', 1).replace('colspan="6"', 'colspan="20"', 1)
+
+    # Act
+    result = parse_schedule(html)
+
+    # Assert
+    assert result.entries

@@ -14,10 +14,10 @@
 | REL-H01 | B/E | `Frontend/static/js/api.js` | `fetch()` без явного тайм-ауту | Висока |
 | REL-H02 | A/D | `Frontend/static/js/api.js` | Помилка JSON-парсингу перетворюється на `null` навіть для HTTP 200 | Середня |
 | REL-H03 | A/C | `Frontend/static/js/api.js` | CSRF-відповідь не перевіряється перед використанням токена | Середня |
-| REL-H04 | C | `Backend/api/services/saz_parser.py` | `rowspan`/`colspan` без перевірки типу й меж | Висока |
+| REL-H04 | C | `Backend/api/services/saz_parser.py` | `rowspan`/`colspan` без перевірки типу й меж | Висока · ✅ Виправлено |
 | REL-H05 | C | `Backend/api/services/saz_parser.py` | Некоректний час може викликати необроблений `ValueError` | Середня |
 | REL-H06 | C/E | `Backend/api/services/saz_parser.py` | Необмежений діапазон тижнів | Висока |
-| REL-H07 | A/D | `Backend/api/services/saz_import.py` | Неочікувана помилка імпорту залишає `SyncLog` у `in_progress` | Висока |
+| REL-H07 | A/D | `Backend/api/services/saz_import.py` | Неочікувана помилка імпорту залишає `SyncLog` у `in_progress` | Висока · ✅ Виправлено |
 | REL-H08 | A/B | `Backend/api/services/microsoft_auth.py` | Збої MSAL, крім `ValueError`, не перетворюються на контрольовану помилку входу | Середня |
 | REL-H09 | C/E | `Backend/api/serializers.py` | В `RoomQuerySerializer.limit` немає верхньої межі | Середня |
 
@@ -91,7 +91,7 @@ csrfToken = (await response.json()).csrfToken;
 - **Критичність:** середня.
 - **Рекомендація:** перевіряти HTTP-статус і непорожній рядковий токен, кидати контрольовану помилку.
 
-## REL-H04 — Некоректні `rowspan` і `colspan` у HTML
+## REL-H04 — Некоректні `rowspan` і `colspan` у HTML ✅ Виправлено
 
 **Категорія:** C — валідація входу.  
 **Файл:** [`Backend/api/services/saz_parser.py`](https://github.com/ukma-fin-ssdm-2026/unispace/blob/main/Backend/api/services/saz_parser.py)
@@ -112,6 +112,23 @@ self._cell = [[], span]
 - **Відмова:** розклад не імпортується, можлива затримка відповіді.
 - **Критичність:** висока.
 - **Рекомендація:** перевіряти числові значення та розумні межі, некоректний HTML відхиляти через `SazParseError`.
+
+**✅ Виправлено (Етап 3, Ольга Михайлик).**
+
+- **Тип відмови — швидка.** Некоректний `rowspan` зсуває день і час у всіх наступних рядках, тож «безпечне» значення за замовчуванням дало б хибний розклад і хибні бронювання. Неправильна відповідь тут гірша за відсутність відповіді, тому сторінку відхиляємо, а вже імпортовані дані лишаються без змін (REL-002).
+- **Перевірка входу (guard clause):** нова функція `_span` приймає лише ціле число в межах `1…MAX_ROWSPAN` (200) і `1…MAX_COLSPAN` (20). Межі взято з запасом відносно справжньої сторінки САЗ (`rowspan` до 19, `colspan` до 6).
+- **Чітка помилка замість сирого винятку:** `SazParseError «Некоректний атрибут colspan=«1000000» у таблиці розкладу (дозволено 1–20)»` замість `ValueError: invalid literal for int()`; роздута сітка більше не створюється.
+- **Логування:** `run_sync` записує спробу в `SyncLog` зі статусом `failed` і цим повідомленням, тож диспетчер бачить причину.
+
+```python
+def _span(attrs, name, limit):
+    raw = (attrs.get(name) or "1").strip()
+    if not raw.isdigit() or not 1 <= int(raw) <= limit:
+        raise SazParseError(f"Некоректний атрибут {name}=«{raw[:20]}» у таблиці розкладу (дозволено 1–{limit})")
+    return int(raw)
+```
+
+**Тести:** `test_saz_parser.py::test_invalid_span_rejects_page_with_clear_parse_error` (10 випадків: `abc`, `-1`, `0`, `2.5`, `1000000` для обох атрибутів), `test_saz_parser.py::test_span_with_spaces_and_upper_limit_is_accepted`, `test_saz_import.py::test_page_with_invalid_colspan_is_logged_as_failed_and_keeps_data`.
 
 ## REL-H05 — Некоректний час із HTML не перетворюється на попередження
 
@@ -159,7 +176,7 @@ weeks.update(range(first, last + 1))
 - **Критичність:** висока.
 - **Рекомендація:** обмежити тижні межами семестру та відхиляти некоректний діапазон до початку імпорту.
 
-## REL-H07 — Непередбачений виняток залишає синхронізацію незавершеною
+## REL-H07 — Непередбачений виняток залишає синхронізацію незавершеною ✅ Виправлено
 
 **Категорія:** A — обробка помилок; D — потенційні мовчазні збої.  
 **Файл:** [`Backend/api/services/saz_import.py`](https://github.com/ukma-fin-ssdm-2026/unispace/blob/main/Backend/api/services/saz_import.py)
@@ -192,6 +209,23 @@ log.save(update_fields=["status", "error_message", "finished_at"])
 - **Відмова:** диспетчер бачить незавершений імпорт після збою.
 - **Критичність:** висока.
 - **Рекомендація:** логувати неочікувані винятки, безпечно намагатися перевести журнал у `failed`, не приховувати системну помилку; окремо врахувати недоступність БД.
+
+**✅ Виправлено (Етап 3, Ольга Михайлик).**
+
+- **Тип відмови — швидка.** Неочікуваний збій (база, помилка в коді) не можна видати за успішний чи «майже успішний» імпорт: запит завершується помилкою, а не безпечним значенням. Але перед цим журнал закривається, щоб стан системи був правдивим.
+- **Окремий вузький шлях для очікуваних помилок** (`SazParseError`, `ValueError`) лишився як був: зрозуміле повідомлення для диспетчера, `failed`, без винятку назовні.
+- **Для решти винятків:** `logger.exception(...)` пише повний traceback у лог сервера; `_mark_failed` переводить `SyncLog` у `failed` з `finished_at`; виняток передається далі (`raise`), тобто збій не приховано.
+- **Без витоку внутрішніх деталей:** у `error_message`, який бачить диспетчер, лише тип помилки («Неочікувана помилка імпорту: OperationalError»), а текст винятку (SQL, шляхи) — тільки в лозі.
+- **Недоступна сама база:** якщо не вдається записати й статус `failed`, `_mark_failed` перехоплює лише `DatabaseError`, логує її й не підміняє початкову помилку.
+
+```python
+except Exception as error:
+    logger.exception("Неочікувана помилка імпорту САЗ (SyncLog %s)", log.pk)
+    _mark_failed(log, f"Неочікувана помилка імпорту: {type(error).__name__}")
+    raise
+```
+
+**Тести:** `test_saz_import.py::test_unexpected_error_marks_sync_failed_and_is_reraised` (`OperationalError` і `RuntimeError`: журнал `failed`, `finished_at` заповнено, повідомлення без деталей, запис у лозі, виняток не приховано), `test_saz_import.py::test_original_error_is_kept_when_sync_log_cannot_be_updated` (база недоступна й для запису журналу: назовні початкова помилка, проблема залогована).
 
 ## REL-H08 — Не всі зовнішні збої Microsoft OAuth перетворюються на контрольовану помилку
 

@@ -31,6 +31,11 @@ _TEACHER = re.compile(r"[А-ЯІЇЄҐ]\. ?(?:[А-ЯІЇЄҐ]\. ?)?[А-ЯІЇЄ�
 _SPECIALTY = re.compile(r"Спеціальність ?[\"«“]([^\"»”]{1,150})[\"»”] ?, ?(\d{1,2}) ?р\.? ?н", re.IGNORECASE)
 _ONLINE_ONLY = {"дистанційно", "онлайн"}
 
+# Межі rowspan/colspan (REL-H04): у справжніх сторінках САЗ rowspan до ~20 (день), colspan до 6 (ширина таблиці).
+# Запас у кілька разів, але без можливості роздути сітку до мільйонів клітинок.
+MAX_ROWSPAN = 200
+MAX_COLSPAN = 20
+
 
 class SazParseError(ValueError):
     """Сторінка не схожа на розклад САЗ: таблицю або заголовок не знайдено."""
@@ -76,7 +81,7 @@ class _TableCollector(HTMLParser):
         elif tag == "tr" and self._depth:
             self._row = []
         elif tag in ("td", "th") and self._row is not None:
-            span = (int(attrs.get("rowspan") or 1), int(attrs.get("colspan") or 1))
+            span = (_span(attrs, "rowspan", MAX_ROWSPAN), _span(attrs, "colspan", MAX_COLSPAN))
             self._cell = [[], span]
         elif tag == "br" and self._cell is not None:
             self._cell[0].append(" ")
@@ -97,6 +102,17 @@ class _TableCollector(HTMLParser):
             self._cell[0].append(data)
         else:
             self.texts.append(data)
+
+
+def _span(attrs, name, limit):
+    """
+    Значення rowspan/colspan з HTML (REL-H04). Швидка відмова: нечисловий, нульовий, від'ємний або завеликий
+    атрибут зсунув би дні й час у наступних рядках, тож замість хибного розкладу сторінку відхиляємо.
+    """
+    raw = (attrs.get(name) or "1").strip()
+    if not raw.isdigit() or not 1 <= int(raw) <= limit:
+        raise SazParseError(f"Некоректний атрибут {name}=«{raw[:20]}» у таблиці розкладу (дозволено 1–{limit})")
+    return int(raw)
 
 
 def _expand_spans(rows):

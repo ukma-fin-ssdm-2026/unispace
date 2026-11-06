@@ -7,6 +7,7 @@
  *
  * Примітка щодо використання ШІ: модуль згенеровано ШІ (Claude).
  */
+
 const UniSpaceApi = (() => {
     const apiBase = document.body.dataset.apiBase;
     const backendOrigin = document.body.dataset.backendOrigin;
@@ -23,13 +24,28 @@ const UniSpaceApi = (() => {
 
     async function getCsrfToken() {
         if (!csrfToken) {
-            const response = await fetch(`${apiBase}auth/csrf/`, { credentials: 'include' });
-            csrfToken = (await response.json()).csrfToken;
+            // Виправлення REL-H01: Додано тайм-аут
+            const response = await fetch(`${apiBase}auth/csrf/`, {
+                credentials: 'include',
+                signal: AbortSignal.timeout(10000)
+            });
+
+            // Виправлення REL-H03: Перевірка статусу та формату токена
+            if (!response.ok) {
+                throw new Error(`Не вдалося отримати CSRF-токен (Статус: ${response.status})`);
+            }
+
+            const data = await response.json();
+            if (!data || typeof data.csrfToken !== 'string' || !data.csrfToken.trim()) {
+                throw new Error('Отримано невалідний CSRF-токен');
+            }
+
+            csrfToken = data.csrfToken;
         }
         return csrfToken;
     }
 
-    async function request(path, { method = 'GET', body = null, json = null, absolute = false } = {}) {
+    async function request(path, { method = 'GET', body = null, json = null, absolute = false, timeout = 10000 } = {}) {
         const headers = { Accept: 'application/json' };
         if (method !== 'GET') {
             headers['X-CSRFToken'] = await getCsrfToken();
@@ -39,14 +55,35 @@ const UniSpaceApi = (() => {
             body = JSON.stringify(json);
         }
         const url = absolute ? `${backendOrigin}${path}` : `${apiBase}${path}`;
-        const response = await fetch(url, { method, headers, body, credentials: 'include' });
+
+        // Виправлення REL-H01: Додано тайм-аут
+        const response = await fetch(url, {
+            method,
+            headers,
+            body,
+            credentials: 'include',
+            signal: AbortSignal.timeout(timeout)
+        });
+
         if (response.status === 204) {
             return null;
         }
-        const payload = await response.json().catch(() => null);
+
+        // Виправлення REL-H02: Явна обробка помилок JSON-парсингу
+        let payload;
+        try {
+            payload = await response.json();
+        } catch (error) {
+            if (response.ok) {
+                throw new Error('Отримано некоректну JSON-відповідь від сервера');
+            }
+            payload = null;
+        }
+
         if (!response.ok) {
             throw new ApiError(response.status, payload);
         }
+
         return payload;
     }
 

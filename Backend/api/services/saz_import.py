@@ -15,15 +15,18 @@
 """
 
 import hashlib
+import logging
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 
-from django.db import IntegrityError, transaction
+from django.db import DatabaseError, IntegrityError, transaction
 from django.utils import timezone
 
 from api.models import AcademicGroup, Booking, Conflict, Lesson, Room, User
 
 from .saz_parser import LECTURE
+
+logger = logging.getLogger(__name__)
 
 PLACEHOLDER_EMAIL_DOMAIN = "saz.invalid"
 
@@ -215,11 +218,30 @@ def run_sync(html, semester_start: date, trigger=None):
     try:
         result = import_schedule(parse_schedule(html), semester_start)
     except (SazParseError, ValueError) as error:
+        # Очікувана помилка даних: зрозуміле повідомлення для диспетчера, наявні дані не змінено.
         log.status = SyncLog.SyncStatus.FAILED
         log.error_message = str(error)
         result = None
+    except Exception as error:
+        # REL-H07: неочікуваний збій (наприклад, база) не має лишати журнал у in_progress.
+        # Швидка відмова: журнал закриваємо як failed, деталі - лише в лог сервера, а виняток передаємо далі.
+        logger.exception("Неочікувана помилка імпорту САЗ (SyncLog %s)", log.pk)
+        _mark_failed(log, f"Неочікувана помилка імпорту: {type(error).__name__}")
+        raise
     else:
         log.status = SyncLog.SyncStatus.SUCCESS
     log.finished_at = timezone.now()
     log.save(update_fields=["status", "error_message", "finished_at"])
     return log, result
+
+
+def _mark_failed(log, message):
+    """Переводить журнал у failed; якщо недоступна й сама база, лише логує, щоб не сховати початкову помилку."""
+    log.status = log.SyncStatus.FAILED
+    log.error_message = message
+    log.finished_at = timezone.now()
+    fields = {"status": log.status, "error_message": message, "finished_at": log.finished_at}
+    try:
+        type(log).objects.filter(pk=log.pk).update(**fields)
+    except DatabaseError:
+        logger.exception("Не вдалося позначити SyncLog %s як failed", log.pk)

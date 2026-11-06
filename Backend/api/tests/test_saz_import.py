@@ -12,9 +12,11 @@
 
 from datetime import date, time
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import DatabaseError, OperationalError
 from django.urls import reverse
 from rest_framework import status
 
@@ -173,6 +175,40 @@ def test_page_with_invalid_colspan_is_logged_as_failed_and_keeps_data(saz_rooms)
     assert log.status == SyncLog.SyncStatus.FAILED
     assert "Некоректний атрибут colspan" in log.error_message
     assert Lesson.objects.count() == lessons_before
+
+
+# --- REL-H07: неочікувані збої не лишають журнал у in_progress ---
+
+
+@pytest.mark.req("REL-002")
+@pytest.mark.parametrize("error", [OperationalError("connection lost"), RuntimeError("bug")])
+def test_unexpected_error_marks_sync_failed_and_is_reraised(saz_rooms, caplog, error):
+    # Arrange: імпорт падає з винятком, якого run_sync не очікує
+    with patch("api.services.saz_import.import_schedule", side_effect=error):
+        # Act / Assert: помилку не приховано
+        with pytest.raises(type(error)):
+            run_sync(HTML, SEMESTER_START)
+
+    # Assert: журнал закрито як failed без внутрішніх деталей, деталі - у лозі сервера
+    log = SyncLog.objects.get()
+    assert log.status == SyncLog.SyncStatus.FAILED
+    assert log.error_message == f"Неочікувана помилка імпорту: {type(error).__name__}"
+    assert log.finished_at is not None
+    assert "Неочікувана помилка імпорту САЗ" in caplog.text
+    assert not Lesson.objects.exists()
+
+
+@pytest.mark.req("REL-002")
+def test_original_error_is_kept_when_sync_log_cannot_be_updated(saz_rooms, caplog):
+    # Arrange: падає імпорт, а потім і запис статусу failed (база недоступна)
+    with patch("api.services.saz_import.import_schedule", side_effect=OperationalError("db down")):
+        with patch("django.db.models.query.QuerySet.update", side_effect=DatabaseError("still down")):
+            # Act / Assert: назовні - початкова помилка, а не помилка запису журналу
+            with pytest.raises(OperationalError, match="db down"):
+                run_sync(HTML, SEMESTER_START)
+
+    # Assert
+    assert "Не вдалося позначити SyncLog" in caplog.text
 
 
 # --- POST /api/v1/sync/ ---

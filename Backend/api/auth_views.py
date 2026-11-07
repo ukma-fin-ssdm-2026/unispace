@@ -121,8 +121,8 @@ def dev_login(request):
     Дозволяє миттєво увійти під будь-якою роллю без Microsoft.
     Приклад: /api/v1/auth/dev-login/?role=dispatcher
     """
-    # Працює ТІЛЬКИ якщо DEBUG = True
-    if not settings.DEBUG:
+    allow_dev_login = getattr(settings, "ALLOW_DEV_LOGIN", settings.DEBUG)
+    if not allow_dev_login:
         return _error("FORBIDDEN", "Цей ендпоінт вимкнено у продакшні", 403)
 
     role = request.GET.get("role", User.RoleChoices.STUDENT)

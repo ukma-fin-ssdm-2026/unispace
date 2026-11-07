@@ -191,16 +191,22 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 * Журнал налагодження [(Debugging Log)](docs/testing/debugging-log.md)
 * План тестування [(Test Plan)](docs/validation/test-plan.md)
 * Журнал оглядів [(Review Log)](docs/validation/review-log.md)
-* Модульні тести API [(Unit Tests)](Backend/api/tests/)
+* Модульні тести [(Unit Tests)](Backend/api/tests/unit/)
+* Інтеграційні тести [(Integration Tests)](Backend/api/tests/integration/)
 * Тести надійності та ін'єкції збоїв [(Reliability Tests)](Backend/api/tests/reliability/)
 * Розширене тестування: мутаційне (Mutmut) та на основі властивостей (Hypothesis) для перевірки бізнес-правил.
 
 **Запуск тестів та перевірка покриття:**
-Щоб запустити модульні тести локально та згенерувати HTML-звіт про покриття коду (`htmlcov/`), виконайте наступні команди з папки бекенду:
+
+Оскільки проєкт використовує фікстури та плагіни `pytest`, усі тести запускаються виключно через цей фреймворк. Щоб запустити тести локально та згенерувати звіт про покриття коду, виконайте наступні команди з папки бекенду:
 ```bash
 cd Backend
-coverage run manage.py test
-coverage html 
+
+# Запуск усіх тестів
+python -m pytest
+
+# Запуск із перевіркою покриття та генерацією HTML-звіту (htmlcov/)
+python -m pytest --cov=api --cov-branch --cov-report=html
 ```
 
 ## Відеоматеріали та демонстрації

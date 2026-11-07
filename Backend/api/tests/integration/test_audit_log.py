@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from api.models import AuditLog
-from .conftest import at
+from api.tests.conftest import at
 
 pytestmark = pytest.mark.req("US-04", "SEC-003")
 

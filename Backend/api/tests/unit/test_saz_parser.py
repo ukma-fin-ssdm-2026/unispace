@@ -20,7 +20,7 @@ from api.services.saz_parser import (
 
 pytestmark = pytest.mark.req("FR-004")
 
-FIXTURE = Path(__file__).parent / "fixtures" / "saz" / "schedule_preview.html"
+FIXTURE = Path(__file__).parent.parent / "fixtures" / "saz" / "schedule_preview.html"
 
 
 @pytest.fixture(scope="module")

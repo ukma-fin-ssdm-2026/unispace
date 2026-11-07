@@ -115,7 +115,7 @@ def collect_test_marks(tests_dir, base_dir=None):
     tests_dir = safe_path(tests_dir)
     base_dir = Path(base_dir).resolve() if base_dir else tests_dir.parent.parent
     tests = {}
-    for path in sorted(tests_dir.glob("test_*.py")):
+    for path in sorted(tests_dir.rglob("test_*.py")):
         module = ast.parse(path.read_text(encoding="utf-8"))
         relative = path.relative_to(base_dir).as_posix()
         module_ids = _pytestmark_ids(module.body)

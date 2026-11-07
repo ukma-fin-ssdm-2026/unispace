@@ -111,6 +111,7 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 * `PYTHON_VERSION` = `3.12.0`
 * `SECRET_KEY` = `<ваш-унікальний-секретний-ключ>`
 * `DEBUG` = `False`
+* `ALLOW_DEV_LOGIN` = `True` *(дозволяє використання Dev Login на Render для демонстрації та тестування)*
 * `ALLOWED_HOSTS` = `unispace-wtf6.onrender.com`
 * `DATABASE_URL` = `<url-бази>` *(Internal Database URL від `unispace-db`)*
 * **Дані для інтеграції з Microsoft (SSO).** Отримайте ці ключі, зареєструвавши застосунок у порталі Microsoft Entra ID (Azure AD):

@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 from api.models import Booking
-from api.room_occupancy import get_day_bookings, get_previous_booking
+from api.services.room_occupancy import get_day_bookings, get_previous_booking
 
 
 def make_booking(booking_id, room_id, start_str, end_str, user_id=1):
@@ -32,7 +32,7 @@ def test_get_day_bookings_queries_correct_parameters_from_db():
     booking_second = make_booking(2, 101, "2026-10-28 10:25:00", "2026-10-28 12:00:00")
     target_date = date(2026, 10, 28)
 
-    with patch("api.room_occupancy.Booking.objects") as mock_objects:
+    with patch("api.services.room_occupancy.Booking.objects") as mock_objects:
         mock_filtered = mock_objects.filter.return_value
         mock_qs = mock_filtered.select_related.return_value
         mock_qs.order_by.return_value = [booking_first, booking_second]
@@ -136,7 +136,7 @@ def test_get_previous_booking_fetches_from_db_when_day_bookings_is_none():
     first_pair = make_booking(1, 101, "2026-10-28 08:30:00", "2026-10-28 10:05:00")
     current_pair = make_booking(2, 101, "2026-10-28 10:25:00", "2026-10-28 12:00:00")
 
-    with patch("api.room_occupancy.get_day_bookings") as mock_fetch:
+    with patch("api.services.room_occupancy.get_day_bookings") as mock_fetch:
         mock_fetch.return_value = [first_pair, current_pair]
 
         previous = get_previous_booking(current_pair)

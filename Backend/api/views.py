@@ -29,7 +29,7 @@ from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
 from api.services import bookings, saz_import, schedule
 from api.services.room_suggestions import suggest_rooms
-from api.room_occupancy import get_previous_booking
+from api.services.room_occupancy import get_previous_booking
 
 from api.services.available_slots import find_free_slots, get_occupied_intervals
 

@@ -26,7 +26,7 @@ from api.services.saz_parser import parse_schedule
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("FR-004")]
 
-HTML = (Path(__file__).parent / "fixtures" / "saz" / "schedule_preview.html").read_text(encoding="utf-8")
+HTML = (Path(__file__).parent.parent / "fixtures" / "saz" / "schedule_preview.html").read_text(encoding="utf-8")
 SEMESTER_START = date(2026, 9, 1)  # вівторок першого тижня; понеділок тижня 1 - 31.08.2026
 
 

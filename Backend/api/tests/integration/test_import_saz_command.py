@@ -26,7 +26,7 @@ from api.models import Lesson, Room, SyncLog
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("FR-004")]
 
-FIXTURE = Path(__file__).parent / "fixtures" / "saz" / "schedule_preview.html"
+FIXTURE = Path(__file__).parent.parent / "fixtures" / "saz" / "schedule_preview.html"
 SEMESTER_START = "2026-09-01"
 COUNT_LINES = [
     "lessons_created: 13",

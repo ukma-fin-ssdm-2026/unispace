@@ -19,7 +19,7 @@ from rest_framework import status
 
 from api.models import Booking, Room, User
 
-from .conftest import at
+from api.tests.conftest import at
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("US-10")]
 

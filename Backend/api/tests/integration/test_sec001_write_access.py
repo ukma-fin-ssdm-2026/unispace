@@ -16,7 +16,7 @@ from rest_framework import status
 
 from api.models import AuditLog, Booking, Notification
 
-from .conftest import at
+from api.tests.conftest import at
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("SEC-001")]
 

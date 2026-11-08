@@ -14,7 +14,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from api.models import Room
-from .conftest import at
+from api.tests.conftest import at
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("US-06")]
 UNKNOWN_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")

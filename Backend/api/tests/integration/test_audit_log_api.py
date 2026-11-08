@@ -20,7 +20,7 @@ from rest_framework.test import APIClient
 
 from api.models import AuditLog, Room
 
-from .conftest import at
+from api.tests.conftest import at
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("US-04")]
 

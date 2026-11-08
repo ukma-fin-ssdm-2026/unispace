@@ -13,7 +13,7 @@ from django.db import OperationalError
 
 from api.services.bookings import BookingConflictError, change_booking_room, create_booking
 
-from .conftest import at
+from api.tests.conftest import at
 
 pytestmark = [pytest.mark.django_db, pytest.mark.req("REL-001")]
 

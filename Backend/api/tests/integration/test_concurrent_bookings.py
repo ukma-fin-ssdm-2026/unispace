@@ -15,7 +15,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from api.models import Booking
-from .conftest import at
+from api.tests.conftest import at
 
 
 @pytest.mark.req("REL-001")

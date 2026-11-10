@@ -5,6 +5,41 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.3.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.2.2...v0.3.0) (2026-11-10)
+
+
+### Features
+
+* add ALLOW_DEV_LOGIN setting to allow dev login on production via environment variable ([4f11ec1](https://github.com/ukma-fin-ssdm-2026/unispace/commit/4f11ec18e09d5d53dfb959a9b66120d8e2683b01))
+* add ALLOW_DEV_LOGIN setting to allow dev login on production via environment variable ([a31415e](https://github.com/ukma-fin-ssdm-2026/unispace/commit/a31415ef0233d2d7cd53b5f5e6d4ff10a5479850))
+* add ALLOW_DEV_LOGIN setting to allow dev login on production via environment variable ([4a94f4f](https://github.com/ukma-fin-ssdm-2026/unispace/commit/4a94f4f7e17afcc384949965dab2a64461a21572))
+
+
+### Bug Fixes
+
+* add timeouts, strict JSON and CSRF validation to api.js ([79d245b](https://github.com/ukma-fin-ssdm-2026/unispace/commit/79d245bc8f06bcf270c5e6aad78cae7cc38bce3b))
+* add timeouts, strict JSON and CSRF validation to api.js ([953e901](https://github.com/ukma-fin-ssdm-2026/unispace/commit/953e90161a846562da21993082f6c7b652f88846))
+* close SyncLog as failed on unexpected import errors (REL-H07) ([939e271](https://github.com/ukma-fin-ssdm-2026/unispace/commit/939e271dc7014ec7b65b3a21284ba3d0d95f21b5))
+* close SyncLog as failed on unexpected import errors (REL-H07) ([0adb2c0](https://github.com/ukma-fin-ssdm-2026/unispace/commit/0adb2c0ce5a7d2aa35981fc75b6f7d7f993b0e44))
+* close SyncLog as failed on unexpected import errors (REL-H07) merge pull request ([939e271](https://github.com/ukma-fin-ssdm-2026/unispace/commit/939e271dc7014ec7b65b3a21284ba3d0d95f21b5))
+* sync release version 0.2.2 in configs and changelog ([01cc379](https://github.com/ukma-fin-ssdm-2026/unispace/commit/01cc37970afab83695942b0b5298e6855953663d))
+* sync release version 0.2.2 in configs and changelog ([ed372e8](https://github.com/ukma-fin-ssdm-2026/unispace/commit/ed372e84263b08af5a5f31be3c1297efd737de29))
+* update traceability script and exceptions for nested test folders ([314a98a](https://github.com/ukma-fin-ssdm-2026/unispace/commit/314a98a5022910f798eccf8a36ccc7128e98c52e))
+* validate rowspan/colspan in SAZ parser (REL-H04) ([87c47bb](https://github.com/ukma-fin-ssdm-2026/unispace/commit/87c47bb330416b8e878ace4da3d6612a59fdcda1))
+* validate rowspan/colspan in SAZ parser (REL-H04) ([15f8619](https://github.com/ukma-fin-ssdm-2026/unispace/commit/15f86194867d4ced03119b8229bc276569937ddb))
+* validate rowspan/colspan in SAZ parser (REL-H04) merge pull request ([87c47bb](https://github.com/ukma-fin-ssdm-2026/unispace/commit/87c47bb330416b8e878ace4da3d6612a59fdcda1))
+
+
+### Documentation
+
+* add ALLOW_DEV_LOGIN environment variable to Render deployment instructions ([9ee1f88](https://github.com/ukma-fin-ssdm-2026/unispace/commit/9ee1f886816d29b56d9a9cb25e302ffc3b1ec150))
+* add Lab08 video link to video_Trekurova.txt ([1fa314c](https://github.com/ukma-fin-ssdm-2026/unispace/commit/1fa314cd1de6c3aa01aa4ed04d0658ba7f89a083))
+* add Lab09 reliability scavenger hunt ([433e185](https://github.com/ukma-fin-ssdm-2026/unispace/commit/433e1857459115d90e458486f8ea89a08cce9694))
+* add Lab09 reliability scavenger hunt ([d9a0d5d](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d9a0d5db98bae75a2b81ba1e9240a60e903ff814))
+* restructure README and add Lab 09 reliability files ([7ef4405](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7ef44051724bef3fe9433d13ff753a069b5a0513))
+* restructure README and add Lab 09 reliability files ([b6e6303](https://github.com/ukma-fin-ssdm-2026/unispace/commit/b6e630300a33d6303607b22d956e9691170f2d95))
+* update test paths and pytest commands in README ([34e21bd](https://github.com/ukma-fin-ssdm-2026/unispace/commit/34e21bd205610861bb630fb6a5788b57db410907))
+
 ## [0.2.2] - 2026-11-05
 
 ### Changed

@@ -12,6 +12,16 @@
   - Додано детальні результати фінального регресійного прогону в `main` після злиття всіх цілей рефакторингу.
   - Додано зведену таблицю всіх виконаних рефакторингів (з авторами, техніками та посиланнями на коміти) та розгорнуту нотатку про верифікацію коду, згенерованого ШІ-агентом.
 - Оновлено тестову документацію (`testing-strategy.md`, `test-plan.md`, `rtm.md`): зафіксовано зростання покриття коду до 95%, збільшення загальної кількості тестів до 344 та відображено покриття вимоги FR-004 новими характеризаційними тестами.
+
+### Refactoring
+- **Replace Magic Number with Constant:** винесено межі робочого дня ("08:00"/"20:00") у константи в `AvailableSlotsAPIView.get` (Ціль A1).
+- **Extract Method:** винесено логіку обчислення зайнятих інтервалів з `AvailableSlotsAPIView.get` у виділений сервіс `services/available_slots.py` (Ціль A2).
+- **Extract Method:** винесено логіку обчислення дати заняття та формування `source_key` з функції `import_schedule` у допоміжні функції в `services/saz_import.py` (Ціль B1).
+- **Extract Method:** винесено блок `update_or_create` з підрахунком лічильників з `import_schedule` в окрему функцію `_upsert_lesson` (Ціль B2).
+- **Extract Method:** замінено 11 однакових блоків перевірки `is_valid()` з поверненням помилки 400 на єдиний загальний хелпер у `views.py` (Ціль C).
+- **Extract Method:** виділено допоміжні функції `_existing_file`, `_parse_semester_start`, `_read_page` та `_write_summary` з довгого методу `handle` команди `import_saz`.
+- **Extract Method:** виділено спільну перевірку автентифікації та ролей у функцію `has_allowed_role` у `views.py` (для `IsTeacherOrDispatcher` та `IsDispatcher`).
+
 ## [0.2.1] - 2026-11-04
 
 ### Added
@@ -27,15 +37,6 @@
   - Додано секцію бонусів: зафіксовано налаштування SonarQube Quality Gate як обов'язкової перевірки для гілки `main`.
   - Додано бонус "Характеризаційні тести перед рефакторингом" для модуля `import_saz`.
 - Оновлено тестову документацію (`test-plan.md`, `quality-attributes.md`, `rtm.md`, `testing-strategy.md`): відображено актуальний стан покриття вимог, додано посилання на новий вимірюваний тест SEC-001 та виправлено таблицю плану тестування.
-
-### Refactoring
-- **Replace Magic Number with Constant:** винесено межі робочого дня ("08:00"/"20:00") у константи в `AvailableSlotsAPIView.get` (Ціль A1).
-- **Extract Method:** винесено логіку обчислення зайнятих інтервалів з `AvailableSlotsAPIView.get` у виділений сервіс `services/available_slots.py` (Ціль A2).
-- **Extract Method:** винесено логіку обчислення дати заняття та формування `source_key` з функції `import_schedule` у допоміжні функції в `services/saz_import.py` (Ціль B1).
-- **Extract Method:** винесено блок `update_or_create` з підрахунком лічильників з `import_schedule` в окрему функцію `_upsert_lesson` (Ціль B2).
-- **Extract Method:** замінено 11 однакових блоків перевірки `is_valid()` з поверненням помилки 400 на єдиний загальний хелпер у `views.py` (Ціль C).
-- **Extract Method:** виділено допоміжні функції `_existing_file`, `_parse_semester_start`, `_read_page` та `_write_summary` з довгого методу `handle` команди `import_saz`.
-- **Extract Method:** виділено спільну перевірку автентифікації та ролей у функцію `has_allowed_role` у `views.py` (для `IsTeacherOrDispatcher` та `IsDispatcher`).
 
 ## [0.2.0] - 2026-11-01
 

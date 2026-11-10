@@ -168,7 +168,7 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 * Опис проєкту [(Project Description)](Project-Description.md)
 * Статут команди [(Team Charter)](TeamCharter.md)
 * Прогрес реалізації проєкту [(Progress)](docs/code-quality/progress.md)
-* Журнал змін і релізи [(Changelog)](CHANGELOG.md)
+* Журнал змін і релізи [(Changelog)](CHANGELOG.md) *(Генерується автоматично через Release Please на основі Conventional Commits)*
 * Конфігурація проєкту та версія [(Frontend pyproject.toml)](Frontend/pyproject.toml)
 
 ## Якість коду та Надійність
@@ -223,6 +223,7 @@ python -m pytest --cov=api --cov-branch --cov-report=html
 4. **Автоматичні перевірки (CI):** кожен PR зобов'язаний успішно пройти всі перевірки GitHub Actions (форматування `black`, лінтер `flake8`, аналізатор безпеки `bandit`). Усі тести також мають успішно завершитися з підтвердженим порогом покриття коду не нижче 75%.
 5. **Огляд коду (Code Review):** схвалення (Approve) мінімум від 1 учасника команди (для важливих документів — перегляд усією командою).
 6. **Злиття (Merge):** після схвалення та успішного проходження CI код додається до `main`.
+7. **Автоматизація релізів (Release Please):** злиття PR з гілкою `main` автоматично тригерить екшн `release-please`. Він аналізує історію комітів за стандартом Conventional Commits, оновлює версії у файлах конфігурації, генерує `CHANGELOG.md` та створює новий Release PR. Після його затвердження створюється відповідний тег і реліз на GitHub.
 
 ## Інформація про команду
 | Учасниця                | GitHub                                                 | Постійні ролі                                                                                                                                                                          | Ролі (Лабораторна 9)           |

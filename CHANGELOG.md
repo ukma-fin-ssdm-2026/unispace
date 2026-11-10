@@ -5,6 +5,29 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.3.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.2.2...v0.3.0) (2026-11-10)
+
+
+### Features
+
+* add ALLOW_DEV_LOGIN setting to allow dev login on production via environment variable ([4f11ec1](https://github.com/ukma-fin-ssdm-2026/unispace/commit/4f11ec18e09d5d53dfb959a9b66120d8e2683b01))
+
+### Bug Fixes
+
+* add timeouts, strict JSON and CSRF validation to api.js ([79d245b](https://github.com/ukma-fin-ssdm-2026/unispace/commit/79d245bc8f06bcf270c5e6aad78cae7cc38bce3b))
+* close SyncLog as failed on unexpected import errors (REL-H07) ([939e271](https://github.com/ukma-fin-ssdm-2026/unispace/commit/939e271dc7014ec7b65b3a21284ba3d0d95f21b5))
+* sync release version 0.2.2 in configs and changelog ([01cc379](https://github.com/ukma-fin-ssdm-2026/unispace/commit/01cc37970afab83695942b0b5298e6855953663d))
+* update traceability script and exceptions for nested test folders ([314a98a](https://github.com/ukma-fin-ssdm-2026/unispace/commit/314a98a5022910f798eccf8a36ccc7128e98c52e))
+* validate rowspan/colspan in SAZ parser (REL-H04) ([87c47bb](https://github.com/ukma-fin-ssdm-2026/unispace/commit/87c47bb330416b8e878ace4da3d6612a59fdcda1))
+
+### Documentation
+
+* add ALLOW_DEV_LOGIN environment variable to Render deployment instructions ([9ee1f88](https://github.com/ukma-fin-ssdm-2026/unispace/commit/9ee1f886816d29b56d9a9cb25e302ffc3b1ec150))
+* add Lab08 video link to video_Trekurova.txt ([1fa314c](https://github.com/ukma-fin-ssdm-2026/unispace/commit/1fa314cd1de6c3aa01aa4ed04d0658ba7f89a083))
+* add Lab09 reliability scavenger hunt ([433e185](https://github.com/ukma-fin-ssdm-2026/unispace/commit/433e1857459115d90e458486f8ea89a08cce9694))
+* restructure README and add Lab 09 reliability files ([7ef4405](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7ef44051724bef3fe9433d13ff753a069b5a0513))
+* update test paths and pytest commands in README ([34e21bd](https://github.com/ukma-fin-ssdm-2026/unispace/commit/34e21bd205610861bb630fb6a5788b57db410907))
+
 ## [0.2.2] - 2026-11-05
 
 ### Changed

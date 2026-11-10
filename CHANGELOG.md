@@ -5,6 +5,13 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.3.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.3.0...v0.3.1) (2026-11-10)
+
+
+### Documentation
+
+* add release-please automation info to readme ([53f8da9](https://github.com/ukma-fin-ssdm-2026/unispace/commit/53f8da95791dec75fce0e915d5be84a7533c85cd))
+
 ## [0.3.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.2.2...v0.3.0) (2026-11-10)
 
 

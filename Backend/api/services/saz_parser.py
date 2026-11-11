@@ -200,8 +200,17 @@ def _parse_time(text):
     match = _TIME_RANGE.search(text)
     if not match:
         return None
+
     h1, m1, h2, m2 = (int(value) for value in match.groups())
-    return time(h1, m1), time(h2, m2)
+    try:
+        start = time(h1, m1)
+        end = time(h2, m2)
+    except ValueError as error:
+        raise SazParseError(f"Некоректний час заняття «{text}»: години мають бути 0–23, хвилини — 0–59") from error
+
+    if end <= start:
+        raise SazParseError(f"Некоректний час заняття «{text}»: час завершення має бути пізніше за час початку")
+    return start, end
 
 
 def parse_schedule(html):

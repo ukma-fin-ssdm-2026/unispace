@@ -35,7 +35,7 @@
 
 | Що | Посилання |
 |---|---|
-| Прогін, де крок `Run reliability tests` пройшов | _додати посилання на прогін CI_ |
+| Прогін, де крок `Run reliability tests` пройшов | [CI Pipeline, job `reliability-tests` (run 43081958822)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/43081958822/job/130736510854) |
 | Налаштування обов'язкової перевірки `reliability-tests` для `main` | _додати скриншот або посилання на правило_ |
 
 Відповідальна: Ольга Михайлик.

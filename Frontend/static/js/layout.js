@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             const response = await fetch(`${BACKEND_BASE_URL}/api/v1/auth/me/`, {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' },
-                credentials: 'include'
+                credentials: 'include',
+                signal: AbortSignal.timeout(5000)
             });
 
             if (!response.ok) {
@@ -113,7 +114,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             try {
                 await fetch(`${BACKEND_BASE_URL}/auth/logout/`, {
                     method: 'POST',
-                    credentials: 'include'
+                    credentials: 'include',
+                    signal: AbortSignal.timeout(3000)
                 });
             } catch (error) {
                 console.error("Помилка при виході:", error);

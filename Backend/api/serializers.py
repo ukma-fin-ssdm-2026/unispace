@@ -87,7 +87,7 @@ class AvailableSlotsResponseSerializer(serializers.Serializer):
 
 # --- Валідатори GET-параметрів ---
 class RoomQuerySerializer(serializers.Serializer):
-    limit = serializers.IntegerField(min_value=1, default=20, help_text="Кількість записів")
+    limit = serializers.IntegerField(min_value=1, max_value=200, default=20, help_text="Кількість записів")
     offset = serializers.IntegerField(min_value=0, default=0, help_text="Зсув")
     capacity = serializers.IntegerField(min_value=1, required=False, help_text="Мінімальна місткість")
     building = serializers.CharField(required=False, help_text="Корпус")
@@ -128,7 +128,7 @@ class RoomAlternativesResponseSerializer(serializers.Serializer):
 
 
 class UserBookingsQuerySerializer(serializers.Serializer):
-    limit = serializers.IntegerField(min_value=1, default=10)
+    limit = serializers.IntegerField(min_value=1, max_value=200, default=10)
     next_cursor = serializers.CharField(required=False, help_text="Пагінація за курсором")
 
 

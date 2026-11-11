@@ -5,6 +5,13 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.3.3](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.3.2...v0.3.3) (2026-11-11)
+
+
+### Documentation
+
+* update TeamCharter with Lab09 roles and responsibilities ([#328](https://github.com/ukma-fin-ssdm-2026/unispace/issues/328)) ([a828582](https://github.com/ukma-fin-ssdm-2026/unispace/commit/a8285829120c8b0271ba70c2477f7ae6cfb7a66d))
+
 ## [0.3.2](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.3.1...v0.3.2) (2026-11-11)
 
 

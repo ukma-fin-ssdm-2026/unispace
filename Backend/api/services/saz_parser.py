@@ -37,6 +37,11 @@ MAX_ROWSPAN = 200
 MAX_COLSPAN = 20
 
 
+# Межі номерів тижнів (REL-H06): у семестрі близько 16 навчальних тижнів, 30 - з запасом.
+MIN_WEEK = 1
+MAX_WEEK = 30
+
+
 class SazParseError(ValueError):
     """Сторінка не схожа на розклад САЗ: таблицю або заголовок не знайдено."""
 
@@ -153,7 +158,7 @@ def _day_index(text):
 
 
 def parse_weeks(text):
-    """«2-12» -> (2, ..., 12); «1,3,5-7» -> (1, 3, 5, 6, 7). Нерозпізнане -> ValueError."""
+    """«2-12» -> (2, ..., 12); «1,3,5-7» -> (1, 3, 5, 6, 7). Нерозпізнане або поза межами семестру -> ValueError."""
     weeks = set()
     for part in re.split(r"[,;]", text):
         part = part.strip()
@@ -164,14 +169,22 @@ def parse_weeks(text):
             first, last = int(match.group(1)), int(match.group(2))
             if first > last:
                 raise ValueError(f"Некоректний діапазон тижнів: {text}")
+            _check_week_bounds(first, last, text)  # до range(): величезний діапазон не створюється взагалі
             weeks.update(range(first, last + 1))
         elif part.isdigit():
+            _check_week_bounds(int(part), int(part), text)
             weeks.add(int(part))
         else:
             raise ValueError(f"Не вдалося розпізнати тижні: {text}")
     if not weeks:
         raise ValueError("Тижні не вказано")
     return tuple(sorted(weeks))
+
+
+def _check_week_bounds(first, last, text):
+    """REL-H06: номери тижнів лише в межах семестру; інакше ValueError (рядок розкладу піде в попередження)."""
+    if first < MIN_WEEK or last > MAX_WEEK:
+        raise ValueError(f"Номер тижня поза межами {MIN_WEEK}-{MAX_WEEK}: {text}")
 
 
 def parse_room(text):

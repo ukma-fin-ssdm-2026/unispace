@@ -22,6 +22,7 @@ import pytest
 pytestmark = [pytest.mark.django_db]
 
 
+@pytest.mark.req("REL-001")
 def test_health_check_returns_unhealthy_on_db_failure(api_client):
     # Act: імітуємо, що база даних відключилася
     with patch("django.db.connection.ensure_connection", side_effect=OperationalError("DB down")):

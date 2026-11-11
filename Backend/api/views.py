@@ -25,7 +25,7 @@ from drf_spectacular.utils import extend_schema
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 
 from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
@@ -716,10 +716,18 @@ class SyncTriggerAPIView(APIView):
     # ==========================================
 
 
+class HealthCheckResponseSerializer(serializers.Serializer):
+    status = serializers.CharField()
+    dependency = serializers.CharField(required=False)
+
+
 class HealthCheckAPIView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(summary="Перевірка здоров'я сервісу")
+    @extend_schema(
+        summary="Перевірка здоров'я сервісу",
+        responses={200: HealthCheckResponseSerializer, 503: HealthCheckResponseSerializer},
+    )
     def get(self, request, format=None):
         try:
             # Перевіряємо з'єднання з БД

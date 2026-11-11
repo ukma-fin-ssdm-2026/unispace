@@ -36,6 +36,8 @@
 | Що | Посилання |
 |---|---|
 | Прогін, де крок `Run reliability tests` пройшов | [CI Pipeline, job `reliability-tests` (run 43081958822)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/43081958822/job/130736510854) |
-| Налаштування обов'язкової перевірки `reliability-tests` для `main` | _додати скриншот або посилання на правило_ |
+| Налаштування обов'язкової перевірки `reliability-tests` для `main` | скриншот правила захисту гілки нижче: `reliability-tests` у списку «Status checks that are required» разом із `build-and-test`, `frontend`, `traceability` і SonarCloud |
+
+![Обов'язкова перевірка reliability-tests у правилі захисту гілки main](reliability-required-check.png)
 
 Відповідальна: Ольга Михайлик.

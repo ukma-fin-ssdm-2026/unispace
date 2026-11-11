@@ -1,0 +1,43 @@
+## Тести надійності
+
+Відповідальна: Ольга Михайлик (тестувальниця надійності). Тести лежать у `Backend/api/tests/reliability/`, працюють зі справжньою PostgreSQL (як і решта набору) і позначені вимогою `REL-002`, тож їх бачить CI-перевірка простежуваності.
+
+Запуск: `cd Backend && python -m pytest api/tests/reliability -v`
+
+| Тип тесту | Файл / тест | Сценарій | Обрана реакція, яку перевіряє тест | Проблема |
+|---|---|---|---|---|
+| Обробка помилки | `test_error_handling.py::test_broken_page_returns_clear_failed_result_and_keeps_data` | Після успішного імпорту диспетчер завантажує через `POST /api/v1/sync/` сторінку САЗ із `colspan="1000000"` | Система не падає: `201`, статус `failed`, `summary = null`, зрозуміле повідомлення «Некоректний атрибут colspan…» без сирого тексту винятку Python; запис `failed` у `SyncLog`; раніше імпортовані заняття не змінено | REL-H04 |
+| Зовнішня відмова (ін'єкція збою) | `test_external_failure.py::test_database_outage_during_import_fails_fast_and_closes_sync_log` | Тестовий дублер (`unittest.mock.patch`) підміняє `import_schedule` і кидає `OperationalError` — обрив з'єднання з PostgreSQL посеред імпорту | Швидка відмова: клієнт отримує `500` без внутрішніх деталей (адреса сервера БД у відповідь не потрапляє); `SyncLog` закрито як `failed` із `finished_at` і загальним повідомленням «Неочікувана помилка імпорту: OperationalError»; деталі збою — у лозі сервера; жодного заняття не створено | REL-H07 |
+| Граничний | `test_boundaries.py::test_values_on_the_boundary_are_accepted`, `test_boundaries.py::test_values_just_outside_the_boundary_are_rejected` (8 випадків) | `rowspan`/`colspan` рівно на межах і на крок за ними: `1`, `MAX_ROWSPAN = 200`, `MAX_COLSPAN = 20` проти `0`, `201`, `21` | Значення на межі приймаються, на крок за межею — `SazParseError` «Некоректний атрибут …» (без помилки на одиницю в жодний бік) | REL-H04 |
+
+**Що доводять тести разом:**
+
+* користувач (диспетчер) бачить зрозумілий результат і у випадку поганих даних (`failed` з поясненням), і у випадку збою інфраструктури (`500` без витоку деталей);
+* система повертається до норми без ручного прибирання стану: журнал синхронізації не «зависає» в `in_progress`, тож наступну спробу імпорту можна запускати одразу після усунення причини (виправити сторінку або дочекатися відновлення БД);
+* раніше імпортовані дані за жодного зі збоїв не змінюються (REL-002).
+
+**Результат прогону:** `python -m pytest api/tests/reliability -v` — 10 passed (1 + 1 + 8).
+
+> Примітка щодо використання ШІ: тести й цей розділ підготовано з допомогою ШІ (Claude) за `scavenger-hunt.md` (REL-H04, REL-H07); тести переглянула й запустила локально Ольга Михайлик.
+
+## Бонуси
+
+### Тести надійності як обов'язкова перевірка PR
+
+**Що зроблено.** У `.github/workflows/ci.yml` додано окремий job `reliability-tests`, який на кожен PR і push у `main` запускає лише тести з `Backend/api/tests/reliability/` (`python -m pytest api/tests/reliability -v`) на власному сервісі PostgreSQL 16 і зберігає результати як артефакт `reliability-results`. Окремий job потрібен, бо правило захисту гілки (branch protection) робить обов'язковою саме перевірку-job, а не крок усередині іншого job. Цей job додано до обов'язкових перевірок гілки `main` (Settings → Branches → Branch protection rule для `main` → Require status checks to pass → `reliability-tests`), тож PR із червоними тестами надійності влити не можна.
+
+**Як працює:**
+
+* job стартує паралельно з `build-and-test`; PostgreSQL прив'язано до порту хоста `5433`, щоб не конфліктувати з базою `build-and-test` на тому самому self-hosted runner;
+* якщо будь-який із тестів обробки помилки, ін'єкції збою чи граничних значень падає, job стає червоним, і кнопку злиття PR заблоковано.
+
+**Докази:**
+
+| Що | Посилання |
+|---|---|
+| Прогін, де крок `Run reliability tests` пройшов | [CI Pipeline, job `reliability-tests` (run 43081958822)](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/43081958822/job/130736510854) |
+| Налаштування обов'язкової перевірки `reliability-tests` для `main` | скриншот правила захисту гілки нижче: `reliability-tests` у списку «Status checks that are required» разом із `build-and-test`, `frontend`, `traceability` і SonarCloud |
+
+![Обов'язкова перевірка reliability-tests у правилі захисту гілки main](reliability-required-check.png)
+
+Відповідальна: Ольга Михайлик.

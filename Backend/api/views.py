@@ -17,6 +17,8 @@ test_rooms_crud.py і test_bookings_crud.py.
 test_room_alternatives.py, які закомічено раніше за реалізацію.
 """
 
+from django.db import connection
+from django.db.utils import OperationalError
 from django.db.models import Prefetch, Q
 from django.db.models import ProtectedError
 from drf_spectacular.utils import extend_schema
@@ -708,3 +710,22 @@ class SyncTriggerAPIView(APIView):
             "summary": result.as_dict() if result else None,
         }
         return Response(SyncResultSerializer(data).data, status=status.HTTP_201_CREATED)
+
+    # ==========================================
+    # API Системи (System Health)
+    # ==========================================
+
+
+class HealthCheckAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(summary="Перевірка здоров'я сервісу")
+    def get(self, request, format=None):
+        try:
+            # Перевіряємо з'єднання з БД
+            connection.ensure_connection()
+            return Response({"status": "healthy"}, status=status.HTTP_200_OK)
+        except OperationalError:
+            return Response(
+                {"status": "unhealthy", "dependency": "database"}, status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )

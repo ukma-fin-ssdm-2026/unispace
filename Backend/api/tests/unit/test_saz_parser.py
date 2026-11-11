@@ -5,12 +5,14 @@
 Примітка щодо використання ШІ: тести згенеровано ШІ (Claude), переглянуто автором PR.
 """
 
+import time as time_module
 from datetime import time
 from pathlib import Path
 
 import pytest
 
 from api.services.saz_parser import (
+    MAX_WEEK,
     SazParseError,
     parse_room,
     parse_schedule,
@@ -135,4 +137,42 @@ def test_span_with_spaces_and_upper_limit_is_accepted():
     result = parse_schedule(html)
 
     # Assert
+    assert result.entries
+
+
+# --- REL-H06: номери тижнів поза межами семестру ---
+
+
+@pytest.mark.req("REL-002")
+@pytest.mark.parametrize("text", ["1-1000000", "1-31", "31", "0", "0-3", "5-100000", "1, 3-999999999"])
+def test_weeks_outside_semester_are_rejected_without_heavy_work(text):
+    # Arrange
+    started = time_module.perf_counter()
+
+    # Act / Assert: відмова ще до побудови range(), тож без «прокручування» мільйона значень
+    with pytest.raises(ValueError, match="поза межами"):
+        parse_weeks(text)
+    assert time_module.perf_counter() - started < 0.5
+
+
+@pytest.mark.req("REL-002")
+@pytest.mark.parametrize(
+    "text,expected",
+    [("1", (1,)), (str(MAX_WEEK), (MAX_WEEK,)), (f"1-{MAX_WEEK}", tuple(range(1, MAX_WEEK + 1)))],
+)
+def test_weeks_on_the_boundary_are_accepted(text, expected):
+    assert parse_weeks(text) == expected
+
+
+@pytest.mark.req("REL-002")
+def test_row_with_out_of_range_weeks_becomes_warning_and_other_rows_are_kept():
+    # Arrange: у першому рядку фікстури тижні «2-4» замінюємо на нереальний діапазон
+    html = FIXTURE_HTML.replace("2-4", "1-1000000", 1)
+    assert html != FIXTURE_HTML
+
+    # Act
+    result = parse_schedule(html)
+
+    # Assert: проблемний рядок пропущено з попередженням, решту розкладу імпортовано
+    assert any("поза межами" in warning for warning in result.warnings)
     assert result.entries

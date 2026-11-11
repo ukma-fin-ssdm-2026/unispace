@@ -5,6 +5,13 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.3.2](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.3.1...v0.3.2) (2026-11-11)
+
+
+### Documentation
+
+* update Lab09 reliability risk analysis ([c90a589](https://github.com/ukma-fin-ssdm-2026/unispace/commit/c90a5897e4a5097b16d92af3e695bef492f0dbcb))
+
 ## [0.3.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.3.0...v0.3.1) (2026-11-10)
 
 

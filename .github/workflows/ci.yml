@@ -144,6 +144,66 @@ jobs:
   # з мітками @pytest.mark.req у тестах і валить збірку, якщо вимога без тесту або тест без вимоги.
   # Свідомі винятки (ще не реалізовані вимоги тощо) з поясненнями - у Backend/traceability.toml.
   # Додано з допомогою ШІ (Claude).
+  # Lab09 (бонус): тести надійності окремим job, щоб його можна було зробити обов'язковою перевіркою PR
+  # (branch protection перевіряє саме job, а не крок). Додано з допомогою ШІ (Claude), перевірено прогоном CI.
+  # PostgreSQL на іншому порту хоста (5433), щоб не конфліктувати з build-and-test на тому самому self-hosted runner.
+  reliability-tests:
+    runs-on: [self-hosted, linux]
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: unispace_reliability
+          POSTGRES_USER: unispace
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U unispace -d unispace_reliability"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Тільки для CI: ключ і пароль не є секретами і не використовуються ніде, крім тестів.
+      SECRET_KEY: ci-only-insecure-key-not-a-secret
+      DATABASE_URL: postgresql://unispace:ci-only-password@localhost:5433/unispace_reliability
+
+    defaults:
+      run:
+        working-directory: ./Backend
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: pip
+        cache-dependency-path: |
+          Backend/requirements.txt
+          Backend/requirements-dev.txt
+
+    - name: Upgrade pip
+      run: "python -m pip install --only-binary=:all: pip==26.2.2"
+
+    - name: Install dependencies
+      run: "pip install --only-binary :all: --require-hashes -r requirements.txt -r requirements-dev.txt"
+
+    # Тести обробки помилки, зовнішньої відмови (ін'єкція збою) і граничних значень (Backend/api/tests/reliability/).
+    - name: Run reliability tests
+      run: python -m pytest api/tests/reliability -v --junitxml=reliability-results.xml
+
+    - name: Upload reliability test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: reliability-results
+        path: Backend/reliability-results.xml
+
   traceability:
     runs-on: [self-hosted, linux]
 

@@ -12,6 +12,7 @@
     {"type": "feat", "section": "Features", "hidden": false},
     {"type": "fix", "section": "Bug Fixes", "hidden": false},
     {"type": "refactor", "section": "Refactoring", "hidden": false},
-    {"type": "docs", "section": "Documentation", "hidden": false}
+    {"type": "docs", "section": "Documentation", "hidden": false},
+    {"type": "test", "section": "Tests", "hidden": false}
   ]
 }

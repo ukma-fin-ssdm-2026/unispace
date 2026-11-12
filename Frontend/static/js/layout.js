@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             // Зберігаємо глобально (корисно з main) та диспачимо подію
             window.currentUser = userData;
 
-            const profileElement = document.querySelector('.user-profile');
-            if (profileElement) {
-                profileElement.innerHTML = `<i class="fa-solid fa-circle-user" style="font-size: 1.5rem; color: var(--color-primary);"></i> ${userData.full_name || userData.email}`;
+            const userNameElement = document.querySelector('.js-user-name');
+            if (userNameElement) {
+                userNameElement.textContent = userData.full_name || userData.email;
             }
 
             // --- ВАШІ РОЛІ ТА КЛАСИ (працюють надійтно) ---

@@ -9,7 +9,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, var(--c-blue-50) 0%, var(--c-blue-100) 100%);
+    background: var(--bg-main);
     color: var(--text-main);
     display: flex;
     height: 100vh;

@@ -14,12 +14,15 @@
 """
 
 import msal
+import logging
+import requests
 from django.conf import settings
 
 from api.models import User
 
 LOGIN_SCOPES = ["User.Read"]
 SESSION_FLOW_KEY = "microsoft_auth_flow"
+logger = logging.getLogger(__name__)
 
 
 class MicrosoftLoginError(Exception):
@@ -57,6 +60,9 @@ def finish_login(flow, query_params):
         result = build_msal_app().acquire_token_by_auth_code_flow(flow, query_params)
     except ValueError as error:  # MSAL кидає ValueError, якщо state не збігається
         raise MicrosoftLoginError("Невалідна відповідь Microsoft") from error
+    except requests.exceptions.RequestException as error:
+        logger.error("Помилка мережі під час звернення до Microsoft: %s", error)
+        raise MicrosoftLoginError("Сервіс авторизації Microsoft тимчасово недоступний. Спробуйте пізніше.") from error
 
     if "error" in result:
         raise MicrosoftLoginError(result.get("error_description") or result["error"])

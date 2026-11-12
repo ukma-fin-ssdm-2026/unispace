@@ -25,9 +25,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             // Отримуємо дані користувача з БД
             const userData = await response.json();
 
-            // Зберігаємо глобально (корисно з main) та диспачимо подію
-            window.currentUser = userData;
-
             const userNameElement = document.querySelector('.js-user-name');
             if (userNameElement) {
                 userNameElement.textContent = userData.full_name || userData.email;

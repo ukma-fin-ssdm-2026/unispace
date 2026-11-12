@@ -1,29 +1,10 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const isLoginPage = window.location.pathname.includes('/login/');
 
-    // Адреса бекенду - з BACKEND_API_URL (<body data-backend-origin>), як у кнопці входу Microsoft,
-    // щоб запити йшли на той самий хост, де бекенд створив сесію. Запасний варіант - як було раніше.
-    const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-    const BACKEND_BASE_URL = document.body.dataset.backendOrigin
-        || (isLocalhost ? `http://${window.location.hostname}:8000` : 'https://unispace-wtf6.onrender.com');
-
     // 1. ЗАХИСТ СТОРІНОК ТА ОДЕРЖАННЯ ПРОФІЛЮ З БЕКЕНДУ
     if (!isLoginPage) {
         try {
-            const response = await fetch(`${BACKEND_BASE_URL}/api/v1/auth/me/`, {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' },
-                credentials: 'include',
-                signal: AbortSignal.timeout(5000)
-            });
-
-            if (!response.ok) {
-                window.location.href = '/login/';
-                return;
-            }
-
-            // Отримуємо дані користувача з БД
-            const userData = await response.json();
+            const userData = await UniSpaceApi.get('auth/me/');
 
             const userNameElement = document.querySelector('.js-user-name');
             if (userNameElement) {
@@ -109,11 +90,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Запит на вихід до бекенду з урахуванням динамічного URL
         btnConfirm.addEventListener('click', async () => {
             try {
-                await fetch(`${BACKEND_BASE_URL}/auth/logout/`, {
-                    method: 'POST',
-                    credentials: 'include',
-                    signal: AbortSignal.timeout(3000)
-                });
+                await UniSpaceApi.logout();
             } catch (error) {
                 console.error("Помилка при виході:", error);
             }

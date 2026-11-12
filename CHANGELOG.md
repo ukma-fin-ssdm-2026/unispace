@@ -5,6 +5,17 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.4.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.0...v0.4.1) (2026-11-12)
+
+
+### Documentation
+
+* add individual Loom video link for Lab 9 ([0d48d7e](https://github.com/ukma-fin-ssdm-2026/unispace/commit/0d48d7e0b5e5f27030b17200c283b5c2d4b09a1c))
+* add lab09 video link to video_Trekurova.txt ([#347](https://github.com/ukma-fin-ssdm-2026/unispace/issues/347)) ([cf79d59](https://github.com/ukma-fin-ssdm-2026/unispace/commit/cf79d5980ec8b07e8153bb480b19a136019619e5))
+* Add video link to video_Mykhailyk.txt ([#344](https://github.com/ukma-fin-ssdm-2026/unispace/issues/344)) merge pull request ([d805191](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d8051917389884cbcc0d10967483f5f2fd550cca))
+* revise reliability report with updates and findings ([#343](https://github.com/ukma-fin-ssdm-2026/unispace/issues/343)) ([50af43a](https://github.com/ukma-fin-ssdm-2026/unispace/commit/50af43af6b50aec1f37bf3cfbe902124ca51d5c3))
+* revise scavenger hunt document with updates and fixes ([#346](https://github.com/ukma-fin-ssdm-2026/unispace/issues/346)) ([eab6de1](https://github.com/ukma-fin-ssdm-2026/unispace/commit/eab6de163bd2a7e55473e0cb4e7476d29d2f8bc0))
+
 ## [0.4.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.3.2...v0.4.0) (2026-11-12)
 
 

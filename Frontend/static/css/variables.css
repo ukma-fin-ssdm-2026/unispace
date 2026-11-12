@@ -9,7 +9,7 @@
     --c-blue-800: #1a2f4c;  /* Глибокий синій для сайдбару */
     --c-blue-900: #0f172a;  /* Насичений темний для тексту */
 
-    --bg-main: var(--c-blue-50);
+    --bg-main: linear-gradient(135deg, var(--c-blue-50) 0%, var(--c-blue-100) 100%);
     --bg-surface: #ffffff;  /* Білий для карток і верхньої панелі */
     --text-main: var(--c-blue-900);
     --text-muted: #64748b;  /* Вторинний сірий текст */

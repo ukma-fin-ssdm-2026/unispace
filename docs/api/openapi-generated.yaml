@@ -465,6 +465,7 @@ paths:
         name: limit
         schema:
           type: integer
+          maximum: 200
           minimum: 1
           default: 20
         description: Кількість записів
@@ -830,6 +831,7 @@ paths:
         name: limit
         schema:
           type: integer
+          maximum: 200
           minimum: 1
           default: 10
       - in: query

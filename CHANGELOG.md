@@ -5,6 +5,28 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.4.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.3.2...v0.4.0) (2026-11-12)
+
+
+### Features
+
+* add health check endpoint and reliability test (bonus) ([#340](https://github.com/ukma-fin-ssdm-2026/unispace/issues/340)) merge pull request ([70f88ce](https://github.com/ukma-fin-ssdm-2026/unispace/commit/70f88ce786e4440200336f52f8e8de7c735c7f20))
+
+
+### Bug Fixes
+
+* add max_value to pagination limits to prevent memory exhaustion … ([#338](https://github.com/ukma-fin-ssdm-2026/unispace/issues/338)) merge pull request ([cdd487e](https://github.com/ukma-fin-ssdm-2026/unispace/commit/cdd487eac57b710203e9216a8c63932a3b5fcf60))
+* add timeouts to profile and logout fetch requests ([#341](https://github.com/ukma-fin-ssdm-2026/unispace/issues/341)) merge pull request ([e1f7512](https://github.com/ukma-fin-ssdm-2026/unispace/commit/e1f751207c6d772a2f3b16189f385c5ecd9eb103))
+* catch and log network errors during Microsoft OAuth login (REL-H08) ([#339](https://github.com/ukma-fin-ssdm-2026/unispace/issues/339)) merge pull request ([f737c92](https://github.com/ukma-fin-ssdm-2026/unispace/commit/f737c9252823e159363d2a4545f8c4953310c9e8))
+* limit week numbers in SAZ parser (REL-H06) ([15f64b0](https://github.com/ukma-fin-ssdm-2026/unispace/commit/15f64b0b90f49f8bf795da19d1ed162984868b50))
+* validate SAZ lesson time with clear errors ([1240a7c](https://github.com/ukma-fin-ssdm-2026/unispace/commit/1240a7c96e95b3d8d3fd4f124df2a6ae4f0a4416))
+
+
+### Documentation
+
+* add Spirina Lab09 video link ([7eedb06](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7eedb0643b270dcb82b0791df9a11dc60ae897d1))
+* update TeamCharter with Lab09 roles and responsibilities ([#328](https://github.com/ukma-fin-ssdm-2026/unispace/issues/328)) ([a828582](https://github.com/ukma-fin-ssdm-2026/unispace/commit/a8285829120c8b0271ba70c2477f7ae6cfb7a66d))
+
 ## [0.3.2](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.3.1...v0.3.2) (2026-11-11)
 
 

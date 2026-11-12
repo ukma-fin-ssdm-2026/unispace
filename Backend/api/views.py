@@ -17,13 +17,15 @@ test_rooms_crud.py і test_bookings_crud.py.
 test_room_alternatives.py, які закомічено раніше за реалізацію.
 """
 
+from django.db import connection
+from django.db.utils import OperationalError
 from django.db.models import Prefetch, Q
 from django.db.models import ProtectedError
 from drf_spectacular.utils import extend_schema
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 
 from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
@@ -708,3 +710,30 @@ class SyncTriggerAPIView(APIView):
             "summary": result.as_dict() if result else None,
         }
         return Response(SyncResultSerializer(data).data, status=status.HTTP_201_CREATED)
+
+    # ==========================================
+    # API Системи (System Health)
+    # ==========================================
+
+
+class HealthCheckResponseSerializer(serializers.Serializer):
+    status = serializers.CharField()
+    dependency = serializers.CharField(required=False)
+
+
+class HealthCheckAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        summary="Перевірка здоров'я сервісу",
+        responses={200: HealthCheckResponseSerializer, 503: HealthCheckResponseSerializer},
+    )
+    def get(self, request, format=None):
+        try:
+            # Перевіряємо з'єднання з БД
+            connection.ensure_connection()
+            return Response({"status": "healthy"}, status=status.HTTP_200_OK)
+        except OperationalError:
+            return Response(
+                {"status": "unhealthy", "dependency": "database"}, status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )

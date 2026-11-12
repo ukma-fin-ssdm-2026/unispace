@@ -15,4 +15,5 @@ urlpatterns = [
     path("audit-logs/", views.AuditLogListAPIView.as_view(), name="audit-log-list"),
     path("sync-logs/", views.SyncLogListAPIView.as_view(), name="sync-log-list"),
     path("sync/", views.SyncTriggerAPIView.as_view(), name="sync-trigger"),
+    path("health/", views.HealthCheckAPIView.as_view(), name="health-check"),
 ]

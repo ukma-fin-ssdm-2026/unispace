@@ -5,6 +5,16 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.4.2](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.1...v0.4.2) (2026-11-14)
+
+
+### Documentation
+
+* add Lab 10 DORA metrics and CI/CD analysis reports ([#353](https://github.com/ukma-fin-ssdm-2026/unispace/issues/353)) ([8e8b6fc](https://github.com/ukma-fin-ssdm-2026/unispace/commit/8e8b6fc3b1d1c41385955934c2f19b3d9e0902e2))
+* add Loom video files for Lab 10 ([#357](https://github.com/ukma-fin-ssdm-2026/unispace/issues/357)) ([d990f28](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d990f281db3d9699044a565e0b8a7aa3b2622221))
+* add raw CI/CD metrics for Lab 10 ([#355](https://github.com/ukma-fin-ssdm-2026/unispace/issues/355)) merge pull request ([7209735](https://github.com/ukma-fin-ssdm-2026/unispace/commit/720973501663ac2e95571c74ce2baf68e0ce5bb1))
+* merge initial dora-summary.md ([#356](https://github.com/ukma-fin-ssdm-2026/unispace/issues/356)) ([7628b0f](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7628b0fbbc9c961b5e88587bf6ea2047060ec734))
+
 ## [0.4.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.0...v0.4.1) (2026-11-12)
 
 

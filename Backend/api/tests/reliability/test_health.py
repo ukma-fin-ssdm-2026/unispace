@@ -1,8 +1,8 @@
 """
 Тест надійності: перевірка здоров'я сервісу, ін'єкція збою (Бонус, Лаб 9).
 
-Ендпоінт /api/v1/health/ перевіряє доступність бази даних.
-Тестовий дублер імітує падіння БД (OperationalError), після чого
+Ендпоінт /api/v1/health/ перевіряє доступність бази даних реальним запитом SELECT 1 з тайм-аутом.
+Тестовий дублер імітує падіння БД (OperationalError під час виконання запиту), після чого
 система має безпечно повернути статус 503 Service Unavailable
 із відповідним JSON-повідомленням, а не впасти з помилкою 500.
 
@@ -23,11 +23,19 @@ pytestmark = [pytest.mark.django_db]
 
 
 @pytest.mark.req("REL-001")
+def test_health_check_returns_healthy_when_db_is_up(api_client):
+    response = api_client.get(reverse("health-check"))
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {"status": "healthy"}
+
+
+@pytest.mark.req("REL-001")
 def test_health_check_returns_unhealthy_on_db_failure(api_client):
-    # Act: імітуємо, що база даних відключилася
-    with patch("django.db.connection.ensure_connection", side_effect=OperationalError("DB down")):
+    # Act: імітуємо збій бази даних під час спроби отримати курсор / виконати SELECT 1
+    with patch("django.db.connection.cursor", side_effect=OperationalError("DB down")):
         response = api_client.get(reverse("health-check"))
 
-    # Assert: маємо отримати статус 503 і зрозуміле повідомлення
+    # Assert: маємо отримати статус 503 і зрозуміле повідомлення без витоку деталей
     assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
-    assert response.json()["status"] == "unhealthy"
+    assert response.json() == {"status": "unhealthy", "dependency": "database"}

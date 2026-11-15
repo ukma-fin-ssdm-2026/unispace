@@ -23,20 +23,20 @@
 
 ## Аналіз проблем безпеки
 
-| № | Проблема | Локація | Рівень небезпеки | План виправлення | Статус після рефакторингу |
-|---|---|---|---|---|---|
-| 1 | Make sure that no untrusted code is executed from a fork. | `.github/workflows/pages.yml` (L30) | **High** | Додати перевірку репозиторію та гілки (`if: github.repository == '...' && github.ref == 'refs/heads/main'`) або обмежити права токена `permissions`, щоб запобігти виконанню довільного коду з форків. | ✅ Виправлено |
-| 2 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L65) | **Medium** | Зафіксувати точні версії залежностей бекенду за допомогою lock-файлу (`pip-compile` / `requirements.lock`) замість плаваючих версій. | ✅ Виправлено |
-| 3 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L65) | **Medium** | Додати прапорець `--only-binary :all:` до команди `pip install`, щоб встановлювати виключно pre-built wheels і блокувати запуск сторонніх `setup.py`. | ✅ Виправлено |
-| 4 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L68) | **Medium** | Зафіксувати точні версії для `requirements-dev.txt` у бекенді через lock-файл із хешами пакетів. | ✅ Виправлено |
-| 5 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L68) | **Medium** | Заборонити збірку tarball-пакетів при встановленні dev-залежностей бекенду, додавши прапорець `--only-binary :all:`. | ✅ Виправлено |
-| 6 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L195) | **Medium** | Створити та підключити окремий lock-файл із зафіксованими версіями для основного середовища фронтенду. | ✅ Виправлено |
-| 7 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L195) | **Medium** | Використати `--only-binary :all:` під час встановлення продакшн-пакетів фронтенду для унеможливлення RCE через вразливі setup-скрипти. | ✅ Виправлено |
-| 8 | Using dependencies without locking resolved versions is security-sensitive. | `.github/workflows/ci.yml` (L198) | **Medium** | Зафіксувати повне дерево транзитивних залежностей розробника для фронтенду (`requirements-dev.lock`). | ✅ Виправлено |
-| 9 | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L198) | **Medium** | Додати параметр `--only-binary :all:` при встановленні dev-інструментів фронтенду в CI-раннері. | ✅ Виправлено |
-| 10 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` (L7) | **Low** | Додати атрибути SRI (`integrity="sha384-..."` та `crossorigin="anonymous"`) до тегу підключення зовнішнього CSS/JS або завантажити ресурс локально. | 🚫 Файл виключено з аналізу, код не змінювався |
-| 11 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` (L14) | **Low** | Додати криптографічний хеш `integrity` та `crossorigin="anonymous"` для валідації цілісності завантажуваного CDN-файлу. | 🚫 Файл виключено з аналізу, код не змінювався |
-| 12 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks. | `docs/api/index.html` (L15) | **Low** | Захистити підключення третього зовнішнього ресурсу документації шляхом додавання перевірки SRI (`integrity` + `crossorigin="anonymous"`). | 🚫 Файл виключено з аналізу, код не змінювався |
+| №  | Проблема                                                                                              | Локація                             | Рівень небезпеки | План виправлення                                                                                                                                                                                       | Статус після рефакторингу                      |
+|----|-------------------------------------------------------------------------------------------------------|-------------------------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| 1  | Make sure that no untrusted code is executed from a fork.                                             | `.github/workflows/pages.yml` (L30) | **High**         | Додати перевірку репозиторію та гілки (`if: github.repository == '...' && github.ref == 'refs/heads/main'`) або обмежити права токена `permissions`, щоб запобігти виконанню довільного коду з форків. | ✅ Виправлено                                   |
+| 2  | Using dependencies without locking resolved versions is security-sensitive.                           | `.github/workflows/ci.yml` (L65)    | **Medium**       | Зафіксувати точні версії залежностей бекенду за допомогою lock-файлу (`pip-compile` / `requirements.lock`) замість плаваючих версій.                                                                   | ✅ Виправлено                                   |
+| 3  | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L65)    | **Medium**       | Додати прапорець `--only-binary :all:` до команди `pip install`, щоб встановлювати виключно pre-built wheels і блокувати запуск сторонніх `setup.py`.                                                  | ✅ Виправлено                                   |
+| 4  | Using dependencies without locking resolved versions is security-sensitive.                           | `.github/workflows/ci.yml` (L68)    | **Medium**       | Зафіксувати точні версії для `requirements-dev.txt` у бекенді через lock-файл із хешами пакетів.                                                                                                       | ✅ Виправлено                                   |
+| 5  | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L68)    | **Medium**       | Заборонити збірку tarball-пакетів при встановленні dev-залежностей бекенду, додавши прапорець `--only-binary :all:`.                                                                                   | ✅ Виправлено                                   |
+| 6  | Using dependencies without locking resolved versions is security-sensitive.                           | `.github/workflows/ci.yml` (L195)   | **Medium**       | Створити та підключити окремий lock-файл із зафіксованими версіями для основного середовища фронтенду.                                                                                                 | ✅ Виправлено                                   |
+| 7  | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L195)   | **Medium**       | Використати `--only-binary :all:` під час встановлення продакшн-пакетів фронтенду для унеможливлення RCE через вразливі setup-скрипти.                                                                 | ✅ Виправлено                                   |
+| 8  | Using dependencies without locking resolved versions is security-sensitive.                           | `.github/workflows/ci.yml` (L198)   | **Medium**       | Зафіксувати повне дерево транзитивних залежностей розробника для фронтенду (`requirements-dev.lock`).                                                                                                  | ✅ Виправлено                                   |
+| 9  | Omitting "--only-binary :all:" can lead to the execution of setup scripts. Make sure it is safe here. | `.github/workflows/ci.yml` (L198)   | **Medium**       | Додати параметр `--only-binary :all:` при встановленні dev-інструментів фронтенду в CI-раннері.                                                                                                        | ✅ Виправлено                                   |
+| 10 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks.     | `docs/api/index.html` (L7)          | **Low**          | Додати атрибути SRI (`integrity="sha384-..."` та `crossorigin="anonymous"`) до тегу підключення зовнішнього CSS/JS або завантажити ресурс локально.                                                    | 🚫 Файл виключено з аналізу, код не змінювався |
+| 11 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks.     | `docs/api/index.html` (L14)         | **Low**          | Додати криптографічний хеш `integrity` та `crossorigin="anonymous"` для валідації цілісності завантажуваного CDN-файлу.                                                                                | 🚫 Файл виключено з аналізу, код не змінювався |
+| 12 | Add integrity and crossorigin="anonymous" attributes to this element to enforce integrity checks.     | `docs/api/index.html` (L15)         | **Low**          | Захистити підключення третього зовнішнього ресурсу документації шляхом додавання перевірки SRI (`integrity` + `crossorigin="anonymous"`).                                                              | 🚫 Файл виключено з аналізу, код не змінювався |
 
 ### Security Analysis — Role 5 (Security Analyst)
 
@@ -52,13 +52,13 @@
 
 **Порівняння результатів:**
 
-| Метрика | До | Після |
-|---|---|---|
-| Security Rating | C | A |
-| Кількість security-знахідок за командним звітом | 12 | 0 у поточному scope аналізу |
-| Початковий розподіл за severity | 1 High, 8 Medium, 3 Low | Не підтверджено окремим історичним зрізом Issues |
-| Основні категорії проблем | CI/CD, Python dependencies, external resources | Частину проблем виправлено, частину виключено з аналізу |
-| Джерело показників | Початкові результати, зафіксовані командою | Повторні результати, зафіксовані командою |
+| Метрика                                         | До                                             | Після                                                   |
+|-------------------------------------------------|------------------------------------------------|---------------------------------------------------------|
+| Security Rating                                 | C                                              | A                                                       |
+| Кількість security-знахідок за командним звітом | 12                                             | 0 у поточному scope аналізу                             |
+| Початковий розподіл за severity                 | 1 High, 8 Medium, 3 Low                        | Не підтверджено окремим історичним зрізом Issues        |
+| Основні категорії проблем                       | CI/CD, Python dependencies, external resources | Частину проблем виправлено, частину виключено з аналізу |
+| Джерело показників                              | Початкові результати, зафіксовані командою     | Повторні результати, зафіксовані командою               |
 
 **Security Rating покращився з C до A** відповідно до командного звіту SonarQube Cloud.
 
@@ -135,11 +135,11 @@ SonarQube зафіксував проблеми, пов'язані з недос
 
 Під час Лаб 5 команда виконувала статичний аналіз із використанням Bandit та перевірку залежностей. Отримані результати задокументовано у [`static-analysis.md`](../code-quality/static-analysis.md).
 
-| ID | Знахідка Lab 5 | Зв'язок із Lab 8 | Статус / висновок |
-|---|---|---|---|
-| S-1 | Bandit B101 — використання `assert` у тестовому коді | Попередня знахідка статичного аналізу; не є прямим поясненням поточного Security Rating | За Lab 5 проблему закрито |
-| S-2 | Недостатня перевірка ролей у `IsTeacherOrDispatcher` | Контроль доступу, RBAC, `SEC-001`; важливий інваріант для рефакторингу | Необхідно зберегти виправлену поведінку |
-| D-1 | Вразлива версія pip у середовищі | Тематичний зв'язок із безпекою Python-залежностей та CI/CD | Не тотожна всім findings SonarQube |
+| ID  | Знахідка Lab 5                                       | Зв'язок із Lab 8                                                                        | Статус / висновок                       |
+|-----|------------------------------------------------------|-----------------------------------------------------------------------------------------|-----------------------------------------|
+| S-1 | Bandit B101 — використання `assert` у тестовому коді | Попередня знахідка статичного аналізу; не є прямим поясненням поточного Security Rating | За Lab 5 проблему закрито               |
+| S-2 | Недостатня перевірка ролей у `IsTeacherOrDispatcher` | Контроль доступу, RBAC, `SEC-001`; важливий інваріант для рефакторингу                  | Необхідно зберегти виправлену поведінку |
+| D-1 | Вразлива версія pip у середовищі                     | Тематичний зв'язок із безпекою Python-залежностей та CI/CD                              | Не тотожна всім findings SonarQube      |
 
 Особливу увагу приділено знахідці **S-2**, оскільки вона безпосередньо стосується авторизації користувачів UniSpace.
 
@@ -155,13 +155,13 @@ SonarQube зафіксував проблеми, пов'язані з недос
 
 Порівняння результатів SonarQube з моделлю STRIDE дає змогу визначити, які ризики пов'язані з виконаними змінами, а які залишаються поза межами поточного статичного аналізу.
 
-| Threat ID | Загроза Lab 3 | Зв'язок із Lab 5 / Lab 8 | Залишковий ризик |
-|---|---|---|---|
-| TM-02 | Elevation of Privilege — обхід рольових обмежень | S-2, `SEC-001`, перевірки RBAC | Регресія контролю доступу після рефакторингу |
-| TM-01 | Spoofing токенів і сесій | Перевірки автентифікації та захисту сесій | Security Rating A не доводить усунення |
-| TM-05 | Розкриття даних PostgreSQL | Управління секретами, права доступу, конфігурація БД | Потребує окремого контролю |
-| TM-10 | Зловживання запуском синхронізації | Авторизація endpoint та обмеження доступу | Потребує окремих перевірок |
-| TM-11 | Шкідливий або надмірно великий HTML | Валідація вхідних даних та обмеження ресурсів | Не усувається автоматично виправленням SRI |
+| Threat ID | Загроза Lab 3                                    | Зв'язок із Lab 5 / Lab 8                             | Залишковий ризик                             |
+|-----------|--------------------------------------------------|------------------------------------------------------|----------------------------------------------|
+| TM-02     | Elevation of Privilege — обхід рольових обмежень | S-2, `SEC-001`, перевірки RBAC                       | Регресія контролю доступу після рефакторингу |
+| TM-01     | Spoofing токенів і сесій                         | Перевірки автентифікації та захисту сесій            | Security Rating A не доводить усунення       |
+| TM-05     | Розкриття даних PostgreSQL                       | Управління секретами, права доступу, конфігурація БД | Потребує окремого контролю                   |
+| TM-10     | Зловживання запуском синхронізації               | Авторизація endpoint та обмеження доступу            | Потребує окремих перевірок                   |
+| TM-11     | Шкідливий або надмірно великий HTML              | Валідація вхідних даних та обмеження ресурсів        | Не усувається автоматично виправленням SRI   |
 
 Найпряміший зв'язок між попередніми лабораторними — **TM-02 → S-2 → SEC-001 → регресійна перевірка RBAC у Lab 8**.
 
@@ -173,13 +173,13 @@ SonarQube зафіксував проблеми, пов'язані з недос
 
 Попри покращення Security Rating, після повторного аналізу залишаються питання, які потребують окремої уваги.
 
-| Ризик | Пріоритет | Рекомендована дія |
-|---|---|---|
-| SRI-знахідки у виключеній HTML-документації | Medium | Виправити вихідний код, а не лише scope сканування |
-| Виконання недовіреного коду в CI | High | Перевірити workflow permissions, тригери та доступ до секретів |
-| Регресія рольових обмежень | High | Зберегти та регулярно виконувати тести `SEC-001` |
-| Вразливі або неконтрольовані залежності | Medium | Продовжувати dependency scanning і контроль версій |
-| Неповне покриття статичним аналізом | Medium | Перевірити SonarQube exclusions та analysis warnings |
+| Ризик                                       | Пріоритет | Рекомендована дія                                              |
+|---------------------------------------------|-----------|----------------------------------------------------------------|
+| SRI-знахідки у виключеній HTML-документації | Medium    | Виправити вихідний код, а не лише scope сканування             |
+| Виконання недовіреного коду в CI            | High      | Перевірити workflow permissions, тригери та доступ до секретів |
+| Регресія рольових обмежень                  | High      | Зберегти та регулярно виконувати тести `SEC-001`               |
+| Вразливі або неконтрольовані залежності     | Medium    | Продовжувати dependency scanning і контроль версій             |
+| Неповне покриття статичним аналізом         | Medium    | Перевірити SonarQube exclusions та analysis warnings           |
 
 Наведені пріоритети є аналітичною оцінкою для подальшої роботи, а не severity, автоматично присвоєною SonarQube.
 
@@ -207,14 +207,14 @@ SonarQube зафіксував проблеми, пов'язані з недос
 > Зовнішня поведінка API та команди не змінювалась: кожну зміну підтверджено тестами, зеленими до і після.
 > Результати прогонів по цілях і виявлений збій описано в розділі «Результат регресійного тестування».
 
-| № | Автор | Ціль | Техніка | Коміт / PR |
-|---|---|---|---|---|
-| 1 | Тимохина Ксенія | `AvailableSlotsAPIView.get` (`views.py`) | Replace Magic Number with Constant | [`7637a25`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7637a25) |
-| 2 | Трекурова Анастасія (ШІ-агент) | `AvailableSlotsAPIView.get` (`views.py`, `services/available_slots.py`) | Extract Method | [`0b90eda`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/0b90eda) |
-| 3 | Мельник Дар'я | `import_schedule` (`services/saz_import.py`) | Extract Method | [`4543d23`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/4543d23) |
-| 4 | Михайлик Ольга | `import_schedule` (`services/saz_import.py`) | Extract Method | [`9e50729`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/9e50729) |
-| 5 | Спіріна Дар'я | `IsTeacherOrDispatcher`, `IsDispatcher` (`views.py`) | Extract Method (усунення дублювання умови) | [`bd76043`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/bd76043) |
-| Бонус | Михайлик Ольга | `import_saz.Command.handle` (`management/commands/import_saz.py`) | Extract Method | [`d50bb2a`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d50bb2a), тести [`3cb4e7e`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/3cb4e7e); деталі в розділі «Бонуси» |
+| №     | Автор                          | Ціль                                                                    | Техніка                                    | Коміт / PR                                                                                                                                                                              |
+|-------|--------------------------------|-------------------------------------------------------------------------|--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1     | Тимохина Ксенія                | `AvailableSlotsAPIView.get` (`views.py`)                                | Replace Magic Number with Constant         | [`7637a25`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7637a25)                                                                                                              |
+| 2     | Трекурова Анастасія (ШІ-агент) | `AvailableSlotsAPIView.get` (`views.py`, `services/available_slots.py`) | Extract Method                             | [`0b90eda`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/0b90eda)                                                                                                              |
+| 3     | Мельник Дар'я                  | `import_schedule` (`services/saz_import.py`)                            | Extract Method                             | [`4543d23`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/4543d23)                                                                                                              |
+| 4     | Михайлик Ольга                 | `import_schedule` (`services/saz_import.py`)                            | Extract Method                             | [`9e50729`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/9e50729)                                                                                                              |
+| 5     | Спіріна Дар'я                  | `IsTeacherOrDispatcher`, `IsDispatcher` (`views.py`)                    | Extract Method (усунення дублювання умови) | [`bd76043`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/bd76043)                                                                                                              |
+| Бонус | Михайлик Ольга                 | `import_saz.Command.handle` (`management/commands/import_saz.py`)       | Extract Method                             | [`d50bb2a`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d50bb2a), тести [`3cb4e7e`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/3cb4e7e); деталі в розділі «Бонуси» |
 
 Злиття в `main` (PR-гілки): ціль A (`refactor/available-slots`) — [`8512cb7`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/8512cb7), ціль B (`refactor/import-schedule`) — [`9287de5`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/9287de5), ціль C (`refactor/security-role-checks`) — [`a404af1`](https://github.com/ukma-fin-ssdm-2026/unispace/commit/a404af1).
 
@@ -262,12 +262,12 @@ SonarQube зафіксував проблеми, пов'язані з недос
 
 SonarQube Cloud показував 0 запахів, 0 год боргу й 0.0% дублювання ще до змін, тож ці значення не могли покращитись (0 → 0). Ефект рефакторингів виміряно складністю та довжиною функцій. Обидва стовпці пораховано одним інструментом (цикломатична складність за підрахунком розгалужень у `ast`) на `pre-refactor` і на поточному `main`.
 
-| Функція | Складність до → після | Довжина до → після (рядки) |
-|---|---|---|
-| `AvailableSlotsAPIView.get` | 7 → 4 | 77 → 40 |
-| `import_schedule` | 12 → 11 | 50 → 29 |
-| `has_permission` (`IsTeacherOrDispatcher`, `IsDispatcher`) | 3 → 1 у кожному | 3 → 5 у кожному |
-| `import_saz.Command.handle` | 6 → 2 | 19 → 8 |
+| Функція                                                    | Складність до → після | Довжина до → після (рядки) |
+|------------------------------------------------------------|-----------------------|----------------------------|
+| `AvailableSlotsAPIView.get`                                | 7 → 4                 | 77 → 40                    |
+| `import_schedule`                                          | 12 → 11               | 50 → 29                    |
+| `has_permission` (`IsTeacherOrDispatcher`, `IsDispatcher`) | 3 → 1 у кожному       | 3 → 5 у кожному            |
+| `import_saz.Command.handle`                                | 6 → 2                 | 19 → 8                     |
 
 Складність `import_schedule` майже не зменшилась: у ній лишились вкладені цикли й умови, а винесено лише обчислення дати, ключа та запис заняття. Довжина зменшилась помітніше (50 → 29 рядків), хоч і не вдвічі. Нові функції мають складність 1–4 і окремо перевіряються. `has_permission` став трохи довшим за рядками (виклик у кілька рядків), зате умова існує в одному місці.
 
@@ -275,7 +275,7 @@ SonarQube Cloud показував 0 запахів, 0 год боргу й 0.0%
 
 ## Використання ШІ
 
-> З допомогою ШІ-агента (Claude, Anthropic) виконано **рефакторинг 2**. `<Рефакторинги 1, 3, 4, 5: виконувала кожна учасниця команди самостійно>`.
+> З допомогою ШІ-агента (Claude, Anthropic) виконано **рефакторинг 2**. Рефакторинги 1, 3, 4, 5 виконувала кожна учасниця команди самостійно.
 
 **Завдання агенту.** Запах (довга функція `AvailableSlotsAPIView.get`), техніка (Extract Method) і те, що має лишитися незмінним: HTTP-статуси й тіла відповідей, `extend_schema`, обрізання `00:00`/`24:00`, часовий пояс, публічний API, міграції.
 
@@ -316,17 +316,17 @@ SonarQube Cloud показував 0 запахів, 0 год боргу й 0.0%
 
 ### Базовий прогін (до рефакторингу)
 
-| Гілка / коміт | Команда | Результат |
-|---|---|---|
+| Гілка / коміт     | Команда               | Результат      |
+|-------------------|-----------------------|----------------|
 | `main`, `1f0ddfa` | `python -m pytest -q` | **327 passed** |
 
 ### Прогони за цілями
 
-| Ціль | Гілка | Цільові тести | До | Після | Повний набір після |
-|---|---|---|---|---|---|
-| A (A1 + A2) | `refactor/available-slots` | `test_available_slots.py` | 16 passed | 16 passed | спершу збій (див. нижче), після виправлення **327 passed** |
-| B (B1 + B2) | `refactor/import-schedule` | `test_saz_import.py`, `test_saz_parser.py` | 37 passed | 37 passed | **327 passed** |
-| C | `refactor/security-role-checks` | `test_bookings_crud.py`, `test_room_alternatives.py`, `test_booking_previous_lesson.py`, `test_views.py` | зелені в базовому прогоні (`1f0ddfa`, 327 passed) | 90 passed (на `main` після злиття) | **344 passed** |
+| Ціль        | Гілка                           | Цільові тести                                                                                            | До                                                | Після                              | Повний набір після                                         |
+|-------------|---------------------------------|----------------------------------------------------------------------------------------------------------|---------------------------------------------------|------------------------------------|------------------------------------------------------------|
+| A (A1 + A2) | `refactor/available-slots`      | `test_available_slots.py`                                                                                | 16 passed                                         | 16 passed                          | спершу збій (див. нижче), після виправлення **327 passed** |
+| B (B1 + B2) | `refactor/import-schedule`      | `test_saz_import.py`, `test_saz_parser.py`                                                               | 37 passed                                         | 37 passed                          | **327 passed**                                             |
+| C           | `refactor/security-role-checks` | `test_bookings_crud.py`, `test_room_alternatives.py`, `test_booking_previous_lesson.py`, `test_views.py` | зелені в базовому прогоні (`1f0ddfa`, 327 passed) | 90 passed (на `main` після злиття) | **344 passed**                                             |
 
 ### Виявлений збій і його причина (ціль A)
 
@@ -341,11 +341,11 @@ SonarQube Cloud показував 0 запахів, 0 год боргу й 0.0%
 
 Прогін на `main`, коміт `42faad0` (05.11.2026), після злиття цілей A, B, C і бонусних тестів.
 
-| Що | Команда | До (`1f0ddfa`) | Після (`42faad0`) |
-|---|---|---|---|
-| Повний набір тестів | `python -m pytest -q` | 327 passed | **344 passed**, 0 failed, 0 errors |
-| Цільові тести цілі C | `python -m pytest api/tests/test_bookings_crud.py api/tests/test_room_alternatives.py api/tests/test_booking_previous_lesson.py api/tests/test_views.py -q` | — | **90 passed** |
-| Покриття | `python -m pytest --cov=api --cov-branch --cov-report=term -q` | 93% (01.11.2026, 88 непокритих рядків) | **95%**, 62 непокриті рядки з 1459 |
+| Що                   | Команда                                                                                                                                                     | До (`1f0ddfa`)                         | Після (`42faad0`)                  |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|------------------------------------|
+| Повний набір тестів  | `python -m pytest -q`                                                                                                                                       | 327 passed                             | **344 passed**, 0 failed, 0 errors |
+| Цільові тести цілі C | `python -m pytest api/tests/test_bookings_crud.py api/tests/test_room_alternatives.py api/tests/test_booking_previous_lesson.py api/tests/test_views.py -q` | —                                      | **90 passed**                      |
+| Покриття             | `python -m pytest --cov=api --cov-branch --cov-report=term -q`                                                                                              | 93% (01.11.2026, 88 непокритих рядків) | **95%**, 62 непокриті рядки з 1459 |
 
 * Приріст тестів (+17): `test_sec001_write_access.py` (6, вимірюваний тест SEC-001) і `test_import_saz_command.py` (11, характеризаційні тести). Жоден наявний тест не змінювали, щоб «підігнати» під рефакторинг.
 * Єдиний збій за весь цикл — видалена фікстура на гілці цілі A (див. вище); він не пов'язаний зі зміною поведінки й виправлений до злиття.
@@ -357,10 +357,10 @@ SonarQube Cloud показував 0 запахів, 0 год боргу й 0.0%
 
 Що зроблено. Команда `python manage.py import_saz` (`Backend/api/management/commands/import_saz.py`) до Лаб 8 не мала жодного тесту: покриття 0% (26 рядків, 8 гілок). Спершу написано характеризаційні тести `Backend/api/tests/test_import_saz_command.py` (11 тестів), які фіксують її поточну поведінку, і лише після цього окремим комітом виконано рефакторинг Extract Method.
 
-| Крок | Коміт | Результат тестів |
-|---|---|---|
-| 1. Характеризаційні тести (команда ще не змінена) | [`3cb4e7e` test: add characterization tests for import_saz command](https://github.com/ukma-fin-ssdm-2026/unispace/commit/3cb4e7e) | 11 passed; покриття `import_saz.py` 0% → 100% |
-| 2. Рефакторинг (Extract Method) | [`d50bb2a` refactor: extract helpers from import_saz handle [REFACTOR]](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d50bb2a) | ті самі 11 passed; повний набір 338 passed |
+| Крок                                              | Коміт                                                                                                                                  | Результат тестів                              |
+|---------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| 1. Характеризаційні тести (команда ще не змінена) | [`3cb4e7e` test: add characterization tests for import_saz command](https://github.com/ukma-fin-ssdm-2026/unispace/commit/3cb4e7e)     | 11 passed; покриття `import_saz.py` 0% → 100% |
+| 2. Рефакторинг (Extract Method)                   | [`d50bb2a` refactor: extract helpers from import_saz handle [REFACTOR]](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d50bb2a) | ті самі 11 passed; повний набір 338 passed    |
 
 Зафіксована поведінка, зокрема та, що виглядає дивно:
 

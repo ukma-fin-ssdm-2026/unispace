@@ -5,6 +5,24 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.4.2](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.1...v0.4.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* replace ensure_connection with parameterized SELECT 1 and timeout ([#360](https://github.com/ukma-fin-ssdm-2026/unispace/issues/360)) ([0014ff8](https://github.com/ukma-fin-ssdm-2026/unispace/commit/0014ff85af087ae244d9ec32100533ea323e9c9e))
+
+
+### Documentation
+
+* add health check section, sync roles with git history and forma… ([#361](https://github.com/ukma-fin-ssdm-2026/unispace/issues/361)) ([8bc939e](https://github.com/ukma-fin-ssdm-2026/unispace/commit/8bc939e5e065e84195c7d3df0f4d82cebe66a048))
+* add Lab 10 DORA metrics and CI/CD analysis reports ([#353](https://github.com/ukma-fin-ssdm-2026/unispace/issues/353)) ([8e8b6fc](https://github.com/ukma-fin-ssdm-2026/unispace/commit/8e8b6fc3b1d1c41385955934c2f19b3d9e0902e2))
+* add Loom video files for Lab 10 ([#357](https://github.com/ukma-fin-ssdm-2026/unispace/issues/357)) ([d990f28](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d990f281db3d9699044a565e0b8a7aa3b2622221))
+* add raw CI/CD metrics for Lab 10 ([#355](https://github.com/ukma-fin-ssdm-2026/unispace/issues/355)) merge pull request ([7209735](https://github.com/ukma-fin-ssdm-2026/unispace/commit/720973501663ac2e95571c74ce2baf68e0ce5bb1))
+* merge initial dora-summary.md ([#356](https://github.com/ukma-fin-ssdm-2026/unispace/issues/356)) ([7628b0f](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7628b0fbbc9c961b5e88587bf6ea2047060ec734))
+* remove template text from SonarQube AI note ([#352](https://github.com/ukma-fin-ssdm-2026/unispace/issues/352)) ([f26887c](https://github.com/ukma-fin-ssdm-2026/unispace/commit/f26887c782f203d6fce2b03c49ee57ac50763dd4))
+* structure scavenger-hunt report and fix formatting blocks ([#359](https://github.com/ukma-fin-ssdm-2026/unispace/issues/359)) ([3673225](https://github.com/ukma-fin-ssdm-2026/unispace/commit/3673225d30a076e04994f055868fa748c817be88))
+
 ## [0.4.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.0...v0.4.1) (2026-11-12)
 
 

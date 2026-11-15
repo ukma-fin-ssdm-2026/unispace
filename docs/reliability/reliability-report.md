@@ -358,11 +358,14 @@ def test_health_check_returns_unhealthy_on_db_failure(api_client):
 
 **Докази:**
 
-| Артефакт / Перевірка                               | Посилання та опис                                                                                                                                                                                                  |
-|:---------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Pull Request із реалізацією**                    | [PR #340](https://github.com/ukma-fin-ssdm-2026/unispace/pull/340) *(також продемонстровано у відеозаписі захисту Лаб 9)*                                                                                          |
-| **Код ендпоінта `HealthCheckAPIView`**             | [`Backend/api/views.py`](https://github.com/ukma-fin-ssdm-2026/unispace/blob/main/Backend/api/views.py)                                                                                                            |
-| **Автоматичні тести (`200 OK` та `503` при збої)** | [`Backend/api/tests/reliability/test_health.py`](https://github.com/ukma-fin-ssdm-2026/unispace/blob/main/Backend/api/tests/reliability/test_health.py) *(виконуються в обов'язковому CI job `reliability-tests`)* |
+**Докази:**
+
+| Артефакт / Перевірка                                         | Посилання та опис                                                                                                                                                                                                  |
+|:-------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Початкова реалізація та демонстрація у відео**             | [PR #340](https://github.com/ukma-fin-ssdm-2026/unispace/pull/340) *(також продемонстровано у відеозаписі захисту Лаб 9)*                                                                                          |
+| **Заміна `ensure_connection()` на `SELECT 1` із тайм-аутом** | [PR #360 (коміт `5c64c50`)](https://github.com/ukma-fin-ssdm-2026/unispace/pull/360) — параметризований запит із `statement_timeout = 2000` мс та оновлені тести (усі перевірки CI пройдено)                       |
+| **Код ендпоінта `HealthCheckAPIView`**                       | [`Backend/api/views.py`](https://github.com/ukma-fin-ssdm-2026/unispace/blob/main/Backend/api/views.py)                                                                                                            |
+| **Автоматичні тести (`200 OK` та `503` при збої)**           | [`Backend/api/tests/reliability/test_health.py`](https://github.com/ukma-fin-ssdm-2026/unispace/blob/main/Backend/api/tests/reliability/test_health.py) *(виконуються в обов'язковому CI job `reliability-tests`)* |
 
 **Відповідальна:** Дар'я Мельник.
 

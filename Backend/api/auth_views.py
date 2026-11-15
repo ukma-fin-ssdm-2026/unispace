@@ -51,7 +51,11 @@ def microsoft_login(request):
     if request.get_host() != redirect.netloc:
         return HttpResponseRedirect(f"{redirect.scheme}://{redirect.netloc}{request.get_full_path()}")
 
-    flow = microsoft_auth.start_login()
+    try:
+        flow = microsoft_auth.start_login()
+    except microsoft_auth.MicrosoftLoginError as error:
+        return _error("LOGIN_FAILED", str(error), 503)
+
     request.session[microsoft_auth.SESSION_FLOW_KEY] = flow
     return HttpResponseRedirect(flow["auth_uri"])
 

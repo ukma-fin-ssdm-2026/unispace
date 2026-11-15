@@ -101,8 +101,7 @@ const UniSpaceApi = (() => {
         post: (path, options = {}) => request(path, { ...options, method: 'POST' }),
         del: (path) => request(path, { method: 'DELETE' }),
         logout: () => request('/auth/logout/', { method: 'POST', absolute: true }),
-        describeError,
-        ApiError,
+        describeError
     };
 })();
 

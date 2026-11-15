@@ -17,8 +17,8 @@ test_rooms_crud.py і test_bookings_crud.py.
 test_room_alternatives.py, які закомічено раніше за реалізацію.
 """
 
-from django.db import connection
-from django.db.utils import OperationalError
+from django.db import connection, transaction
+from django.db.utils import DatabaseError
 from django.db.models import Prefetch, Q
 from django.db.models import ProtectedError
 from drf_spectacular.utils import extend_schema
@@ -716,6 +716,9 @@ class SyncTriggerAPIView(APIView):
     # ==========================================
 
 
+HEALTH_CHECK_DB_TIMEOUT_MS = "2000"
+
+
 class HealthCheckResponseSerializer(serializers.Serializer):
     status = serializers.CharField()
     dependency = serializers.CharField(required=False)
@@ -730,10 +733,12 @@ class HealthCheckAPIView(APIView):
     )
     def get(self, request, format=None):
         try:
-            # Перевіряємо з'єднання з БД
-            connection.ensure_connection()
+            with transaction.atomic(), connection.cursor() as cursor:
+                cursor.execute("SELECT set_config('statement_timeout', %s, true), 1;", [HEALTH_CHECK_DB_TIMEOUT_MS])
+                cursor.fetchone()
             return Response({"status": "healthy"}, status=status.HTTP_200_OK)
-        except OperationalError:
+        except DatabaseError:
             return Response(
-                {"status": "unhealthy", "dependency": "database"}, status=status.HTTP_503_SERVICE_UNAVAILABLE
+                {"status": "unhealthy", "dependency": "database"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )

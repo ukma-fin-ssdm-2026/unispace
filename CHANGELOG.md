@@ -5,6 +5,18 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.5.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.3...v0.5.0) (2026-11-16)
+
+
+### Features
+
+* add concurrency, timeouts and  artifact resilience ([#365](https://github.com/ukma-fin-ssdm-2026/unispace/issues/365)) ([04e0573](https://github.com/ukma-fin-ssdm-2026/unispace/commit/04e0573b60897ccd0794d9caba86337d45d5c535))
+
+
+### Documentation
+
+* complete DORA analytics, root cause analysis, blameless postmor… ([#363](https://github.com/ukma-fin-ssdm-2026/unispace/issues/363)) ([729bb6b](https://github.com/ukma-fin-ssdm-2026/unispace/commit/729bb6bf3493aba395d2d4887ca9e9fcf4430638))
+
 ## [0.4.3](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.2...v0.4.3) (2026-11-15)
 
 

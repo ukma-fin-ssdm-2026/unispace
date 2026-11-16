@@ -17,9 +17,15 @@ on:
   pull_request:
     branches: [ "main" ]
 
+# Роль Проєктувальниці покращень (Дар'я Мельник): автоматичне скасування застарілих запусків у PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   build-and-test:
     runs-on: [self-hosted, linux]
+    timeout-minutes: 20
 
     # PostgreSQL для CI (ADR-002): та сама СУБД, що в Docker локально і на Render.
     # Потрібен, бо моделі використовують можливості лише PostgreSQL (ExclusionConstraint).
@@ -128,6 +134,7 @@ jobs:
     # Згенерований YAML можна скачати зі сторінки запуску (Artifacts) і закомітити.
     - name: Upload generated schema
       uses: actions/upload-artifact@v4
+      continue-on-error: true
       with:
         name: openapi-generated
         path: Backend/openapi-generated.yaml
@@ -136,6 +143,7 @@ jobs:
     - name: Upload coverage report
       if: always()
       uses: actions/upload-artifact@v4
+      continue-on-error: true
       with:
         name: coverage-html
         path: Backend/htmlcov/
@@ -149,6 +157,7 @@ jobs:
   # PostgreSQL на іншому порту хоста (5433), щоб не конфліктувати з build-and-test на тому самому self-hosted runner.
   reliability-tests:
     runs-on: [self-hosted, linux]
+    timeout-minutes: 10
 
     services:
       postgres:
@@ -206,6 +215,7 @@ jobs:
 
   traceability:
     runs-on: [self-hosted, linux]
+    timeout-minutes: 10
 
     defaults:
       run:
@@ -230,6 +240,7 @@ jobs:
   # Lab05: перевірки фронтенду (окремий Django-проєкт у Frontend/) після огляду іншої команди.
   frontend:
     runs-on: [self-hosted, linux]
+    timeout-minutes: 10
 
     env:
       # Тільки для CI: ключ не є секретом і не використовується ніде, крім перевірок.

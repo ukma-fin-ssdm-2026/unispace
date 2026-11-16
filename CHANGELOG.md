@@ -5,6 +5,13 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.4.3](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.2...v0.4.3) (2026-11-15)
+
+
+### Bug Fixes
+
+* complete REL-H08 with MSAL timeout, start_login handling and rel… ([#362](https://github.com/ukma-fin-ssdm-2026/unispace/issues/362)) ([984a633](https://github.com/ukma-fin-ssdm-2026/unispace/commit/984a633fe8a01048e77d8f922685fd9511cae7a2))
+
 ## [0.4.2](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.1...v0.4.2) (2026-11-15)
 
 

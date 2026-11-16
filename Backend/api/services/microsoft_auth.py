@@ -8,9 +8,9 @@
 Роль Microsoft не повідомляє, тому її визначає наша база: викладачі приходять з розкладу САЗ,
 диспетчера призначає адміністратор, а новий користувач за замовчуванням - студент.
 
-Примітка щодо використання ШІ: модуль згенеровано ШІ (Claude); логіку
-зіставлення користувачів узгоджено з командою, поведінку перевіряють
-тести test_microsoft_auth.py з підміною MSAL.
+Примітка щодо використання ШІ: модуль згенеровано ШІ (Claude, Gemini); логіку
+зіставлення користувачів та обробку помилок узгоджено з командою, поведінку перевіряють
+тести test_microsoft_auth.py та test_microsoft_auth_reliability.py з підміною MSAL.
 """
 
 import msal
@@ -22,6 +22,11 @@ from api.models import User
 
 LOGIN_SCOPES = ["User.Read"]
 SESSION_FLOW_KEY = "microsoft_auth_flow"
+MSAL_HTTP_TIMEOUT_SECONDS = 10
+
+MS_UNAVAILABLE_MESSAGE = "Сервіс авторизації Microsoft тимчасово недоступний. Спробуйте пізніше."
+MS_AUTH_REJECTED_MESSAGE = "Не вдалося виконати вхід через Microsoft. Спробуйте ще раз."
+
 logger = logging.getLogger(__name__)
 
 
@@ -42,6 +47,7 @@ def build_msal_app():
         settings.MS_CLIENT_ID,
         authority=f"https://login.microsoftonline.com/{settings.MS_TENANT_ID}",
         client_credential=settings.MS_CLIENT_SECRET,
+        timeout=MSAL_HTTP_TIMEOUT_SECONDS,
     )
 
     # ==========================================
@@ -51,7 +57,21 @@ def build_msal_app():
 
 def start_login():
     """Повертає flow (зберігається в сесії) з адресою auth_uri, куди треба перенаправити браузер."""
-    return build_msal_app().initiate_auth_code_flow(LOGIN_SCOPES, redirect_uri=settings.MS_REDIRECT_URI)
+    try:
+        flow = build_msal_app().initiate_auth_code_flow(LOGIN_SCOPES, redirect_uri=settings.MS_REDIRECT_URI)
+    except (requests.exceptions.RequestException, ValueError) as error:
+        logger.error("Помилка звернення до Microsoft під час ініціалізації входу: %s", error)
+        raise MicrosoftLoginError(MS_UNAVAILABLE_MESSAGE) from error
+
+    if "error" in flow or "auth_uri" not in flow:
+        logger.error(
+            "Microsoft повернув помилку ініціалізації входу: %s (%s)",
+            flow.get("error"),
+            flow.get("error_description"),
+        )
+        raise MicrosoftLoginError(MS_UNAVAILABLE_MESSAGE)
+
+    return flow
 
 
 def finish_login(flow, query_params):
@@ -62,10 +82,15 @@ def finish_login(flow, query_params):
         raise MicrosoftLoginError("Невалідна відповідь Microsoft") from error
     except requests.exceptions.RequestException as error:
         logger.error("Помилка мережі під час звернення до Microsoft: %s", error)
-        raise MicrosoftLoginError("Сервіс авторизації Microsoft тимчасово недоступний. Спробуйте пізніше.") from error
+        raise MicrosoftLoginError(MS_UNAVAILABLE_MESSAGE) from error
 
     if "error" in result:
-        raise MicrosoftLoginError(result.get("error_description") or result["error"])
+        logger.warning(
+            "Відмова авторизації Microsoft: error=%s, description=%s",
+            result.get("error"),
+            result.get("error_description"),
+        )
+        raise MicrosoftLoginError(MS_AUTH_REJECTED_MESSAGE)
 
     claims = result.get("id_token_claims")
     if not claims:

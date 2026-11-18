@@ -281,28 +281,33 @@ python -m unittest discover -s scripts/tests -p test_ci_change_scope.py -v
 
 Цей запуск підтверджує, що після злиття змін повний CI на `main` збережено.
 
-Залишилося перевірити документаційний PR: `changes` і `traceability` повинні завершитися успішно, а `build-and-test`, `reliability-tests` і `frontend` — отримати статус `skipped`.
+Документаційний сценарій підтверджено в [PR #376, CI #976](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/44395998653): `changes` і `traceability` завершилися успішно, а `build-and-test`, `reliability-tests` і `frontend` отримали статус `skipped`.
 
 ### 4. Вимірювання ефекту
 
-Базовий приклад до зміни — [PR #363](https://github.com/ukma-fin-ssdm-2026/unispace/pull/363), у якому змінювався лише `docs/ci-cd/dora-summary.md`.
+Порівняно два PR зі змінами лише в `docs/ci-cd/dora-summary.md`:
 
-У [CI Pipeline #944](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/43908528695) зафіксовано:
+- До впровадження: [PR #363](https://github.com/ukma-fin-ssdm-2026/unispace/pull/363), [CI Pipeline #944](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/43908528695).
+- Після впровадження: [PR #376](https://github.com/ukma-fin-ssdm-2026/unispace/pull/376), [CI Pipeline #976](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/44395998653), коміт `b524636`.
 
-| Job | Статус до зміни | Тривалість |
-|---|---|---:|
-| `build-and-test` | success | 106 с |
-| `reliability-tests` | success | 69 с |
-| `frontend` | success | 53 с |
-| `traceability` | success | 21 с |
+| Job | До: CI #944 | Після: CI #976 |
+|---|---|---|
+| `changes` | Відсутній | success, 16 с |
+| `build-and-test` | success, 106 с | skipped |
+| `reliability-tests` | success, 69 с | skipped |
+| `frontend` | success, 53 с | skipped |
+| `traceability` | success, 21 с | success, 17 с |
+| Сума тривалостей виконаних jobs | 249 с | 33 с |
 
-Сума тривалостей трьох важких jobs становить **228 с**. Це не тривалість workflow, оскільки jobs могли працювати паралельно.
+**Докази:** [запуск до зміни](evidence/ci-docs-filter-before.png), [запуск після зміни](evidence/ci-docs-filter-after.png).
 
-Після перевірки документаційного PR потрібно додати посилання на новий запуск, фактичні статуси та тривалості jobs, включно з новим `changes`. Докази порівняння будуть додані до `docs/ci-cd/evidence/`.
+**Результат:** для документаційного PR три важкі jobs не запускалися. Сума тривалостей виконаних jobs у порівняних запусках зменшилася з 249 до 33 с, тобто на 216 с. Новий job `changes` врахований у результаті після зміни.
 
-Порівняння оцінює виконання jobs для документаційного PR. Воно саме по собі не доводить зменшення загального Change Lead Time, оскільки на нього також впливають черга раннерів та очікування рев'ю.
+Це сума тривалостей jobs, а не тривалість workflow: jobs можуть виконуватися паралельно. Порівняння двох запусків підтверджує роботу фільтра, але не доводить постійне скорочення загального Change Lead Time або черги раннерів.
 
-**Статус:** реалізацію інтегровано; перевірки PR та повний CI на `main` пройдено. Перевірка документаційного PR і вимірювання ефекту ще не завершені.
+Перевірка `traceability` і SonarCloud залишилися успішними. Повний CI на `main` також збережено, що підтверджено [запуском #973](https://github.com/ukma-fin-ssdm-2026/unispace/actions/runs/44393575602) після злиття PR #374.
+
+**Статус:** реалізацію інтегровано; повний CI на `main` та фільтрацію документаційного PR перевірено. Ефект зафіксовано; оновлення звіту очікує рев'ю та злиття.
 
 **Примітка щодо використання ШІ:** Claude використано для підготовки скрипта, тестів, змін workflow та цього розділу, а також для уточнення реалізації, аналізу перевірок і оновлення документації. Локальні перевірки виконала Спіріна Дар'я; результати GitHub Actions наведено за посиланнями на запуски.
 

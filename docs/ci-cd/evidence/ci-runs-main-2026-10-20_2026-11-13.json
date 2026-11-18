@@ -1,0 +1,6149 @@
+[
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-13T08:31:13Z",
+  "databaseId": 43393846837,
+  "displayTitle": "docs: add Lab 10 DORA metrics and CI/CD analysis reports (#353)",
+  "event": "push",
+  "headSha": "8e8b6fc3b1d1c41385955934c2f19b3d9e0902e2",
+  "updatedAt": "2026-11-13T08:32:40Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-13T08:31:15Z",
+    "completedAt": "2026-11-13T08:31:55Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-13T08:31:15Z",
+    "completedAt": "2026-11-13T08:32:10Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-13T08:31:15Z",
+    "completedAt": "2026-11-13T08:31:33Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-13T08:31:16Z",
+    "completedAt": "2026-11-13T08:32:40Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 353,
+   "title": "docs: add Lab 10 DORA metrics and CI/CD analysis reports",
+   "mergedAt": "2026-11-13T08:31:11Z",
+   "firstCommitAuthoredDate": "2026-11-13T08:28:26Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T12:49:43Z",
+  "databaseId": 43221486156,
+  "displayTitle": "refactor: centralize background gradient using --bg-main variable (#350)",
+  "event": "push",
+  "headSha": "6fb7f4d83cf565fba8f0be0b81e089ce2afe0812",
+  "updatedAt": "2026-11-12T12:51:11Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T12:49:45Z",
+    "completedAt": "2026-11-12T12:50:04Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T12:49:45Z",
+    "completedAt": "2026-11-12T12:50:47Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T12:49:45Z",
+    "completedAt": "2026-11-12T12:51:10Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T12:49:45Z",
+    "completedAt": "2026-11-12T12:50:28Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 350,
+   "title": "refactor: centralize background gradient using --bg-main variable",
+   "mergedAt": "2026-11-12T12:49:40Z",
+   "firstCommitAuthoredDate": "2026-11-12T09:32:03Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T09:15:45Z",
+  "databaseId": 43189902185,
+  "displayTitle": "delete: docs/images/.gitkeep",
+  "event": "push",
+  "headSha": "7e7072e79e2a7e597284e6ff1847a3be87b6f11b",
+  "updatedAt": "2026-11-12T09:17:18Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T09:15:48Z",
+    "completedAt": "2026-11-12T09:16:44Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T09:15:48Z",
+    "completedAt": "2026-11-12T09:17:18Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T09:15:48Z",
+    "completedAt": "2026-11-12T09:16:06Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T09:15:48Z",
+    "completedAt": "2026-11-12T09:16:28Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 349,
+   "title": "delete: docs/images/.gitkeep",
+   "mergedAt": "2026-11-12T09:15:42Z",
+   "firstCommitAuthoredDate": "2026-11-12T08:07:24Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T08:05:28Z",
+  "databaseId": 43180117544,
+  "displayTitle": "chore(main): release 0.4.1 (#345)",
+  "event": "push",
+  "headSha": "354d90a660771c0b516c8e61d768dd4c26f4091a",
+  "updatedAt": "2026-11-12T08:06:57Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T08:05:30Z",
+    "completedAt": "2026-11-12T08:06:22Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T08:05:30Z",
+    "completedAt": "2026-11-12T08:05:47Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T08:05:30Z",
+    "completedAt": "2026-11-12T08:06:56Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T08:05:38Z",
+    "completedAt": "2026-11-12T08:06:18Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 345,
+   "title": "chore(main): release 0.4.1",
+   "mergedAt": "2026-11-12T08:05:25Z",
+   "firstCommitAuthoredDate": "2026-11-12T07:53:31Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T07:53:15Z",
+  "databaseId": 43178578721,
+  "displayTitle": "docs: add individual Loom video link for Lab 9",
+  "event": "push",
+  "headSha": "0d48d7e0b5e5f27030b17200c283b5c2d4b09a1c",
+  "updatedAt": "2026-11-12T07:54:42Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:53:18Z",
+    "completedAt": "2026-11-12T07:53:57Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:53:18Z",
+    "completedAt": "2026-11-12T07:54:41Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:53:18Z",
+    "completedAt": "2026-11-12T07:54:19Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:53:18Z",
+    "completedAt": "2026-11-12T07:53:36Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 348,
+   "title": "docs: add individual Loom video link for Lab 9",
+   "mergedAt": "2026-11-12T07:53:13Z",
+   "firstCommitAuthoredDate": "2026-11-12T07:50:10Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T07:32:57Z",
+  "databaseId": 43176068642,
+  "displayTitle": "docs: add lab09 video link to video_Trekurova.txt (#347)",
+  "event": "push",
+  "headSha": "cf79d5980ec8b07e8153bb480b19a136019619e5",
+  "updatedAt": "2026-11-12T07:34:27Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:32:59Z",
+    "completedAt": "2026-11-12T07:33:39Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:32:59Z",
+    "completedAt": "2026-11-12T07:34:13Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:32:59Z",
+    "completedAt": "2026-11-12T07:34:26Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:32:59Z",
+    "completedAt": "2026-11-12T07:33:18Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 347,
+   "title": "docs: add lab09 video link to video_Trekurova.txt",
+   "mergedAt": "2026-11-12T07:32:54Z",
+   "firstCommitAuthoredDate": "2026-11-12T07:24:49Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T07:28:51Z",
+  "databaseId": 43175558977,
+  "displayTitle": "docs: revise scavenger hunt document with updates and fixes (#346)",
+  "event": "push",
+  "headSha": "eab6de163bd2a7e55473e0cb4e7476d29d2f8bc0",
+  "updatedAt": "2026-11-12T07:30:21Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:28:53Z",
+    "completedAt": "2026-11-12T07:29:33Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:28:53Z",
+    "completedAt": "2026-11-12T07:29:48Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:28:53Z",
+    "completedAt": "2026-11-12T07:29:10Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T07:28:53Z",
+    "completedAt": "2026-11-12T07:30:21Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 346,
+   "title": "docs: revise scavenger hunt document with updates and fixes",
+   "mergedAt": "2026-11-12T07:28:48Z",
+   "firstCommitAuthoredDate": "2026-11-12T06:57:31Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T06:46:21Z",
+  "databaseId": 43170480099,
+  "displayTitle": "docs: Add video link to video_Mykhailyk.txt (#344) merge pull request",
+  "event": "push",
+  "headSha": "d8051917389884cbcc0d10967483f5f2fd550cca",
+  "updatedAt": "2026-11-12T06:47:48Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:46:23Z",
+    "completedAt": "2026-11-12T06:47:47Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:46:23Z",
+    "completedAt": "2026-11-12T06:47:04Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:46:23Z",
+    "completedAt": "2026-11-12T06:47:17Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:46:23Z",
+    "completedAt": "2026-11-12T06:46:41Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 344,
+   "title": "docs: Add video link to video_Mykhailyk.txt",
+   "mergedAt": "2026-11-12T06:46:18Z",
+   "firstCommitAuthoredDate": "2026-11-12T06:36:32Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T06:41:32Z",
+  "databaseId": 43169906996,
+  "displayTitle": "docs: revise reliability report with updates and findings (#343)",
+  "event": "push",
+  "headSha": "50af43af6b50aec1f37bf3cfbe902124ca51d5c3",
+  "updatedAt": "2026-11-12T06:42:59Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:41:34Z",
+    "completedAt": "2026-11-12T06:42:22Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:41:35Z",
+    "completedAt": "2026-11-12T06:42:58Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:41:50Z",
+    "completedAt": "2026-11-12T06:42:45Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:41:47Z",
+    "completedAt": "2026-11-12T06:42:04Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 343,
+   "title": "docs: revise reliability report with updates and findings",
+   "mergedAt": "2026-11-12T06:41:29Z",
+   "firstCommitAuthoredDate": "2026-11-12T06:32:17Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T06:38:09Z",
+  "databaseId": 43169508972,
+  "displayTitle": "chore(main): release 0.4.0 (#337)",
+  "event": "push",
+  "headSha": "9796c37dd3cadd9d8afa9009cf38e9b0845f82eb",
+  "updatedAt": "2026-11-12T06:39:34Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:38:11Z",
+    "completedAt": "2026-11-12T06:38:29Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:38:42Z",
+    "completedAt": "2026-11-12T06:39:26Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:38:11Z",
+    "completedAt": "2026-11-12T06:39:34Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:38:27Z",
+    "completedAt": "2026-11-12T06:39:20Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 337,
+   "title": "chore(main): release 0.4.0",
+   "mergedAt": "2026-11-12T06:38:06Z",
+   "firstCommitAuthoredDate": "2026-11-12T06:17:56Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T06:17:39Z",
+  "databaseId": 43167119972,
+  "displayTitle": "fix: add timeouts to profile and logout fetch requests (#341) merge p…",
+  "event": "push",
+  "headSha": "e1f751207c6d772a2f3b16189f385c5ecd9eb103",
+  "updatedAt": "2026-11-12T06:19:06Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:17:41Z",
+    "completedAt": "2026-11-12T06:19:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:17:41Z",
+    "completedAt": "2026-11-12T06:17:59Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:17:41Z",
+    "completedAt": "2026-11-12T06:18:36Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:17:41Z",
+    "completedAt": "2026-11-12T06:18:20Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 341,
+   "title": "fix: add timeouts to profile and logout fetch requests",
+   "mergedAt": "2026-11-12T06:17:36Z",
+   "firstCommitAuthoredDate": "2026-11-11T23:45:03Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T06:05:48Z",
+  "databaseId": 43165733727,
+  "displayTitle": "feat: add health check endpoint and reliability test (bonus) (#340) m…",
+  "event": "push",
+  "headSha": "70f88ce786e4440200336f52f8e8de7c735c7f20",
+  "updatedAt": "2026-11-12T06:07:16Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:05:50Z",
+    "completedAt": "2026-11-12T06:06:08Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:06:21Z",
+    "completedAt": "2026-11-12T06:06:59Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:05:51Z",
+    "completedAt": "2026-11-12T06:07:15Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:05:51Z",
+    "completedAt": "2026-11-12T06:06:46Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 340,
+   "title": "feat: add health check endpoint and reliability test (bonus)",
+   "mergedAt": "2026-11-12T06:05:45Z",
+   "firstCommitAuthoredDate": "2026-11-11T23:34:12Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T06:02:34Z",
+  "databaseId": 43165358713,
+  "displayTitle": "fix: catch and log network errors during Microsoft OAuth login (REL-H…",
+  "event": "push",
+  "headSha": "f737c9252823e159363d2a4545f8c4953310c9e8",
+  "updatedAt": "2026-11-12T06:04:08Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:02:36Z",
+    "completedAt": "2026-11-12T06:03:31Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:02:36Z",
+    "completedAt": "2026-11-12T06:03:22Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:02:36Z",
+    "completedAt": "2026-11-12T06:02:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T06:02:36Z",
+    "completedAt": "2026-11-12T06:04:07Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 339,
+   "title": "fix: catch and log network errors during Microsoft OAuth login (REL-H08)",
+   "mergedAt": "2026-11-12T06:02:31Z",
+   "firstCommitAuthoredDate": "2026-11-11T23:13:15Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-12T05:57:39Z",
+  "databaseId": 43164814566,
+  "displayTitle": "fix: add max_value to pagination limits to prevent memory exhaustion …",
+  "event": "push",
+  "headSha": "cdd487eac57b710203e9216a8c63932a3b5fcf60",
+  "updatedAt": "2026-11-12T05:59:05Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T05:57:41Z",
+    "completedAt": "2026-11-12T05:58:44Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T05:57:41Z",
+    "completedAt": "2026-11-12T05:57:59Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T05:57:41Z",
+    "completedAt": "2026-11-12T05:58:23Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-12T05:57:41Z",
+    "completedAt": "2026-11-12T05:59:04Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 338,
+   "title": "fix: add max_value to pagination limits to prevent memory exhaustion …",
+   "mergedAt": "2026-11-12T05:57:36Z",
+   "firstCommitAuthoredDate": "2026-11-11T23:02:55Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T22:23:09Z",
+  "databaseId": 43111314872,
+  "displayTitle": "fix: validate SAZ lesson time with clear errors",
+  "event": "push",
+  "headSha": "1240a7c96e95b3d8d3fd4f124df2a6ae4f0a4416",
+  "updatedAt": "2026-11-11T22:24:50Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T22:23:11Z",
+    "completedAt": "2026-11-11T22:24:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T22:23:11Z",
+    "completedAt": "2026-11-11T22:23:39Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T22:23:11Z",
+    "completedAt": "2026-11-11T22:23:53Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T22:23:11Z",
+    "completedAt": "2026-11-11T22:24:06Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 333,
+   "title": "fix: validate SAZ lesson time with clear errors",
+   "mergedAt": "2026-11-11T22:23:06Z",
+   "firstCommitAuthoredDate": "2026-11-11T20:31:19Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T22:02:51Z",
+  "databaseId": 43108372992,
+  "displayTitle": "Ci: fix release config bug",
+  "event": "push",
+  "headSha": "b560f784b0a621123f70b36790f549738c54e9ed",
+  "updatedAt": "2026-11-11T22:04:29Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T22:02:53Z",
+    "completedAt": "2026-11-11T22:03:34Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T22:02:53Z",
+    "completedAt": "2026-11-11T22:04:18Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T22:03:30Z",
+    "completedAt": "2026-11-11T22:04:28Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T22:02:58Z",
+    "completedAt": "2026-11-11T22:03:16Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 336,
+   "title": "Ci: fix release config bug",
+   "mergedAt": "2026-11-11T22:02:48Z",
+   "firstCommitAuthoredDate": "2026-11-11T21:13:09Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T21:53:15Z",
+  "databaseId": 43106977269,
+  "displayTitle": "fix: limit week numbers in SAZ parser (REL-H06)",
+  "event": "push",
+  "headSha": "15f64b0b90f49f8bf795da19d1ed162984868b50",
+  "updatedAt": "2026-11-11T21:54:43Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:53:17Z",
+    "completedAt": "2026-11-11T21:54:20Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:53:17Z",
+    "completedAt": "2026-11-11T21:54:42Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:53:17Z",
+    "completedAt": "2026-11-11T21:53:37Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:53:17Z",
+    "completedAt": "2026-11-11T21:53:58Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 331,
+   "title": "fix: limit week numbers in SAZ parser (REL-H06)",
+   "mergedAt": "2026-11-11T21:53:12Z",
+   "firstCommitAuthoredDate": "2026-11-11T20:05:56Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T21:24:55Z",
+  "databaseId": 43102837707,
+  "displayTitle": "docs: add Spirina Lab09 video link",
+  "event": "push",
+  "headSha": "7eedb0643b270dcb82b0791df9a11dc60ae897d1",
+  "updatedAt": "2026-11-11T21:27:00Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:24:57Z",
+    "completedAt": "2026-11-11T21:25:41Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:24:57Z",
+    "completedAt": "2026-11-11T21:25:17Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:24:58Z",
+    "completedAt": "2026-11-11T21:25:55Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:25:30Z",
+    "completedAt": "2026-11-11T21:26:59Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 334,
+   "title": "docs: add Spirina Lab09 video link",
+   "mergedAt": "2026-11-11T21:24:52Z",
+   "firstCommitAuthoredDate": "2026-11-11T20:47:03Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T21:19:21Z",
+  "databaseId": 43102028032,
+  "displayTitle": "ci: restrict release triggers to feat, fix and refactor",
+  "event": "push",
+  "headSha": "8988affc8cf8be74cb556c55237957130115c7ba",
+  "updatedAt": "2026-11-11T21:20:51Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:19:23Z",
+    "completedAt": "2026-11-11T21:19:42Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:19:25Z",
+    "completedAt": "2026-11-11T21:20:08Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:19:23Z",
+    "completedAt": "2026-11-11T21:20:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T21:19:25Z",
+    "completedAt": "2026-11-11T21:20:32Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 335,
+   "title": "ci: restrict release triggers to feat, fix and refactor",
+   "mergedAt": "2026-11-11T21:19:18Z",
+   "firstCommitAuthoredDate": "2026-11-11T21:13:09Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "failure",
+  "createdAt": "2026-11-11T20:15:05Z",
+  "databaseId": 43094726969,
+  "displayTitle": "docs: update TeamCharter with Lab09 roles and responsibilities (#328)",
+  "event": "push",
+  "headSha": "a8285829120c8b0271ba70c2477f7ae6cfb7a66d",
+  "updatedAt": "2026-11-11T21:01:44Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:15:07Z",
+    "completedAt": "2026-11-11T20:16:17Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:15:07Z",
+    "completedAt": "2026-11-11T20:15:39Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:15:11Z",
+    "completedAt": "2026-11-11T20:16:39Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "failure",
+    "startedAt": "2026-11-11T20:15:13Z",
+    "completedAt": "2026-11-11T20:38:23Z",
+    "failedSteps": [
+     "Upload generated schema",
+     "Upload coverage report"
+    ]
+   }
+  ],
+  "pr": {
+   "number": 328,
+   "title": "docs: update TeamCharter with Lab09 roles and responsibilities",
+   "mergedAt": "2026-11-11T20:15:02Z",
+   "firstCommitAuthoredDate": "2026-11-11T14:20:21Z"
+  },
+  "failedLogTail": [
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0907950Z  2026-11-11 20:17:17.003 UTC [296] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('0ed95c9b062649e99ba47353ac6c7942'::uuid, '301fe48c882043e1b6d29d127f49a9c0'::uuid, 'a69ff337b32c4bf2bf3cefd394649132'::uuid, NULL, '2026-09-15 10:00:00+03:00'::timestamptz, '2026-09-15 11:20:00+03:00'::timestamptz, 'active', 'saz', '2026-11-11 20:17:17.002439+00:00'::timestamptz, '2026-11-11 20:17:17.002459+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0911020Z  2026-11-11 20:17:17.870 UTC [313] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0913505Z  2026-11-11 20:17:17.870 UTC [313] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0918284Z  2026-11-11 20:17:17.870 UTC [313] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('3a224f75ef7f410db1c0c0035aa1ccac'::uuid, '88a183606bbc49ff82be14e460e500bd'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.844852+00:00'::timestamptz, '2026-11-11 20:17:17.844871+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0922038Z  2026-11-11 20:17:17.869 UTC [310] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0924542Z  2026-11-11 20:17:17.869 UTC [310] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0929496Z  2026-11-11 20:17:17.869 UTC [310] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('d4775d6875a14e678638cc2a4dffcd05'::uuid, '48a0ca3c922248f381fb848ab574d36b'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.820700+00:00'::timestamptz, '2026-11-11 20:17:17.820716+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0933048Z  2026-11-11 20:17:17.877 UTC [306] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0935526Z  2026-11-11 20:17:17.877 UTC [306] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0940225Z  2026-11-11 20:17:17.877 UTC [306] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('110f914808a24e7f84675e004a55ce83'::uuid, '49a9577389f34435a9311109cdd73705'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.856905+00:00'::timestamptz, '2026-11-11 20:17:17.857045+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0943730Z  2026-11-11 20:17:17.892 UTC [312] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0946208Z  2026-11-11 20:17:17.892 UTC [312] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0950957Z  2026-11-11 20:17:17.892 UTC [312] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('81a0b59a63154792bd7621b62de8f157'::uuid, '728acf60b4114042aa2526ef5a9ad738'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.863969+00:00'::timestamptz, '2026-11-11 20:17:17.863990+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0954529Z  2026-11-11 20:17:17.912 UTC [308] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0957190Z  2026-11-11 20:17:17.912 UTC [308] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0961829Z  2026-11-11 20:17:17.912 UTC [308] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('915dbf7692e740738456aea4a36c8203'::uuid, '75ea31f4aaa14074a309ed4692b25dbd'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.891386+00:00'::timestamptz, '2026-11-11 20:17:17.891406+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0965646Z  2026-11-11 20:17:17.917 UTC [305] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0968205Z  2026-11-11 20:17:17.917 UTC [305] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0972807Z  2026-11-11 20:17:17.917 UTC [305] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('0cd38c99242d4cc3b7525835f1a4440a'::uuid, '0f53c956a1114082a24f0c2a1fb864e5'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.886465+00:00'::timestamptz, '2026-11-11 20:17:17.886487+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0976382Z  2026-11-11 20:17:17.922 UTC [311] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0978909Z  2026-11-11 20:17:17.922 UTC [311] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0983513Z  2026-11-11 20:17:17.922 UTC [311] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('c326d57bf9374d648205f2e5ed2e54d6'::uuid, '0972eab6e45d4d28938f6497983bbe19'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.902420+00:00'::timestamptz, '2026-11-11 20:17:17.902439+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0987029Z  2026-11-11 20:17:17.922 UTC [314] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0989428Z  2026-11-11 20:17:17.922 UTC [314] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0994082Z  2026-11-11 20:17:17.922 UTC [314] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('8f6a96a70f7649edb795721dd8564edb'::uuid, 'bd62d4aacda64c15b73759fc5ba9959e'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.896181+00:00'::timestamptz, '2026-11-11 20:17:17.896202+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.0997646Z  2026-11-11 20:17:17.939 UTC [307] ERROR:  conflicting key value violates exclusion constraint \"booking_active_room_time_excl\"",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.1000325Z  2026-11-11 20:17:17.939 UTC [307] DETAIL:  Key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12) conflicts with existing key (tstzrange(start_time, end_time, '[)'::text), room_id)=([\"2026-10-20 07:00:00+00\",\"2026-10-20 08:30:00+00\"), db61f12c-4c34-451a-9be5-e01bf4e24b12).",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.1004886Z  2026-11-11 20:17:17.939 UTC [307] STATEMENT:  INSERT INTO \"api_booking\" (\"id\", \"lesson_id\", \"room_id\", \"user_id\", \"start_time\", \"end_time\", \"status\", \"source\", \"created_at\", \"updated_at\") VALUES ('fde5a015c14a41df8865561946c7e37b'::uuid, '348f642f76ea44919a5d3bdf482b2756'::uuid, 'db61f12c4c34451a9be5e01bf4e24b12'::uuid, 'fabd6790faa7477aa4c44cabb05706b1'::uuid, '2026-10-20 10:00:00+03:00'::timestamptz, '2026-10-20 11:30:00+03:00'::timestamptz, 'active', 'manual', '2026-11-11 20:17:17.923298+00:00'::timestamptz, '2026-11-11 20:17:17.923319+00:00'::timestamptz)",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.1008244Z  2026-11-11 20:17:22.470 UTC [127] LOG:  checkpoint starting: immediate force wait",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.1010154Z  2026-11-11 20:17:22.512 UTC [127] LOG:  checkpoint complete: wrote 366 buffers (2.2%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.016 s, sync=0.017 s, total=0.043 s; sync files=212, longest=0.007 s, average=0.001 s; distance=8971 kB, estimate=8971 kB; lsn=0/21E1E60, redo lsn=0/21E1E28",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.1011990Z  2026-11-11 20:22:22.579 UTC [127] LOG:  checkpoint starting: time",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.1013783Z  2026-11-11 20:22:25.595 UTC [127] LOG:  checkpoint complete: wrote 31 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.009 s, sync=0.003 s, total=3.017 s; sync files=7, longest=0.002 s, average=0.001 s; distance=137 kB, estimate=8087 kB; lsn=0/22042B0, redo lsn=0/2204278",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.1027045Z Stop and remove container: 312c19733d5b45349136b83a7f8ca999_postgres16_08aafb",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.1037458Z ##[command]/usr/bin/docker rm --force 105891a76621973ad197f565f5d4a9ef9bf638f3ddc129fca83da45ea4aa2e5a",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.3400142Z 105891a76621973ad197f565f5d4a9ef9bf638f3ddc129fca83da45ea4aa2e5a",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.3464004Z Remove container network: github_network_c525d218ee774b7190f3df33ec5edc0e",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.3491279Z ##[command]/usr/bin/docker network rm github_network_c525d218ee774b7190f3df33ec5edc0e",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.4745510Z github_network_c525d218ee774b7190f3df33ec5edc0e",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.4896993Z Cleaning up orphan processes",
+   "build-and-test\tUNKNOWN STEP\t2026-11-11T20:38:18.5037015Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+  ]
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T20:06:17Z",
+  "databaseId": 43093341521,
+  "displayTitle": "chore(main): release 0.3.2",
+  "event": "push",
+  "headSha": "6f0d74c169d89f48033acff19e6281b221cac48a",
+  "updatedAt": "2026-11-11T20:10:31Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:06:57Z",
+    "completedAt": "2026-11-11T20:09:18Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:08:24Z",
+    "completedAt": "2026-11-11T20:08:49Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:08:48Z",
+    "completedAt": "2026-11-11T20:09:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:09:04Z",
+    "completedAt": "2026-11-11T20:10:30Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 330,
+   "title": "chore(main): release 0.3.2",
+   "mergedAt": "2026-11-11T20:06:14Z",
+   "firstCommitAuthoredDate": "2026-11-11T19:59:39Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T19:59:19Z",
+  "databaseId": 43092243813,
+  "displayTitle": "docs: update Lab09 reliability risk analysis",
+  "event": "push",
+  "headSha": "c90a5897e4a5097b16d92af3e695bef492f0dbcb",
+  "updatedAt": "2026-11-11T20:02:15Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T19:59:21Z",
+    "completedAt": "2026-11-11T20:00:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T19:59:21Z",
+    "completedAt": "2026-11-11T20:01:51Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:00:42Z",
+    "completedAt": "2026-11-11T20:01:07Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T20:01:11Z",
+    "completedAt": "2026-11-11T20:02:14Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 323,
+   "title": "docs: update Lab09 reliability risk analysis",
+   "mergedAt": "2026-11-11T19:59:16Z",
+   "firstCommitAuthoredDate": "2026-11-08T22:31:24Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T19:46:38Z",
+  "databaseId": 43090336652,
+  "displayTitle": "Test/lab09 reliability tests (#329) merge pull request",
+  "event": "push",
+  "headSha": "196ce1ec7580821a164d63e01667a05b2638c4da",
+  "updatedAt": "2026-11-11T19:49:47Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T19:46:41Z",
+    "completedAt": "2026-11-11T19:47:46Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T19:47:07Z",
+    "completedAt": "2026-11-11T19:47:35Z",
+    "failedSteps": []
+   },
+   {
+    "name": "reliability-tests",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T19:47:49Z",
+    "completedAt": "2026-11-11T19:49:17Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T19:47:16Z",
+    "completedAt": "2026-11-11T19:49:47Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 329,
+   "title": "Test/lab09 reliability tests",
+   "mergedAt": "2026-11-11T19:46:36Z",
+   "firstCommitAuthoredDate": "2026-11-11T18:25:19Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-11T17:46:47Z",
+  "databaseId": 43071428755,
+  "displayTitle": "chore(main): release 0.3.1",
+  "event": "push",
+  "headSha": "7096f001152468e1f03ca4e2d4f6ec1afc9ce841",
+  "updatedAt": "2026-11-11T17:49:08Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T17:46:49Z",
+    "completedAt": "2026-11-11T17:47:16Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T17:46:49Z",
+    "completedAt": "2026-11-11T17:47:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T17:46:49Z",
+    "completedAt": "2026-11-11T17:49:07Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 327,
+   "title": "chore(main): release 0.3.1",
+   "mergedAt": "2026-11-11T17:46:44Z",
+   "firstCommitAuthoredDate": "2026-11-10T11:01:19Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-10T11:00:58Z",
+  "databaseId": 42803943815,
+  "displayTitle": "docs: add release-please automation info to readme",
+  "event": "push",
+  "headSha": "53f8da95791dec75fce0e915d5be84a7533c85cd",
+  "updatedAt": "2026-11-10T11:02:22Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T11:01:01Z",
+    "completedAt": "2026-11-10T11:02:21Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T11:01:01Z",
+    "completedAt": "2026-11-10T11:01:18Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T11:01:01Z",
+    "completedAt": "2026-11-10T11:01:40Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 326,
+   "title": "docs: add release-please automation info to readme",
+   "mergedAt": "2026-11-10T11:00:56Z",
+   "firstCommitAuthoredDate": "2026-11-10T10:28:21Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-10T10:58:40Z",
+  "databaseId": 42803624792,
+  "displayTitle": "chore(main): release 0.3.0 (#325)",
+  "event": "push",
+  "headSha": "99db480ddd305355d8ccea1e0cbdd6264d13a149",
+  "updatedAt": "2026-11-10T11:00:03Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T10:58:43Z",
+    "completedAt": "2026-11-10T11:00:03Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T10:58:43Z",
+    "completedAt": "2026-11-10T10:59:23Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T10:58:43Z",
+    "completedAt": "2026-11-10T10:59:00Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 325,
+   "title": "chore(main): release 0.3.0",
+   "mergedAt": "2026-11-10T10:58:37Z",
+   "firstCommitAuthoredDate": "2026-11-10T10:19:05Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-10T10:18:27Z",
+  "databaseId": 42798016386,
+  "displayTitle": "ci: fix release-please permissions and pin action SHA",
+  "event": "push",
+  "headSha": "347c01ab57df2cb87cc1ae5f2ff28065dc39c42c",
+  "updatedAt": "2026-11-10T10:19:49Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T10:18:30Z",
+    "completedAt": "2026-11-10T10:19:09Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T10:18:30Z",
+    "completedAt": "2026-11-10T10:19:49Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T10:18:30Z",
+    "completedAt": "2026-11-10T10:18:47Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 324,
+   "title": "ci: fix release-please permissions and pin action SHA",
+   "mergedAt": "2026-11-10T10:18:24Z",
+   "firstCommitAuthoredDate": "2026-11-10T10:13:57Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-10T09:34:52Z",
+  "databaseId": 42791902774,
+  "displayTitle": "chore: add images folder for documentation",
+  "event": "push",
+  "headSha": "29820b1a086a32dfafff96d5754e0b85eba44f9f",
+  "updatedAt": "2026-11-10T09:36:11Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:34:54Z",
+    "completedAt": "2026-11-10T09:35:31Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:34:54Z",
+    "completedAt": "2026-11-10T09:35:11Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:34:54Z",
+    "completedAt": "2026-11-10T09:36:10Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 322,
+   "title": "chore: add images folder for documentation",
+   "mergedAt": "2026-11-10T09:34:49Z",
+   "firstCommitAuthoredDate": "2026-11-08T15:01:40Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-10T09:32:10Z",
+  "databaseId": 42791519206,
+  "displayTitle": "ci: setup release please automation",
+  "event": "push",
+  "headSha": "60a4eb2b68241fc0c51065a69d2969fb4c66bff7",
+  "updatedAt": "2026-11-10T09:33:33Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:32:12Z",
+    "completedAt": "2026-11-10T09:33:33Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:32:12Z",
+    "completedAt": "2026-11-10T09:32:29Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:32:13Z",
+    "completedAt": "2026-11-10T09:32:51Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 321,
+   "title": "ci: setup release please automation",
+   "mergedAt": "2026-11-10T09:32:07Z",
+   "firstCommitAuthoredDate": "2026-11-08T14:51:12Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-10T09:29:06Z",
+  "databaseId": 42791085997,
+  "displayTitle": "fix: sync release version 0.2.2 in configs and changelog",
+  "event": "push",
+  "headSha": "01cc37970afab83695942b0b5298e6855953663d",
+  "updatedAt": "2026-11-10T09:30:30Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:29:09Z",
+    "completedAt": "2026-11-10T09:30:30Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:29:09Z",
+    "completedAt": "2026-11-10T09:29:49Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-10T09:29:09Z",
+    "completedAt": "2026-11-10T09:29:26Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 320,
+   "title": "fix: sync release version 0.2.2 in configs and changelog",
+   "mergedAt": "2026-11-10T09:29:03Z",
+   "firstCommitAuthoredDate": "2026-11-08T14:26:17Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-08T14:22:25Z",
+  "databaseId": 42489489965,
+  "displayTitle": "feat: add ALLOW_DEV_LOGIN setting to allow dev login on production vi…",
+  "event": "push",
+  "headSha": "4f11ec18e09d5d53dfb959a9b66120d8e2683b01",
+  "updatedAt": "2026-11-08T14:23:52Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T14:22:27Z",
+    "completedAt": "2026-11-08T14:22:44Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T14:22:27Z",
+    "completedAt": "2026-11-08T14:23:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T14:22:27Z",
+    "completedAt": "2026-11-08T14:23:51Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 319,
+   "title": "feat: add ALLOW_DEV_LOGIN setting to allow dev login on production via environment variable",
+   "mergedAt": "2026-11-08T14:22:22Z",
+   "firstCommitAuthoredDate": "2026-11-07T15:38:34Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-08T14:20:24Z",
+  "databaseId": 42489319801,
+  "displayTitle": "refactor: separate unit and integration tests into dedicated folders",
+  "event": "push",
+  "headSha": "d378812a4e5de230e92aae2bb181b9442519c536",
+  "updatedAt": "2026-11-08T14:21:50Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T14:20:26Z",
+    "completedAt": "2026-11-08T14:21:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T14:20:26Z",
+    "completedAt": "2026-11-08T14:20:43Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T14:20:27Z",
+    "completedAt": "2026-11-08T14:21:50Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 318,
+   "title": "refactor: separate unit and integration tests into dedicated folders",
+   "mergedAt": "2026-11-08T14:20:21Z",
+   "firstCommitAuthoredDate": "2026-11-07T14:27:40Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-08T13:06:09Z",
+  "databaseId": 42483329896,
+  "displayTitle": "chore: setup file structure for Lab 09 reliability and testing",
+  "event": "push",
+  "headSha": "05eaaf934eeef633c2fc4d7b1c821011878f3058",
+  "updatedAt": "2026-11-08T13:08:02Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T13:06:11Z",
+    "completedAt": "2026-11-08T13:06:29Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T13:06:33Z",
+    "completedAt": "2026-11-08T13:08:01Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T13:06:42Z",
+    "completedAt": "2026-11-08T13:07:22Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 317,
+   "title": "chore: setup file structure for Lab 09 reliability and testing",
+   "mergedAt": "2026-11-08T13:06:06Z",
+   "firstCommitAuthoredDate": "2026-11-07T10:53:26Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-08T13:02:54Z",
+  "databaseId": 42483065519,
+  "displayTitle": "docs: restructure README and add Lab 09 reliability files",
+  "event": "push",
+  "headSha": "7ef44051724bef3fe9433d13ff753a069b5a0513",
+  "updatedAt": "2026-11-08T13:06:43Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T13:04:40Z",
+    "completedAt": "2026-11-08T13:04:58Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T13:05:13Z",
+    "completedAt": "2026-11-08T13:06:43Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-08T13:05:13Z",
+    "completedAt": "2026-11-08T13:05:56Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 316,
+   "title": "docs: restructure README and add Lab 09 reliability files",
+   "mergedAt": "2026-11-08T13:02:51Z",
+   "firstCommitAuthoredDate": "2026-11-07T10:42:22Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-06T10:00:44Z",
+  "databaseId": 42199334523,
+  "displayTitle": "fix: add timeouts, strict JSON and CSRF validation to api.js",
+  "event": "push",
+  "headSha": "79d245bc8f06bcf270c5e6aad78cae7cc38bce3b",
+  "updatedAt": "2026-11-06T10:03:19Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-06T10:01:27Z",
+    "completedAt": "2026-11-06T10:02:09Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-06T10:02:02Z",
+    "completedAt": "2026-11-06T10:03:18Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-06T10:02:22Z",
+    "completedAt": "2026-11-06T10:02:39Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 314,
+   "title": "fix: add timeouts, strict JSON and CSRF validation to api.js",
+   "mergedAt": "2026-11-06T10:00:41Z",
+   "firstCommitAuthoredDate": "2026-11-06T09:04:11Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-06T09:56:35Z",
+  "databaseId": 42198820409,
+  "displayTitle": "docs: add Lab09 reliability scavenger hunt",
+  "event": "push",
+  "headSha": "433e1857459115d90e458486f8ea89a08cce9694",
+  "updatedAt": "2026-11-06T09:58:00Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-06T09:56:37Z",
+    "completedAt": "2026-11-06T09:56:55Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-06T09:56:37Z",
+    "completedAt": "2026-11-06T09:57:15Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-06T09:56:37Z",
+    "completedAt": "2026-11-06T09:58:00Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 311,
+   "title": "docs: add Lab09 reliability scavenger hunt",
+   "mergedAt": "2026-11-06T09:56:31Z",
+   "firstCommitAuthoredDate": "2026-11-06T08:26:58Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T07:49:32Z",
+  "databaseId": 41989943632,
+  "displayTitle": "[REFACTOR] docs: add Loom video link for Daria Melnyk",
+  "event": "push",
+  "headSha": "c45b01e75d26c16450b24f839e8daed63c0111ab",
+  "updatedAt": "2026-11-05T07:50:55Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:49:35Z",
+    "completedAt": "2026-11-05T07:50:55Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:49:35Z",
+    "completedAt": "2026-11-05T07:49:51Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:49:35Z",
+    "completedAt": "2026-11-05T07:50:14Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 310,
+   "title": "[REFACTOR] docs: add Loom video link for Daria Melnyk",
+   "mergedAt": "2026-11-05T07:49:29Z",
+   "firstCommitAuthoredDate": "2026-11-05T07:44:50Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T07:31:06Z",
+  "databaseId": 41987779261,
+  "displayTitle": "Merge pull request docs/lab08-loom-Trekurova",
+  "event": "push",
+  "headSha": "8edf2b3a0e70a16d87e2f2cd153fda8b044bbd2d",
+  "updatedAt": "2026-11-05T07:32:26Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:31:08Z",
+    "completedAt": "2026-11-05T07:31:47Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:31:08Z",
+    "completedAt": "2026-11-05T07:31:25Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:31:08Z",
+    "completedAt": "2026-11-05T07:32:26Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 309,
+   "title": "docs: add Lab08 video link to video_Trekurova.txt",
+   "mergedAt": "2026-11-05T07:31:03Z",
+   "firstCommitAuthoredDate": "2026-11-05T07:29:07Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T07:18:08Z",
+  "databaseId": 41986267014,
+  "displayTitle": "refactor: update changelog for release v0.2.2 [REFACTOR]",
+  "event": "push",
+  "headSha": "2278a9e02bed2c8827533e97bc9da847508b0488",
+  "updatedAt": "2026-11-05T07:19:25Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:18:10Z",
+    "completedAt": "2026-11-05T07:18:48Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:18:10Z",
+    "completedAt": "2026-11-05T07:18:29Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:18:10Z",
+    "completedAt": "2026-11-05T07:19:24Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 287,
+   "title": "refactor: prepare release v0.2.0 [REFACTOR]",
+   "mergedAt": "2026-11-05T07:18:05Z",
+   "firstCommitAuthoredDate": "2026-11-01T20:34:19Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T07:09:39Z",
+  "databaseId": 41985263834,
+  "displayTitle": "docs: update sonarcloud report",
+  "event": "push",
+  "headSha": "97063ed99a2daff01a4d747ec8d70209bf4b235c",
+  "updatedAt": "2026-11-05T07:14:14Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:12:43Z",
+    "completedAt": "2026-11-05T07:13:02Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:12:50Z",
+    "completedAt": "2026-11-05T07:14:13Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T07:13:14Z",
+    "completedAt": "2026-11-05T07:13:52Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 308,
+   "title": "docs: update sonarcloud report",
+   "mergedAt": "2026-11-05T07:09:36Z",
+   "firstCommitAuthoredDate": "2026-11-05T06:51:27Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T06:52:41Z",
+  "databaseId": 41983356105,
+  "displayTitle": "docs: add video link to video_Mykhailyk.txt merge pull request",
+  "event": "push",
+  "headSha": "033abe3b4c2e99f3481d1bfb52e56a8cd29fdc47",
+  "updatedAt": "2026-11-05T06:54:24Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:52:43Z",
+    "completedAt": "2026-11-05T06:53:23Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:53:04Z",
+    "completedAt": "2026-11-05T06:54:23Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:53:13Z",
+    "completedAt": "2026-11-05T06:53:30Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 307,
+   "title": "docs: add video link to video_Mykhailyk.txt",
+   "mergedAt": "2026-11-05T06:52:38Z",
+   "firstCommitAuthoredDate": "2026-11-05T06:50:34Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T06:46:16Z",
+  "databaseId": 41982657676,
+  "displayTitle": "Merge pull request docs/update-sonarcloud-report",
+  "event": "push",
+  "headSha": "2811fe0a4fad46fadda7f100a870b932872ded51",
+  "updatedAt": "2026-11-05T06:47:39Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:46:18Z",
+    "completedAt": "2026-11-05T06:47:38Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:46:18Z",
+    "completedAt": "2026-11-05T06:46:55Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:46:18Z",
+    "completedAt": "2026-11-05T06:46:35Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 306,
+   "title": "docs: add refactoring details and AI usage note to Lab08 report",
+   "mergedAt": "2026-11-05T06:46:13Z",
+   "firstCommitAuthoredDate": "2026-11-05T06:41:21Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T06:13:58Z",
+  "databaseId": 41979032939,
+  "displayTitle": "docs: add final Lab08 regression run and refresh coverage merge pull …",
+  "event": "push",
+  "headSha": "4eb09812228a84faa6dd5aed97543a17b33c8f5e",
+  "updatedAt": "2026-11-05T06:15:16Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:14:00Z",
+    "completedAt": "2026-11-05T06:14:16Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:14:00Z",
+    "completedAt": "2026-11-05T06:15:15Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:14:00Z",
+    "completedAt": "2026-11-05T06:14:38Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 305,
+   "title": "docs: add final Lab08 regression run and refresh coverage",
+   "mergedAt": "2026-11-05T06:13:55Z",
+   "firstCommitAuthoredDate": "2026-11-05T06:07:41Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T06:10:47Z",
+  "databaseId": 41978685963,
+  "displayTitle": "docs: merge Tymokhyna-Lab08-Loom",
+  "event": "push",
+  "headSha": "da34376ff5cea90ff104519ecaa37d7b3a875df1",
+  "updatedAt": "2026-11-05T06:12:07Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:10:49Z",
+    "completedAt": "2026-11-05T06:11:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:10:49Z",
+    "completedAt": "2026-11-05T06:11:27Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T06:10:49Z",
+    "completedAt": "2026-11-05T06:12:06Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 304,
+   "title": "docs: add link to video_Tymokhyna.txt",
+   "mergedAt": "2026-11-05T06:10:44Z",
+   "firstCommitAuthoredDate": "2026-11-05T06:00:05Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T05:59:31Z",
+  "databaseId": 41977442467,
+  "displayTitle": "Test/import saz characterization merge pull request",
+  "event": "push",
+  "headSha": "42faad07352b038762097bffe8100b67686f8225",
+  "updatedAt": "2026-11-05T06:00:53Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:59:33Z",
+    "completedAt": "2026-11-05T06:00:11Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:59:33Z",
+    "completedAt": "2026-11-05T06:00:52Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:59:33Z",
+    "completedAt": "2026-11-05T05:59:50Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 300,
+   "title": "Test/import saz characterization",
+   "mergedAt": "2026-11-05T05:59:28Z",
+   "firstCommitAuthoredDate": "2026-11-04T20:03:54Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T05:55:17Z",
+  "databaseId": 41977019708,
+  "displayTitle": "Merge pull request test/sec001-measured",
+  "event": "push",
+  "headSha": "3b9c478da76f8cfabbd504b6915c95cd51f618e6",
+  "updatedAt": "2026-11-05T05:56:34Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:55:19Z",
+    "completedAt": "2026-11-05T05:56:33Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:55:19Z",
+    "completedAt": "2026-11-05T05:55:36Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:55:19Z",
+    "completedAt": "2026-11-05T05:55:57Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 299,
+   "title": "Test/sec001 measured",
+   "mergedAt": "2026-11-05T05:55:14Z",
+   "firstCommitAuthoredDate": "2026-11-04T19:47:59Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T05:53:00Z",
+  "databaseId": 41976787584,
+  "displayTitle": "Merge pull request docs/bonus-quality-gate",
+  "event": "push",
+  "headSha": "fe0dd18ac106827c8d1c4d03e33f5d49418423a5",
+  "updatedAt": "2026-11-05T05:54:21Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:53:02Z",
+    "completedAt": "2026-11-05T05:54:20Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:53:02Z",
+    "completedAt": "2026-11-05T05:53:19Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:53:02Z",
+    "completedAt": "2026-11-05T05:53:41Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 298,
+   "title": "docs: add quality gate bonus to sonarcloud report",
+   "mergedAt": "2026-11-05T05:52:57Z",
+   "firstCommitAuthoredDate": "2026-11-04T18:49:11Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T05:50:04Z",
+  "databaseId": 41976482942,
+  "displayTitle": "Merge pull request refactor/security-role-checks",
+  "event": "push",
+  "headSha": "a404af11b0e80a3fb1bb4ae88856c95e7fec1281",
+  "updatedAt": "2026-11-05T05:51:23Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:50:06Z",
+    "completedAt": "2026-11-05T05:51:22Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:50:06Z",
+    "completedAt": "2026-11-05T05:50:23Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:50:06Z",
+    "completedAt": "2026-11-05T05:50:43Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 302,
+   "title": "refactor: extract shared RBAC permission check",
+   "mergedAt": "2026-11-05T05:50:01Z",
+   "firstCommitAuthoredDate": "2026-11-04T21:11:11Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T05:46:59Z",
+  "databaseId": 41976168168,
+  "displayTitle": "Merge pull request refactor/import-schedule",
+  "event": "push",
+  "headSha": "9287de501e8fa72a65c7fb63924013e633ac60a5",
+  "updatedAt": "2026-11-05T05:48:17Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:47:01Z",
+    "completedAt": "2026-11-05T05:47:39Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:47:01Z",
+    "completedAt": "2026-11-05T05:47:18Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:47:01Z",
+    "completedAt": "2026-11-05T05:48:16Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 293,
+   "title": "Refactor/import schedule",
+   "mergedAt": "2026-11-05T05:46:56Z",
+   "firstCommitAuthoredDate": "2026-11-04T17:20:49Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-05T05:44:19Z",
+  "databaseId": 41975884568,
+  "displayTitle": "Merge pull request refactor/available-slots",
+  "event": "push",
+  "headSha": "8512cb7f00d79975f6dc09615fcc2259dc44520c",
+  "updatedAt": "2026-11-05T05:45:43Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:44:21Z",
+    "completedAt": "2026-11-05T05:45:00Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:44:23Z",
+    "completedAt": "2026-11-05T05:45:42Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T05:44:21Z",
+    "completedAt": "2026-11-05T05:44:38Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 295,
+   "title": "Refactor/available slots",
+   "mergedAt": "2026-11-05T05:44:16Z",
+   "firstCommitAuthoredDate": "2026-11-04T13:21:41Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-04T22:22:14Z",
+  "databaseId": 41924672611,
+  "displayTitle": "docs: add Lab08 Loom video for Spirina",
+  "event": "push",
+  "headSha": "e0dd3df57726f9a714c5dbd3ce157201debd3fc3",
+  "updatedAt": "2026-11-04T22:23:36Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T22:22:16Z",
+    "completedAt": "2026-11-04T22:23:36Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T22:22:16Z",
+    "completedAt": "2026-11-04T22:22:56Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T22:22:16Z",
+    "completedAt": "2026-11-04T22:22:33Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 303,
+   "title": "docs: add Lab08 Loom video for Spirina",
+   "mergedAt": "2026-11-04T22:22:11Z",
+   "firstCommitAuthoredDate": "2026-11-04T21:34:58Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-04T21:37:27Z",
+  "databaseId": 41917818670,
+  "displayTitle": "Merge pull request #301 from ukma-fin-ssdm-2026/docs/lab08-security-a…",
+  "event": "push",
+  "headSha": "d1af181256b805f1f9a7d267e8f76fadf02b9a44",
+  "updatedAt": "2026-11-04T21:38:49Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T21:37:29Z",
+    "completedAt": "2026-11-04T21:38:08Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T21:37:29Z",
+    "completedAt": "2026-11-04T21:37:46Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T21:37:29Z",
+    "completedAt": "2026-11-04T21:38:48Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 301,
+   "title": "docs: add Lab08 security analysis and STRIDE traceability",
+   "mergedAt": "2026-11-04T21:37:24Z",
+   "firstCommitAuthoredDate": "2026-11-04T20:48:14Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-04T19:05:10Z",
+  "databaseId": 41893492826,
+  "displayTitle": "docs: add Lab08 regression testing results merge pull request",
+  "event": "push",
+  "headSha": "1cfdc84511c8195d62d02fda91570efa8b270393",
+  "updatedAt": "2026-11-04T19:06:33Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T19:05:13Z",
+    "completedAt": "2026-11-04T19:05:31Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T19:05:13Z",
+    "completedAt": "2026-11-04T19:06:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T19:05:13Z",
+    "completedAt": "2026-11-04T19:05:53Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 294,
+   "title": "docs: add Lab08 regression testing results",
+   "mergedAt": "2026-11-04T19:05:08Z",
+   "firstCommitAuthoredDate": "2026-11-04T17:52:13Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-04T19:01:30Z",
+  "databaseId": 41892872846,
+  "displayTitle": "docs: describe SAZ import as manual page upload instead of automatic …",
+  "event": "push",
+  "headSha": "067280d4fdeff5467e756269fec3138a2126eced",
+  "updatedAt": "2026-11-04T19:02:49Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T19:01:32Z",
+    "completedAt": "2026-11-04T19:02:11Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T19:01:32Z",
+    "completedAt": "2026-11-04T19:02:49Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T19:01:33Z",
+    "completedAt": "2026-11-04T19:01:50Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 296,
+   "title": "docs: describe SAZ import as manual page upload instead of automatic …",
+   "mergedAt": "2026-11-04T19:01:27Z",
+   "firstCommitAuthoredDate": "2026-11-04T18:00:55Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-04T17:56:20Z",
+  "databaseId": 41881941238,
+  "displayTitle": "docs: merge update_sonarcloud_report",
+  "event": "push",
+  "headSha": "9ed3d060dcc68ec54dd65160a7e4669be81cdafc",
+  "updatedAt": "2026-11-04T17:57:50Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T17:56:23Z",
+    "completedAt": "2026-11-04T17:56:41Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T17:56:23Z",
+    "completedAt": "2026-11-04T17:57:00Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T17:56:23Z",
+    "completedAt": "2026-11-04T17:57:49Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 292,
+   "title": "docs: update sonarcloud-report.md",
+   "mergedAt": "2026-11-04T17:55:48Z",
+   "firstCommitAuthoredDate": "2026-11-04T12:33:07Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-04T17:09:06Z",
+  "databaseId": 41874718152,
+  "displayTitle": "docs: update TeamCharter with Lab08 roles and responsibilities",
+  "event": "push",
+  "headSha": "1f0ddfae26d933dc553add10ba2e3a1b355abd29",
+  "updatedAt": "2026-11-04T17:10:28Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T17:09:09Z",
+    "completedAt": "2026-11-04T17:09:26Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T17:09:09Z",
+    "completedAt": "2026-11-04T17:10:27Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-04T17:09:09Z",
+    "completedAt": "2026-11-04T17:09:48Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 291,
+   "title": "docs: update TeamCharter with Lab08 roles and responsibilities",
+   "mergedAt": "2026-11-04T17:09:03Z",
+   "firstCommitAuthoredDate": "2026-11-02T17:54:23Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T21:58:36Z",
+  "databaseId": 41354720501,
+  "displayTitle": "Merge pull request #283 from ukma-fin-ssdm-2026/docs/midterm-consistency",
+  "event": "push",
+  "headSha": "ed1f1d2fd8ad41ff6f32ce52191207f922fb0a14",
+  "updatedAt": "2026-11-02T02:34:32Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:31:42Z",
+    "completedAt": "2026-11-02T02:34:31Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:33:04Z",
+    "completedAt": "2026-11-02T02:34:22Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:31:59Z",
+    "completedAt": "2026-11-02T02:32:28Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 283,
+   "title": "Docs/midterm consistency",
+   "mergedAt": "2026-11-01T21:58:33Z",
+   "firstCommitAuthoredDate": "2026-11-01T16:16:13Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T21:52:01Z",
+  "databaseId": 41354182167,
+  "displayTitle": "Merge pull request feat/email-room-change-notifications",
+  "event": "push",
+  "headSha": "1c2d614755552cca7496b411c1895cb37e36d5c4",
+  "updatedAt": "2026-11-02T02:31:43Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:30:31Z",
+    "completedAt": "2026-11-02T02:31:41Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:28:14Z",
+    "completedAt": "2026-11-02T02:28:41Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:29:00Z",
+    "completedAt": "2026-11-02T02:31:42Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 281,
+   "title": "feat: email room change notifications",
+   "mergedAt": "2026-11-01T21:51:47Z",
+   "firstCommitAuthoredDate": "2026-11-01T15:08:22Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T21:51:06Z",
+  "databaseId": 41354107963,
+  "displayTitle": "Add link to midterm presentation merge pull request",
+  "event": "push",
+  "headSha": "64294a1b7100aab0d5b21026e412f9d3d7174728",
+  "updatedAt": "2026-11-02T02:27:44Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:21:07Z",
+    "completedAt": "2026-11-02T02:24:02Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:26:13Z",
+    "completedAt": "2026-11-02T02:26:42Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T02:26:28Z",
+    "completedAt": "2026-11-02T02:27:43Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 289,
+   "title": "Add link to midterm presentation",
+   "mergedAt": "2026-11-01T21:51:04Z",
+   "firstCommitAuthoredDate": "2026-11-01T21:49:33Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T21:46:23Z",
+  "databaseId": 41353710842,
+  "displayTitle": "Merge pull request test/available-slots-edge-cases",
+  "event": "push",
+  "headSha": "0e7214014f3caf461630643abd5b3c99ee8ad3e1",
+  "updatedAt": "2026-11-02T01:38:29Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T00:26:06Z",
+    "completedAt": "2026-11-02T00:27:33Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T01:25:44Z",
+    "completedAt": "2026-11-02T01:28:49Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T01:37:59Z",
+    "completedAt": "2026-11-02T01:38:29Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 286,
+   "title": "test: cover available slots boundary and overlap cases",
+   "mergedAt": "2026-11-01T21:46:20Z",
+   "firstCommitAuthoredDate": "2026-11-01T18:38:35Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T21:42:08Z",
+  "databaseId": 41353354865,
+  "displayTitle": "Merge pull request docs/lab5-loom-Trekurova",
+  "event": "push",
+  "headSha": "02cde753c0c47aca80eee88086bcef4179940fca",
+  "updatedAt": "2026-11-02T00:25:30Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T23:40:36Z",
+    "completedAt": "2026-11-01T23:43:46Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T00:09:02Z",
+    "completedAt": "2026-11-02T00:09:38Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-02T00:24:03Z",
+    "completedAt": "2026-11-02T00:25:29Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 288,
+   "title": "docs: add video link to video_Trekurova.txt",
+   "mergedAt": "2026-11-01T21:42:05Z",
+   "firstCommitAuthoredDate": "2026-11-01T21:06:35Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T19:50:51Z",
+  "databaseId": 41343800564,
+  "displayTitle": "fix/ci-sonarcloud-issues merge pull request",
+  "event": "push",
+  "headSha": "b4086678e452342c4e11d99fca60f9ec4c860a59",
+  "updatedAt": "2026-11-01T22:25:41Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T20:20:58Z",
+    "completedAt": "2026-11-01T20:22:45Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T22:22:13Z",
+    "completedAt": "2026-11-01T22:25:41Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T20:31:36Z",
+    "completedAt": "2026-11-01T20:32:12Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 249,
+   "title": "fix(ci): apply --only-binary  to install step",
+   "mergedAt": "2026-11-01T19:50:48Z",
+   "firstCommitAuthoredDate": "2026-10-30T08:52:08Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T18:49:21Z",
+  "databaseId": 41338567856,
+  "displayTitle": "refactor: redesign home page with schedule and quick actions",
+  "event": "push",
+  "headSha": "376b203d16fb53229660461d42ecfa90bccdc7b7",
+  "updatedAt": "2026-11-01T19:20:35Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T19:10:55Z",
+    "completedAt": "2026-11-01T19:11:34Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T19:19:04Z",
+    "completedAt": "2026-11-01T19:19:23Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T19:19:04Z",
+    "completedAt": "2026-11-01T19:20:35Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 284,
+   "title": "refactor: redesign home page with schedule and quick actions",
+   "mergedAt": "2026-11-01T18:49:18Z",
+   "firstCommitAuthoredDate": "2026-11-01T18:24:17Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T16:46:19Z",
+  "databaseId": 41328018324,
+  "displayTitle": "docs: align concurrency documentation with PostgreSQL implementation …",
+  "event": "push",
+  "headSha": "ac34202ec57ed04b7334c9cd5c6578d6d28f6706",
+  "updatedAt": "2026-11-01T16:47:35Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:46:21Z",
+    "completedAt": "2026-11-01T16:46:56Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:46:21Z",
+    "completedAt": "2026-11-01T16:47:34Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:46:21Z",
+    "completedAt": "2026-11-01T16:46:38Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 282,
+   "title": "docs: align concurrency documentation with PostgreSQL implementation",
+   "mergedAt": "2026-11-01T16:46:16Z",
+   "firstCommitAuthoredDate": "2026-11-01T15:19:11Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T16:43:30Z",
+  "databaseId": 41327779278,
+  "displayTitle": "docs: update link to Web UI login page in README merge pull request",
+  "event": "push",
+  "headSha": "2f6c4e2f3c16c61f22db9ac02a7659d344c77a4e",
+  "updatedAt": "2026-11-01T16:44:55Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:43:32Z",
+    "completedAt": "2026-11-01T16:44:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:43:32Z",
+    "completedAt": "2026-11-01T16:44:14Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:43:47Z",
+    "completedAt": "2026-11-01T16:44:06Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 280,
+   "title": "docs: update link to Web UI login page in README",
+   "mergedAt": "2026-11-01T16:43:27Z",
+   "firstCommitAuthoredDate": "2026-11-01T14:58:08Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T16:19:58Z",
+  "databaseId": 41325780462,
+  "displayTitle": "fix: keep Microsoft login on the redirect URI host locally merge pull…",
+  "event": "push",
+  "headSha": "76392cc794ee2082089dc0d10063694f852013f0",
+  "updatedAt": "2026-11-01T16:32:07Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:26:38Z",
+    "completedAt": "2026-11-01T16:26:57Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:29:52Z",
+    "completedAt": "2026-11-01T16:30:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T16:30:46Z",
+    "completedAt": "2026-11-01T16:32:07Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 279,
+   "title": "fix: keep Microsoft login on the redirect URI host locally",
+   "mergedAt": "2026-11-01T16:19:56Z",
+   "firstCommitAuthoredDate": "2026-11-01T14:55:28Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T15:08:51Z",
+  "databaseId": 41319719046,
+  "displayTitle": "fix: correct sidebar, reset welcome, and hide dev login",
+  "event": "push",
+  "headSha": "c2bdd8e36cb66522025be57de7cb3665408f4aad",
+  "updatedAt": "2026-11-01T15:21:48Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T15:12:13Z",
+    "completedAt": "2026-11-01T15:12:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T15:20:25Z",
+    "completedAt": "2026-11-01T15:21:47Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T15:16:52Z",
+    "completedAt": "2026-11-01T15:17:10Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 277,
+   "title": "fix: correct sidebar, reset welcome, and hide dev login",
+   "mergedAt": "2026-11-01T15:08:49Z",
+   "firstCommitAuthoredDate": "2026-11-01T13:03:01Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T14:19:12Z",
+  "databaseId": 41315598262,
+  "displayTitle": "docs: add local auth and demo data instructions to README",
+  "event": "push",
+  "headSha": "556b577422d0f557b9ef488537da4010e60e1e59",
+  "updatedAt": "2026-11-01T14:39:07Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T14:37:13Z",
+    "completedAt": "2026-11-01T14:37:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T14:36:54Z",
+    "completedAt": "2026-11-01T14:38:17Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T14:38:27Z",
+    "completedAt": "2026-11-01T14:39:06Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 278,
+   "title": "docs: add local auth and demo data instructions to README",
+   "mergedAt": "2026-11-01T14:19:09Z",
+   "firstCommitAuthoredDate": "2026-11-01T13:40:54Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T12:03:14Z",
+  "databaseId": 41304622720,
+  "displayTitle": "feat: calculate available room slots from active bookings",
+  "event": "push",
+  "headSha": "620dc83428ad827ead66d2f6f2751eafae1dd46e",
+  "updatedAt": "2026-11-01T12:05:30Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T12:03:40Z",
+    "completedAt": "2026-11-01T12:03:57Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T12:03:53Z",
+    "completedAt": "2026-11-01T12:04:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T12:04:10Z",
+    "completedAt": "2026-11-01T12:05:29Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 261,
+   "title": "feat: calculate available room slots from active bookings",
+   "mergedAt": "2026-11-01T12:03:11Z",
+   "firstCommitAuthoredDate": "2026-10-31T10:52:17Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T11:55:31Z",
+  "databaseId": 41304033912,
+  "displayTitle": "feat(auth): add local dev-login and update render configs",
+  "event": "push",
+  "headSha": "5977d606ee8f46320e6d2c36acb9a65d8766c96d",
+  "updatedAt": "2026-11-01T12:03:53Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T11:56:12Z",
+    "completedAt": "2026-11-01T11:57:47Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T11:57:12Z",
+    "completedAt": "2026-11-01T11:57:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T12:03:36Z",
+    "completedAt": "2026-11-01T12:03:52Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 273,
+   "title": "feat(auth): add local dev-login and update render configs",
+   "mergedAt": "2026-11-01T11:55:28Z",
+   "firstCommitAuthoredDate": "2026-10-30T14:34:39Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T11:45:57Z",
+  "databaseId": 41303328324,
+  "displayTitle": "fix: update CSRF cookie assertion in Microsoft auth tests",
+  "event": "push",
+  "headSha": "b2c946f718fe67a625e0afd18fac2bf3cce0c913",
+  "updatedAt": "2026-11-01T11:51:39Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T11:46:23Z",
+    "completedAt": "2026-11-01T11:47:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T11:48:52Z",
+    "completedAt": "2026-11-01T11:49:31Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T11:51:21Z",
+    "completedAt": "2026-11-01T11:51:38Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 276,
+   "title": "fix: update CSRF cookie assertion in Microsoft auth tests",
+   "mergedAt": "2026-11-01T11:45:55Z",
+   "firstCommitAuthoredDate": "2026-10-31T21:49:53Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-11-01T07:15:17Z",
+  "databaseId": 41284041694,
+  "displayTitle": "docs: merge update_documents_before_midterm",
+  "event": "push",
+  "headSha": "1ccd415016369e030a60e0f12ea3cfed3c56d951",
+  "updatedAt": "2026-11-01T07:16:31Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T07:15:19Z",
+    "completedAt": "2026-11-01T07:16:30Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T07:15:19Z",
+    "completedAt": "2026-11-01T07:15:55Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-11-01T07:15:19Z",
+    "completedAt": "2026-11-01T07:15:36Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 265,
+   "title": "docs: update documents before midterm",
+   "mergedAt": "2026-11-01T07:15:14Z",
+   "firstCommitAuthoredDate": "2026-10-31T12:35:12Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T21:52:23Z",
+  "databaseId": 41245593363,
+  "displayTitle": "docs: update README with local run and Render deployment instructions",
+  "event": "push",
+  "headSha": "b1f77819d1a3c8956d49e22d0a01e4ee754d71f7",
+  "updatedAt": "2026-10-31T21:53:42Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T21:52:26Z",
+    "completedAt": "2026-10-31T21:53:03Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T21:52:26Z",
+    "completedAt": "2026-10-31T21:53:41Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T21:52:26Z",
+    "completedAt": "2026-10-31T21:52:45Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 274,
+   "title": "docs: update README with local run and Render deployment instructions",
+   "mergedAt": "2026-10-31T21:52:21Z",
+   "firstCommitAuthoredDate": "2026-10-31T19:20:37Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T20:40:28Z",
+  "databaseId": 41240000571,
+  "displayTitle": "Feat/frontend bookings import merge pull request",
+  "event": "push",
+  "headSha": "f8a993a231a77c716d8d74d9b47d83a203a8eb17",
+  "updatedAt": "2026-10-31T20:41:42Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:40:30Z",
+    "completedAt": "2026-10-31T20:40:46Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:40:31Z",
+    "completedAt": "2026-10-31T20:41:07Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:40:31Z",
+    "completedAt": "2026-10-31T20:41:41Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 272,
+   "title": "Feat/frontend bookings import",
+   "mergedAt": "2026-10-31T20:40:26Z",
+   "firstCommitAuthoredDate": "2026-10-31T16:12:40Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T20:35:36Z",
+  "databaseId": 41239631123,
+  "displayTitle": "fix: return 409 when PostgreSQL aborts concurrent booking as deadlock…",
+  "event": "push",
+  "headSha": "c40e16982ae02dff0b9d6645f4de12305cd42ab8",
+  "updatedAt": "2026-10-31T20:36:50Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:35:38Z",
+    "completedAt": "2026-10-31T20:36:15Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:35:38Z",
+    "completedAt": "2026-10-31T20:35:55Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:35:39Z",
+    "completedAt": "2026-10-31T20:36:50Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 275,
+   "title": "fix: return 409 when PostgreSQL aborts concurrent booking as deadlock…",
+   "mergedAt": "2026-10-31T20:35:34Z",
+   "firstCommitAuthoredDate": "2026-10-31T20:29:57Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T20:19:41Z",
+  "databaseId": 41238379571,
+  "displayTitle": "Feat/saz import merge pull request",
+  "event": "push",
+  "headSha": "252c9e3cdcae041f8d7f723a1296e2c08a62ca20",
+  "updatedAt": "2026-10-31T20:27:27Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:26:37Z",
+    "completedAt": "2026-10-31T20:27:26Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:23:32Z",
+    "completedAt": "2026-10-31T20:24:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T20:22:55Z",
+    "completedAt": "2026-10-31T20:23:33Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 271,
+   "title": "Feat/saz import",
+   "mergedAt": "2026-10-31T20:19:39Z",
+   "firstCommitAuthoredDate": "2026-10-31T14:41:01Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T18:56:02Z",
+  "databaseId": 41231781476,
+  "displayTitle": "Merge pull request #260 from ukma-fin-ssdm-2026/feat/demo-seed-data",
+  "event": "push",
+  "headSha": "af48add85e6e31e29f2e232e0fc39ecd8156b5bb",
+  "updatedAt": "2026-10-31T18:57:16Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T18:56:05Z",
+    "completedAt": "2026-10-31T18:56:21Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T18:56:05Z",
+    "completedAt": "2026-10-31T18:57:15Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T18:56:12Z",
+    "completedAt": "2026-10-31T18:56:47Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 260,
+   "title": "feat: add demo data seeding command and tests",
+   "mergedAt": "2026-10-31T18:55:59Z",
+   "firstCommitAuthoredDate": "2026-10-31T10:10:32Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T18:48:54Z",
+  "databaseId": 41231222750,
+  "displayTitle": "Merge pull request #253 from ukma-fin-ssdm-2026/test/rel001-concurren…",
+  "event": "push",
+  "headSha": "d6984bcd50ad90c280f0e9dd4985bb593a5f5f54",
+  "updatedAt": "2026-10-31T18:50:06Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T18:48:56Z",
+    "completedAt": "2026-10-31T18:50:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T18:48:56Z",
+    "completedAt": "2026-10-31T18:49:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T18:48:56Z",
+    "completedAt": "2026-10-31T18:49:14Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 253,
+   "title": "test: cover concurrent booking conflicts (REL-001)",
+   "mergedAt": "2026-10-31T18:48:48Z",
+   "firstCommitAuthoredDate": "2026-10-30T14:34:39Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T14:48:02Z",
+  "databaseId": 41211801904,
+  "displayTitle": "feat/audit-log-view merge pull request",
+  "event": "push",
+  "headSha": "7379db2e8bb7c598530fe5e000c91ba0980b9bd5",
+  "updatedAt": "2026-10-31T14:49:12Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:48:14Z",
+    "completedAt": "2026-10-31T14:48:31Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:48:04Z",
+    "completedAt": "2026-10-31T14:49:12Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:48:04Z",
+    "completedAt": "2026-10-31T14:48:41Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 266,
+   "title": "feat: audit-log-view",
+   "mergedAt": "2026-10-31T14:47:59Z",
+   "firstCommitAuthoredDate": "2026-10-31T13:38:20Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T14:27:36Z",
+  "databaseId": 41210216544,
+  "displayTitle": "feat/previous-lesson-view merge pull request",
+  "event": "push",
+  "headSha": "81e57b58631095a33c09dadbafe4119dbc9223da",
+  "updatedAt": "2026-10-31T14:28:47Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:27:38Z",
+    "completedAt": "2026-10-31T14:27:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:27:38Z",
+    "completedAt": "2026-10-31T14:28:46Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:27:38Z",
+    "completedAt": "2026-10-31T14:28:13Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 269,
+   "title": "feat/previous-lesson-view",
+   "mergedAt": "2026-10-31T14:27:33Z",
+   "firstCommitAuthoredDate": "2026-10-31T13:53:14Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T14:20:19Z",
+  "databaseId": 41209660254,
+  "displayTitle": "fix: configure CORS and CSRF trusted origins for frontend integration",
+  "event": "push",
+  "headSha": "aa777999e10fdea14e87e69db769577ab1b239fd",
+  "updatedAt": "2026-10-31T14:21:30Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:20:21Z",
+    "completedAt": "2026-10-31T14:21:30Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:20:21Z",
+    "completedAt": "2026-10-31T14:20:38Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T14:20:21Z",
+    "completedAt": "2026-10-31T14:20:57Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 270,
+   "title": "fix: configure CORS and CSRF trusted origins for frontend integration",
+   "mergedAt": "2026-10-31T14:20:17Z",
+   "firstCommitAuthoredDate": "2026-10-31T14:17:20Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T13:56:07Z",
+  "databaseId": 41207792695,
+  "displayTitle": "refactor: revert wsgi.py to clean state and use start command for mig…",
+  "event": "push",
+  "headSha": "b7dd5921be44bb40871a16a059527a40e93badf8",
+  "updatedAt": "2026-10-31T13:57:22Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:56:09Z",
+    "completedAt": "2026-10-31T13:56:26Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:56:09Z",
+    "completedAt": "2026-10-31T13:57:21Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:56:09Z",
+    "completedAt": "2026-10-31T13:56:47Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 268,
+   "title": "refactor: revert wsgi.py to clean state and use start command for mig…",
+   "mergedAt": "2026-10-31T13:56:04Z",
+   "firstCommitAuthoredDate": "2026-10-31T13:53:24Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T13:43:47Z",
+  "databaseId": 41206876749,
+  "displayTitle": "fix: add automated database migrations on WSGI startup for Render",
+  "event": "push",
+  "headSha": "334513ade4adccc8da192d2b4f6cd62c22cf9eb4",
+  "updatedAt": "2026-10-31T13:44:57Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:43:49Z",
+    "completedAt": "2026-10-31T13:44:24Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:43:49Z",
+    "completedAt": "2026-10-31T13:44:09Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:43:49Z",
+    "completedAt": "2026-10-31T13:44:56Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 267,
+   "title": "fix: add automated database migrations on WSGI startup for Render",
+   "mergedAt": "2026-10-31T13:43:44Z",
+   "firstCommitAuthoredDate": "2026-10-31T13:41:13Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T13:03:00Z",
+  "databaseId": 41203794702,
+  "displayTitle": "feat: integrate frontend login with Render backend",
+  "event": "push",
+  "headSha": "9dfe92466a8751afae1bae7773387959e38c332b",
+  "updatedAt": "2026-10-31T13:05:25Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:03:40Z",
+    "completedAt": "2026-10-31T13:05:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:04:12Z",
+    "completedAt": "2026-10-31T13:04:53Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T13:05:07Z",
+    "completedAt": "2026-10-31T13:05:24Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 259,
+   "title": "feat: integrate frontend login with Render backend",
+   "mergedAt": "2026-10-31T13:02:57Z",
+   "firstCommitAuthoredDate": "2026-10-30T22:04:03Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T12:42:09Z",
+  "databaseId": 41202274147,
+  "displayTitle": "docs: update README with midterm fixes and lab 8 requirements",
+  "event": "push",
+  "headSha": "1c8b02e3974e3189d76e3be6c48ae123c5288732",
+  "updatedAt": "2026-10-31T12:43:21Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:42:11Z",
+    "completedAt": "2026-10-31T12:42:28Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:42:11Z",
+    "completedAt": "2026-10-31T12:42:51Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:42:12Z",
+    "completedAt": "2026-10-31T12:43:21Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 255,
+   "title": "docs: update README with midterm fixes and lab 8 requirements",
+   "mergedAt": "2026-10-31T12:42:06Z",
+   "firstCommitAuthoredDate": "2026-10-30T23:47:41Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T12:36:00Z",
+  "databaseId": 41201832030,
+  "displayTitle": "Fix/room alternatives building scope Merge pull request",
+  "event": "push",
+  "headSha": "5b6f481d01d75c2fff48ad9e77f0e7ac8dc2b895",
+  "updatedAt": "2026-10-31T12:40:25Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:39:47Z",
+    "completedAt": "2026-10-31T12:40:24Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:38:41Z",
+    "completedAt": "2026-10-31T12:39:54Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:39:48Z",
+    "completedAt": "2026-10-31T12:40:05Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 264,
+   "title": "Fix/room alternatives building scope",
+   "mergedAt": "2026-10-31T12:35:57Z",
+   "firstCommitAuthoredDate": "2026-10-31T12:15:55Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T12:10:42Z",
+  "databaseId": 41199935966,
+  "displayTitle": "fix: exclude generated files from SonarCloud and add missing FR rows …",
+  "event": "push",
+  "headSha": "64a13e931d9f3a85539b62300499fb30339d7287",
+  "updatedAt": "2026-10-31T12:11:53Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:10:44Z",
+    "completedAt": "2026-10-31T12:11:52Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:10:44Z",
+    "completedAt": "2026-10-31T12:11:00Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:10:44Z",
+    "completedAt": "2026-10-31T12:11:22Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 263,
+   "title": "fix: exclude generated files from SonarCloud and add missing FR rows …",
+   "mergedAt": "2026-10-31T12:10:39Z",
+   "firstCommitAuthoredDate": "2026-10-31T11:47:03Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T12:06:13Z",
+  "databaseId": 41199612626,
+  "displayTitle": "docs: add individual video links for lab 8 and midterm presentation",
+  "event": "push",
+  "headSha": "a4ccfa6f3a6e85dd0a7d7807c661fd5d489a1c24",
+  "updatedAt": "2026-10-31T12:07:27Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:06:15Z",
+    "completedAt": "2026-10-31T12:06:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:06:15Z",
+    "completedAt": "2026-10-31T12:07:26Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:06:16Z",
+    "completedAt": "2026-10-31T12:06:55Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 256,
+   "title": "docs: add individual video links for lab 8 and midterm presentation",
+   "mergedAt": "2026-10-31T12:06:10Z",
+   "firstCommitAuthoredDate": "2026-10-30T23:57:33Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T11:59:33Z",
+  "databaseId": 41199114986,
+  "displayTitle": "feat: merge add_admin.py_code",
+  "event": "push",
+  "headSha": "7326de0ba41fe345e44f944d328e12b724d1ce8d",
+  "updatedAt": "2026-10-31T12:02:51Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:00:44Z",
+    "completedAt": "2026-10-31T12:01:20Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:01:33Z",
+    "completedAt": "2026-10-31T12:02:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:01:43Z",
+    "completedAt": "2026-10-31T12:02:00Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 245,
+   "title": "feat: add code to admin.py",
+   "mergedAt": "2026-10-31T11:59:30Z",
+   "firstCommitAuthoredDate": "2026-10-29T19:05:50Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T11:49:15Z",
+  "databaseId": 41198431019,
+  "displayTitle": "fix: add gunicorn to frontend requirements",
+  "event": "push",
+  "headSha": "e63713bfcc354a6f9c4b2f5d8cf4d924ec07c3a1",
+  "updatedAt": "2026-10-31T12:00:32Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T11:55:45Z",
+    "completedAt": "2026-10-31T11:56:27Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T11:58:28Z",
+    "completedAt": "2026-10-31T11:59:47Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T12:00:15Z",
+    "completedAt": "2026-10-31T12:00:31Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 262,
+   "title": "fix: add gunicorn to frontend requirements",
+   "mergedAt": "2026-10-31T11:49:13Z",
+   "firstCommitAuthoredDate": "2026-10-31T11:20:28Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T11:14:26Z",
+  "databaseId": 41196025442,
+  "displayTitle": "fix: add whitenoise and static root for render deployment",
+  "event": "push",
+  "headSha": "b093827b1d51c58e73eb903751902a7d7820fa58",
+  "updatedAt": "2026-10-31T11:15:43Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T11:14:28Z",
+    "completedAt": "2026-10-31T11:14:45Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T11:14:28Z",
+    "completedAt": "2026-10-31T11:15:40Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T11:15:02Z",
+    "completedAt": "2026-10-31T11:15:43Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 258,
+   "title": "fix: add whitenoise and static root for render deployment",
+   "mergedAt": "2026-10-31T11:14:23Z",
+   "firstCommitAuthoredDate": "2026-10-31T00:54:35Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-31T10:36:02Z",
+  "databaseId": 41193417739,
+  "displayTitle": "docs: merge write_sonarcloud_report",
+  "event": "push",
+  "headSha": "71775c0d00f900d8ba324b75e2ea6a94a889c3dc",
+  "updatedAt": "2026-10-31T10:37:13Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T10:36:04Z",
+    "completedAt": "2026-10-31T10:37:12Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T10:36:04Z",
+    "completedAt": "2026-10-31T10:36:40Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-31T10:36:04Z",
+    "completedAt": "2026-10-31T10:36:20Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 251,
+   "title": "docs:write_sonarcloud_report",
+   "mergedAt": "2026-10-31T10:35:59Z",
+   "firstCommitAuthoredDate": "2026-10-30T09:08:20Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-30T09:23:57Z",
+  "databaseId": 41033131001,
+  "displayTitle": "ci: pin pip and development dependencies to exact versions",
+  "event": "push",
+  "headSha": "27911789610cf542591b922fd891baf5f432af98",
+  "updatedAt": "2026-10-30T09:25:14Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:23:59Z",
+    "completedAt": "2026-10-30T09:24:35Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:23:59Z",
+    "completedAt": "2026-10-30T09:24:18Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:23:59Z",
+    "completedAt": "2026-10-30T09:25:14Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 250,
+   "title": "ci: pin pip and development dependencies to exact versions",
+   "mergedAt": "2026-10-30T09:23:55Z",
+   "firstCommitAuthoredDate": "2026-10-30T08:55:38Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-30T09:19:12Z",
+  "databaseId": 41032555172,
+  "displayTitle": "fix: restrict GitHub Pages deployment to trusted workflows",
+  "event": "push",
+  "headSha": "485a0ab89827c5f5f2bc2f325ccc535db3629f24",
+  "updatedAt": "2026-10-30T09:23:37Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:21:32Z",
+    "completedAt": "2026-10-30T09:22:12Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:22:21Z",
+    "completedAt": "2026-10-30T09:23:36Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:22:25Z",
+    "completedAt": "2026-10-30T09:22:42Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 247,
+   "title": "fix: restrict GitHub Pages deployment to trusted workflows",
+   "mergedAt": "2026-10-30T09:19:09Z",
+   "firstCommitAuthoredDate": "2026-10-30T08:42:52Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-30T09:12:58Z",
+  "databaseId": 41031792623,
+  "displayTitle": "fix: pin pip and frontend dev dependencies in CI merge pull request",
+  "event": "push",
+  "headSha": "a56804f6d73ebc69ddc53b84f7d220e13c92de52",
+  "updatedAt": "2026-10-30T09:14:16Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:13:00Z",
+    "completedAt": "2026-10-30T09:14:16Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:13:00Z",
+    "completedAt": "2026-10-30T09:13:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T09:13:00Z",
+    "completedAt": "2026-10-30T09:13:16Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 248,
+   "title": "fix: pin pip and frontend dev dependencies in CI",
+   "mergedAt": "2026-10-30T09:12:52Z",
+   "firstCommitAuthoredDate": "2026-10-30T08:44:42Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-30T08:32:17Z",
+  "databaseId": 41027109100,
+  "displayTitle": "docs: create initial SonarQube Cloud analysis report",
+  "event": "push",
+  "headSha": "302f1e7b1a54c30e1e83514d33917b355cf7dce5",
+  "updatedAt": "2026-10-30T08:34:53Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T08:33:29Z",
+    "completedAt": "2026-10-30T08:33:45Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T08:33:30Z",
+    "completedAt": "2026-10-30T08:34:06Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-30T08:33:38Z",
+    "completedAt": "2026-10-30T08:34:53Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 246,
+   "title": "docs: create initial SonarQube Cloud analysis report",
+   "mergedAt": "2026-10-30T08:32:15Z",
+   "firstCommitAuthoredDate": "2026-10-30T08:29:59Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T10:59:45Z",
+  "databaseId": 40861892229,
+  "displayTitle": "docs: update progress.md to reflect CRUD and Microsoft SSO integration",
+  "event": "push",
+  "headSha": "35bf46084f4e467ed562d453c23685197ec36f4c",
+  "updatedAt": "2026-10-29T11:00:58Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T10:59:48Z",
+    "completedAt": "2026-10-29T11:00:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T10:59:48Z",
+    "completedAt": "2026-10-29T11:00:23Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T10:59:48Z",
+    "completedAt": "2026-10-29T11:00:58Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 244,
+   "title": "docs: update progress.md to reflect CRUD and Microsoft SSO integration",
+   "mergedAt": "2026-10-29T10:59:43Z",
+   "firstCommitAuthoredDate": "2026-10-29T08:40:13Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T08:21:51Z",
+  "databaseId": 40841590987,
+  "displayTitle": "docs: remove stale branch mentions and fix mutmut module path merge p…",
+  "event": "push",
+  "headSha": "606081ccd33eae001bf8dadaf498c9c1584da344",
+  "updatedAt": "2026-10-29T08:23:06Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:21:53Z",
+    "completedAt": "2026-10-29T08:22:28Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:21:54Z",
+    "completedAt": "2026-10-29T08:23:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:21:54Z",
+    "completedAt": "2026-10-29T08:22:10Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 243,
+   "title": "docs: remove stale branch mentions and fix mutmut module path",
+   "mergedAt": "2026-10-29T08:21:48Z",
+   "firstCommitAuthoredDate": "2026-10-29T08:10:38Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T08:02:18Z",
+  "databaseId": 40839307415,
+  "displayTitle": "refactor: connect domain rules",
+  "event": "push",
+  "headSha": "de6fd22fc7261ab75e7589bf849de6459d8fff95",
+  "updatedAt": "2026-10-29T08:03:33Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:02:21Z",
+    "completedAt": "2026-10-29T08:03:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:02:21Z",
+    "completedAt": "2026-10-29T08:02:38Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:02:21Z",
+    "completedAt": "2026-10-29T08:03:02Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 241,
+   "title": "Refactor/connect domain rules",
+   "mergedAt": "2026-10-29T08:02:15Z",
+   "firstCommitAuthoredDate": "2026-10-29T07:53:41Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T08:00:14Z",
+  "databaseId": 40839061790,
+  "displayTitle": "docs: add Daria Melnyk Loom video for Lab 07",
+  "event": "push",
+  "headSha": "7a7886961b78b9c798018a82f1709faebb0fd8e1",
+  "updatedAt": "2026-10-29T08:01:32Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:00:16Z",
+    "completedAt": "2026-10-29T08:01:31Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:00:16Z",
+    "completedAt": "2026-10-29T08:00:55Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T08:00:16Z",
+    "completedAt": "2026-10-29T08:00:34Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 242,
+   "title": "docs: add Daria Melnyk Loom video for Lab 07",
+   "mergedAt": "2026-10-29T08:00:11Z",
+   "firstCommitAuthoredDate": "2026-10-29T07:58:07Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T07:28:45Z",
+  "databaseId": 40835680651,
+  "displayTitle": "Merge pull request docs/bonus_review_log",
+  "event": "push",
+  "headSha": "b765438a808acba63b8abe977e3d2396fc40650f",
+  "updatedAt": "2026-10-29T07:30:05Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:28:47Z",
+    "completedAt": "2026-10-29T07:29:26Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:28:47Z",
+    "completedAt": "2026-10-29T07:30:04Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:28:47Z",
+    "completedAt": "2026-10-29T07:29:04Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 240,
+   "title": "docs: add bonus to review-log.md",
+   "mergedAt": "2026-10-29T07:28:42Z",
+   "firstCommitAuthoredDate": "2026-10-29T06:49:18Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T07:26:29Z",
+  "databaseId": 40835440208,
+  "displayTitle": "Merge pull request docs/rtm-update-lab07",
+  "event": "push",
+  "headSha": "e7583be2b8e1a1c10dd03a43c04e1598528f13db",
+  "updatedAt": "2026-10-29T07:27:44Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:26:31Z",
+    "completedAt": "2026-10-29T07:26:49Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:26:31Z",
+    "completedAt": "2026-10-29T07:27:43Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:26:31Z",
+    "completedAt": "2026-10-29T07:27:06Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 238,
+   "title": "Docs/rtm update lab07",
+   "mergedAt": "2026-10-29T07:26:26Z",
+   "firstCommitAuthoredDate": "2026-10-29T05:39:10Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T07:24:11Z",
+  "databaseId": 40835192829,
+  "displayTitle": "Merge pull request feat/email-notification-template",
+  "event": "push",
+  "headSha": "5ed1790b135ac13dad82bcd1ba194fd04fdfd04f",
+  "updatedAt": "2026-10-29T07:25:29Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:24:13Z",
+    "completedAt": "2026-10-29T07:24:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:24:13Z",
+    "completedAt": "2026-10-29T07:24:29Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:24:13Z",
+    "completedAt": "2026-10-29T07:25:28Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 236,
+   "title": "feat: add email template generation for room changes",
+   "mergedAt": "2026-10-29T07:24:07Z",
+   "firstCommitAuthoredDate": "2026-10-28T23:35:16Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T07:21:38Z",
+  "databaseId": 40834923064,
+  "displayTitle": "Merge pull request docs/fix-test-plan-link",
+  "event": "push",
+  "headSha": "6f718b1ba810139a115c5548f2226113f2e32b2c",
+  "updatedAt": "2026-10-29T07:23:02Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:21:40Z",
+    "completedAt": "2026-10-29T07:21:57Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:21:40Z",
+    "completedAt": "2026-10-29T07:22:18Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:21:40Z",
+    "completedAt": "2026-10-29T07:23:01Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 235,
+   "title": "docs: resolve placeholder in test plan bonus section",
+   "mergedAt": "2026-10-29T07:21:35Z",
+   "firstCommitAuthoredDate": "2026-10-28T23:02:07Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T07:19:11Z",
+  "databaseId": 40834665707,
+  "displayTitle": "Merge pull request docs/midterm-documentation-update",
+  "event": "push",
+  "headSha": "fb42c049172e789458b8dae06da4a45820db65a8",
+  "updatedAt": "2026-10-29T07:20:24Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:19:13Z",
+    "completedAt": "2026-10-29T07:19:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:19:13Z",
+    "completedAt": "2026-10-29T07:19:30Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:19:14Z",
+    "completedAt": "2026-10-29T07:20:24Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 234,
+   "title": "docs: align data model and quality attributes with implementation",
+   "mergedAt": "2026-10-29T07:19:08Z",
+   "firstCommitAuthoredDate": "2026-10-28T21:05:59Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T07:16:45Z",
+  "databaseId": 40834407319,
+  "displayTitle": "Merge pull request docs/update-agents-guidelines",
+  "event": "push",
+  "headSha": "df2165d287b824a79b0ba86eaacc5b48ef7cd57c",
+  "updatedAt": "2026-10-29T07:18:01Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:16:48Z",
+    "completedAt": "2026-10-29T07:17:24Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:16:48Z",
+    "completedAt": "2026-10-29T07:17:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T07:16:48Z",
+    "completedAt": "2026-10-29T07:18:00Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 229,
+   "title": "docs: update AGENTS.md with current project guidelines",
+   "mergedAt": "2026-10-29T07:16:43Z",
+   "firstCommitAuthoredDate": "2026-10-28T19:37:45Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T06:52:18Z",
+  "databaseId": 40831841555,
+  "displayTitle": "Add video link to video_Mykhailyk.txt merge pull request",
+  "event": "push",
+  "headSha": "75facfb272254cefbc28ee933386cbc6d69b80d1",
+  "updatedAt": "2026-10-29T06:53:38Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T06:52:20Z",
+    "completedAt": "2026-10-29T06:52:37Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T06:52:20Z",
+    "completedAt": "2026-10-29T06:52:57Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T06:52:20Z",
+    "completedAt": "2026-10-29T06:53:37Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 239,
+   "title": "Add video link to video_Mykhailyk.txt",
+   "mergedAt": "2026-10-29T06:52:15Z",
+   "firstCommitAuthoredDate": "2026-10-29T06:19:43Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-29T05:26:47Z",
+  "databaseId": 40823437671,
+  "displayTitle": "docs: merge Tymokhyna-Lab07-Loom",
+  "event": "push",
+  "headSha": "fc56c94c93793d78896bd328906ed8311c4c9a8f",
+  "updatedAt": "2026-10-29T05:28:01Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T05:26:49Z",
+    "completedAt": "2026-10-29T05:27:06Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T05:26:49Z",
+    "completedAt": "2026-10-29T05:28:00Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-29T05:26:49Z",
+    "completedAt": "2026-10-29T05:27:26Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 237,
+   "title": "docs: add Lab07 link video_Tymokhyna.txt",
+   "mergedAt": "2026-10-29T05:26:44Z",
+   "firstCommitAuthoredDate": "2026-10-29T05:21:39Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T22:54:39Z",
+  "databaseId": 40783506451,
+  "displayTitle": "docs: add AI code review results for PR #228",
+  "event": "push",
+  "headSha": "e816694759da53780510e682d4191f752e3242a4",
+  "updatedAt": "2026-10-28T22:55:49Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T22:54:41Z",
+    "completedAt": "2026-10-28T22:54:58Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T22:54:41Z",
+    "completedAt": "2026-10-28T22:55:48Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T22:54:41Z",
+    "completedAt": "2026-10-28T22:55:15Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 232,
+   "title": "docs: add AI code review results for PR #228",
+   "mergedAt": "2026-10-28T22:54:36Z",
+   "firstCommitAuthoredDate": "2026-10-28T20:34:02Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T22:50:28Z",
+  "databaseId": 40782995684,
+  "displayTitle": "docs: update test-plan table",
+  "event": "push",
+  "headSha": "d734f079f17ff5c29cfc4b2b358115d13cb2a568",
+  "updatedAt": "2026-10-28T22:51:45Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T22:50:30Z",
+    "completedAt": "2026-10-28T22:51:05Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T22:50:30Z",
+    "completedAt": "2026-10-28T22:51:45Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T22:50:30Z",
+    "completedAt": "2026-10-28T22:50:48Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 225,
+   "title": "docs: update test-plan table",
+   "mergedAt": "2026-10-28T22:50:25Z",
+   "firstCommitAuthoredDate": "2026-10-28T14:27:48Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T20:55:22Z",
+  "databaseId": 40767537486,
+  "displayTitle": "Merge pull request #233 from ukma-fin-ssdm-2026/docs/lab07-loom-spirina",
+  "event": "push",
+  "headSha": "9143d7a6454c083521c6664344a0545f7e6dfee0",
+  "updatedAt": "2026-10-28T20:56:35Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:55:25Z",
+    "completedAt": "2026-10-28T20:55:41Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:55:25Z",
+    "completedAt": "2026-10-28T20:55:59Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:55:25Z",
+    "completedAt": "2026-10-28T20:56:34Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 233,
+   "title": "docs: add Spirina Loom video for lab 07",
+   "mergedAt": "2026-10-28T20:55:19Z",
+   "firstCommitAuthoredDate": "2026-10-28T20:48:44Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T20:37:13Z",
+  "databaseId": 40764900447,
+  "displayTitle": "docs: add Loom video files for Lab 7",
+  "event": "push",
+  "headSha": "1abfb668d15e211e01d32d82d52c7ea6dd300ae7",
+  "updatedAt": "2026-10-28T20:38:26Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:37:16Z",
+    "completedAt": "2026-10-28T20:38:26Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:37:16Z",
+    "completedAt": "2026-10-28T20:37:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:37:16Z",
+    "completedAt": "2026-10-28T20:37:51Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 231,
+   "title": "docs: add Loom video files for Lab 7",
+   "mergedAt": "2026-10-28T20:37:11Z",
+   "firstCommitAuthoredDate": "2026-10-28T20:33:16Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T20:21:31Z",
+  "databaseId": 40762554247,
+  "displayTitle": "refactor(tests): standardize test suite structure, rename test double…",
+  "event": "push",
+  "headSha": "add1ee86ae906ee2a6f7645ae5a6259ce735b6e3",
+  "updatedAt": "2026-10-28T20:22:42Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:21:33Z",
+    "completedAt": "2026-10-28T20:22:13Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:21:33Z",
+    "completedAt": "2026-10-28T20:22:42Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:21:33Z",
+    "completedAt": "2026-10-28T20:21:50Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 228,
+   "title": "refactor(tests): standardize test suite structure, rename test double…",
+   "mergedAt": "2026-10-28T20:21:28Z",
+   "firstCommitAuthoredDate": "2026-10-28T19:19:21Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T20:18:38Z",
+  "databaseId": 40762119740,
+  "displayTitle": "feat(frontend): add base layout and temporary home page",
+  "event": "push",
+  "headSha": "a05d96cec11a349137d4e8fb935e62adbdecc2ba",
+  "updatedAt": "2026-10-28T20:19:53Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:18:40Z",
+    "completedAt": "2026-10-28T20:18:57Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:18:40Z",
+    "completedAt": "2026-10-28T20:19:52Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:18:40Z",
+    "completedAt": "2026-10-28T20:19:17Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 220,
+   "title": "feat(frontend): add base layout and temporary home page",
+   "mergedAt": "2026-10-28T20:18:35Z",
+   "firstCommitAuthoredDate": "2026-10-27T14:10:48Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T20:12:51Z",
+  "databaseId": 40761239050,
+  "displayTitle": "Merge pull request #230 from ukma-fin-ssdm-2026/docs/review-log-lab07",
+  "event": "push",
+  "headSha": "b906159285e634615eb7bdc1b012ae0fdc6e214d",
+  "updatedAt": "2026-10-28T20:14:17Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:12:53Z",
+    "completedAt": "2026-10-28T20:13:11Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:12:53Z",
+    "completedAt": "2026-10-28T20:13:29Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T20:13:04Z",
+    "completedAt": "2026-10-28T20:14:17Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 230,
+   "title": "Docs/review log lab07",
+   "mergedAt": "2026-10-28T20:12:47Z",
+   "firstCommitAuthoredDate": "2026-10-28T19:44:26Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T17:28:05Z",
+  "databaseId": 40735990769,
+  "displayTitle": "feat: merge add_room_occupancy",
+  "event": "push",
+  "headSha": "99ea6a701fc9206841d54ddf5f49c9b1f8d7fe8f",
+  "updatedAt": "2026-10-28T17:29:22Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T17:28:07Z",
+    "completedAt": "2026-10-28T17:28:51Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T17:28:07Z",
+    "completedAt": "2026-10-28T17:29:21Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T17:28:07Z",
+    "completedAt": "2026-10-28T17:28:25Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 227,
+   "title": "feat/add room occupancy",
+   "mergedAt": "2026-10-28T17:28:02Z",
+   "firstCommitAuthoredDate": "2026-10-28T16:52:27Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T16:10:47Z",
+  "databaseId": 40723387410,
+  "displayTitle": "feat: add test and coverage summary to CI run page merge pull request",
+  "event": "push",
+  "headSha": "fa1a8b06f41c8473ff7535d4711e8058c122a5ab",
+  "updatedAt": "2026-10-28T16:12:01Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T16:10:50Z",
+    "completedAt": "2026-10-28T16:11:30Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T16:10:50Z",
+    "completedAt": "2026-10-28T16:12:00Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T16:10:50Z",
+    "completedAt": "2026-10-28T16:11:08Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 226,
+   "title": "feat: add test and coverage summary to CI run page",
+   "mergedAt": "2026-10-28T16:10:43Z",
+   "firstCommitAuthoredDate": "2026-10-28T15:00:56Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T16:08:42Z",
+  "databaseId": 40723046032,
+  "displayTitle": "feat: add CI traceability check between RTM and tests merge pull request",
+  "event": "push",
+  "headSha": "8138b4fb3d415811adb52b5bd8b31d74ea0e109e",
+  "updatedAt": "2026-10-28T16:09:59Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T16:08:44Z",
+    "completedAt": "2026-10-28T16:09:22Z",
+    "failedSteps": []
+   },
+   {
+    "name": "traceability",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T16:08:44Z",
+    "completedAt": "2026-10-28T16:09:02Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T16:08:45Z",
+    "completedAt": "2026-10-28T16:09:58Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 221,
+   "title": "feat: add CI traceability check between RTM and tests",
+   "mergedAt": "2026-10-28T16:08:39Z",
+   "firstCommitAuthoredDate": "2026-10-27T17:57:14Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T15:58:44Z",
+  "databaseId": 40721375995,
+  "displayTitle": "feat: add Microsoft university account login merge pull request",
+  "event": "push",
+  "headSha": "43c84bffb1b6bad7f7258847c7123249702d687f",
+  "updatedAt": "2026-10-28T16:00:06Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T15:58:46Z",
+    "completedAt": "2026-10-28T15:59:22Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T15:58:46Z",
+    "completedAt": "2026-10-28T16:00:05Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 219,
+   "title": "feat: add Microsoft university account login",
+   "mergedAt": "2026-10-28T15:58:41Z",
+   "firstCommitAuthoredDate": "2026-10-27T10:40:14Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-28T15:56:13Z",
+  "databaseId": 40720971597,
+  "displayTitle": "feat/schedule merge pull request",
+  "event": "push",
+  "headSha": "6fa0e9263c7f7a100c0c03eeec44bcc253457048",
+  "updatedAt": "2026-10-28T15:57:29Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T15:56:16Z",
+    "completedAt": "2026-10-28T15:56:52Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-28T15:56:16Z",
+    "completedAt": "2026-10-28T15:57:29Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 217,
+   "title": "feat/schedule",
+   "mergedAt": "2026-10-28T15:56:10Z",
+   "firstCommitAuthoredDate": "2026-10-27T08:59:28Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-27T10:49:04Z",
+  "databaseId": 40491398636,
+  "displayTitle": "Feat/room alternatives Merge pull request",
+  "event": "push",
+  "headSha": "327b825041449e5ceb2fceb2a46f987b44f77cd6",
+  "updatedAt": "2026-10-27T10:50:15Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-27T10:49:06Z",
+    "completedAt": "2026-10-27T10:49:40Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-27T10:49:07Z",
+    "completedAt": "2026-10-27T10:50:14Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 218,
+   "title": "Feat/room alternatives",
+   "mergedAt": "2026-10-27T10:49:01Z",
+   "firstCommitAuthoredDate": "2026-10-27T09:00:26Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-27T10:24:14Z",
+  "databaseId": 40488182791,
+  "displayTitle": "docs/lab07-docs merge pull request",
+  "event": "push",
+  "headSha": "47b39a0d72d2481397db10c6bc64689b5284086b",
+  "updatedAt": "2026-10-27T10:25:20Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-27T10:24:16Z",
+    "completedAt": "2026-10-27T10:24:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-27T10:24:16Z",
+    "completedAt": "2026-10-27T10:25:19Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 213,
+   "title": "docs: add roles and responsibilities for Lab07",
+   "mergedAt": "2026-10-27T10:24:11Z",
+   "firstCommitAuthoredDate": "2026-10-26T09:30:01Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-27T08:46:27Z",
+  "databaseId": 40475857263,
+  "displayTitle": "feat/rooms-bookings-crud merge pull request",
+  "event": "push",
+  "headSha": "991c696cf70c7d98a011099578305aded4f11ccf",
+  "updatedAt": "2026-10-27T08:47:53Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-27T08:46:30Z",
+    "completedAt": "2026-10-27T08:47:52Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-27T08:46:30Z",
+    "completedAt": "2026-10-27T08:47:12Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 214,
+   "title": "feat: add rooms booking crud",
+   "mergedAt": "2026-10-27T08:46:24Z",
+   "firstCommitAuthoredDate": "2026-10-26T11:40:11Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-27T08:17:39Z",
+  "databaseId": 40472498018,
+  "displayTitle": "docs: update README with Lab 07 roles, tech stack, and CI threshold",
+  "event": "push",
+  "headSha": "2daa7bf0b238dc0781834f513fd2716e74627b3b",
+  "updatedAt": "2026-10-27T08:18:48Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-27T08:17:42Z",
+    "completedAt": "2026-10-27T08:18:22Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-27T08:17:42Z",
+    "completedAt": "2026-10-27T08:18:47Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 215,
+   "title": "docs: update README with Lab 07 roles, tech stack, and CI threshold",
+   "mergedAt": "2026-10-27T08:17:37Z",
+   "firstCommitAuthoredDate": "2026-10-26T12:23:43Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-23T15:11:17Z",
+  "databaseId": 39976103953,
+  "displayTitle": "docs: distribute test cases among all team members",
+  "event": "push",
+  "headSha": "cdf6f5a009f62acbd81a3bc900f286a3d8d2fa38",
+  "updatedAt": "2026-10-23T15:12:24Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-23T15:11:19Z",
+    "completedAt": "2026-10-23T15:12:24Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-23T15:11:19Z",
+    "completedAt": "2026-10-23T15:11:56Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 212,
+   "title": "docs: distribute test cases among all team members",
+   "mergedAt": "2026-10-23T15:11:13Z",
+   "firstCommitAuthoredDate": "2026-10-23T07:42:42Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-23T07:01:47Z",
+  "databaseId": 39915154195,
+  "displayTitle": "docs: add initial test plan and review log templates for validation a…",
+  "event": "push",
+  "headSha": "aa14b03ab7542c85e16f8cf76a2f8df5f3796b8c",
+  "updatedAt": "2026-10-23T07:03:01Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-23T07:01:49Z",
+    "completedAt": "2026-10-23T07:02:58Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-23T07:01:49Z",
+    "completedAt": "2026-10-23T07:02:25Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 211,
+   "title": "docs: add initial test plan and review log templates for validation a…",
+   "mergedAt": "2026-10-23T07:01:44Z",
+   "firstCommitAuthoredDate": "2026-10-23T06:54:45Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:57:58Z",
+  "databaseId": 39737275045,
+  "displayTitle": "docs: add Loom video links for Lab 6 submission",
+  "event": "push",
+  "headSha": "6ffca2fb0f8361ec38d7bf946df623d56d52a16e",
+  "updatedAt": "2026-10-22T06:59:03Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:58:00Z",
+    "completedAt": "2026-10-22T06:59:03Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:58:00Z",
+    "completedAt": "2026-10-22T06:58:34Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 210,
+   "title": "docs: add Loom video links for Lab 6 submission",
+   "mergedAt": "2026-10-22T06:57:54Z",
+   "firstCommitAuthoredDate": "2026-10-22T06:52:06Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:55:53Z",
+  "databaseId": 39737058578,
+  "displayTitle": "test: generate final htmlcov report for submission",
+  "event": "push",
+  "headSha": "3f4e90aa7509f2263a13ea4384f276c20a703351",
+  "updatedAt": "2026-10-22T06:57:07Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:55:56Z",
+    "completedAt": "2026-10-22T06:57:07Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:55:56Z",
+    "completedAt": "2026-10-22T06:56:32Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 208,
+   "title": "test: generate final htmlcov report for submission",
+   "mergedAt": "2026-10-22T06:55:50Z",
+   "firstCommitAuthoredDate": "2026-10-22T06:40:57Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:48:48Z",
+  "databaseId": 39736304766,
+  "displayTitle": "add loom links in video_Mykhailyk.txt Merge pull request",
+  "event": "push",
+  "headSha": "ee8a7394dc40f0b8b6b703a9fa9fda7c2d33b0ac",
+  "updatedAt": "2026-10-22T06:49:54Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:48:50Z",
+    "completedAt": "2026-10-22T06:49:24Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:48:50Z",
+    "completedAt": "2026-10-22T06:49:53Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 209,
+   "title": "add loom links in video_Mykhailyk.txt",
+   "mergedAt": "2026-10-22T06:48:45Z",
+   "firstCommitAuthoredDate": "2026-10-22T06:45:28Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:38:12Z",
+  "databaseId": 39735178998,
+  "displayTitle": "Tdd: mykhailyk intervals",
+  "event": "push",
+  "headSha": "1dc14f37e103e9cee9b4b40253618478804adda6",
+  "updatedAt": "2026-10-22T06:39:16Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:38:14Z",
+    "completedAt": "2026-10-22T06:39:16Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:38:14Z",
+    "completedAt": "2026-10-22T06:38:46Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 193,
+   "title": "Tdd/mykhailyk intervals",
+   "mergedAt": "2026-10-22T06:38:08Z",
+   "firstCommitAuthoredDate": "2026-10-21T18:14:10Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:35:46Z",
+  "databaseId": 39734925198,
+  "displayTitle": "docs: sync progress.md with current API state and test coverage",
+  "event": "push",
+  "headSha": "87555fdfbb11dbcc4c35e9c2241f261e941ffb2d",
+  "updatedAt": "2026-10-22T06:36:51Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:35:48Z",
+    "completedAt": "2026-10-22T06:36:50Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:35:48Z",
+    "completedAt": "2026-10-22T06:36:21Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 203,
+   "title": "docs: sync progress.md with current API state and test coverage",
+   "mergedAt": "2026-10-22T06:35:43Z",
+   "firstCommitAuthoredDate": "2026-10-21T22:23:41Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:33:58Z",
+  "databaseId": 39734735958,
+  "displayTitle": "test: add property-based tests",
+  "event": "push",
+  "headSha": "3529ddc178e97effabed7dd508b8ce9d487a4fe9",
+  "updatedAt": "2026-10-22T06:35:12Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:34:00Z",
+    "completedAt": "2026-10-22T06:34:35Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:34:01Z",
+    "completedAt": "2026-10-22T06:35:11Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 202,
+   "title": "test: add property-based tests",
+   "mergedAt": "2026-10-22T06:33:55Z",
+   "firstCommitAuthoredDate": "2026-10-21T22:15:14Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:31:13Z",
+  "databaseId": 39734444689,
+  "displayTitle": "docs: add loom Trekurova",
+  "event": "push",
+  "headSha": "de0eee6c0d9c446310034dc7e48814b07bb53487",
+  "updatedAt": "2026-10-22T06:32:15Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:31:15Z",
+    "completedAt": "2026-10-22T06:32:14Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:31:15Z",
+    "completedAt": "2026-10-22T06:31:50Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 204,
+   "title": "docs/loom Trekurova",
+   "mergedAt": "2026-10-22T06:31:10Z",
+   "firstCommitAuthoredDate": "2026-10-21T23:12:24Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:28:53Z",
+  "databaseId": 39734190684,
+  "displayTitle": "chore: remove unused hypothesis dependency",
+  "event": "push",
+  "headSha": "732be77c0e3e7e84aa8c08d7f024d4ec230e61aa",
+  "updatedAt": "2026-10-22T06:29:56Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:28:55Z",
+    "completedAt": "2026-10-22T06:29:29Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:28:55Z",
+    "completedAt": "2026-10-22T06:29:55Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 201,
+   "title": "chore: remove unused hypothesis dependency",
+   "mergedAt": "2026-10-22T06:28:50Z",
+   "firstCommitAuthoredDate": "2026-10-21T21:32:36Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:25:21Z",
+  "databaseId": 39733829574,
+  "displayTitle": "TDD: lesson validator",
+  "event": "push",
+  "headSha": "5e5676a67bf8edddffe7c807972ee3997bed21a8",
+  "updatedAt": "2026-10-22T06:26:27Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:25:23Z",
+    "completedAt": "2026-10-22T06:25:57Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:25:24Z",
+    "completedAt": "2026-10-22T06:26:27Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 197,
+   "title": "TDD: lesson validator",
+   "mergedAt": "2026-10-22T06:25:18Z",
+   "firstCommitAuthoredDate": "2026-10-21T20:06:47Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:11:36Z",
+  "databaseId": 39732425888,
+  "displayTitle": "docs: add testing strategy and bonus section",
+  "event": "push",
+  "headSha": "a59cac9e83a41b64e9310454f8c7e8ac0e7b2728",
+  "updatedAt": "2026-10-22T06:12:38Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:11:39Z",
+    "completedAt": "2026-10-22T06:12:37Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:11:39Z",
+    "completedAt": "2026-10-22T06:12:12Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 175,
+   "title": "docs: add testing strategy and bonus section",
+   "mergedAt": "2026-10-22T06:11:34Z",
+   "firstCommitAuthoredDate": "2026-10-18T20:02:02Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:08:31Z",
+  "databaseId": 39732109919,
+  "displayTitle": "Merge pull request #207 from ukma-fin-ssdm-2026/docs/lab06-spirina-vi…",
+  "event": "push",
+  "headSha": "675b3602f8828c9e2c42c73e4c8a79f3ae54b202",
+  "updatedAt": "2026-10-22T06:09:37Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:08:33Z",
+    "completedAt": "2026-10-22T06:09:07Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:08:33Z",
+    "completedAt": "2026-10-22T06:09:37Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 207,
+   "title": "docs: add Spirina Lab06 Loom videos",
+   "mergedAt": "2026-10-22T06:08:28Z",
+   "firstCommitAuthoredDate": "2026-10-22T05:45:19Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T06:00:17Z",
+  "databaseId": 39731265100,
+  "displayTitle": "fix: merge debug_room_suggestions",
+  "event": "push",
+  "headSha": "c4dad345304550f3fe95230506d98a836f826222",
+  "updatedAt": "2026-10-22T06:01:21Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:00:19Z",
+    "completedAt": "2026-10-22T06:00:56Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T06:00:20Z",
+    "completedAt": "2026-10-22T06:01:20Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 205,
+   "title": "fix/debug room suggestions",
+   "mergedAt": "2026-10-22T06:00:14Z",
+   "firstCommitAuthoredDate": "2026-10-22T04:49:48Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T05:57:39Z",
+  "databaseId": 39731013098,
+  "displayTitle": "Merge pull request #195 from ukma-fin-ssdm-2026/feat/tdd-room-capacity",
+  "event": "push",
+  "headSha": "c7ecf70a475bf5472afb9bbada033ee824fefea0",
+  "updatedAt": "2026-10-22T05:58:43Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T05:57:42Z",
+    "completedAt": "2026-10-22T05:58:16Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T05:57:42Z",
+    "completedAt": "2026-10-22T05:58:42Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 195,
+   "title": "Feat: tdd room capacity",
+   "mergedAt": "2026-10-22T05:57:36Z",
+   "firstCommitAuthoredDate": "2026-10-21T19:51:12Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T05:47:59Z",
+  "databaseId": 39730084640,
+  "displayTitle": "docs: merge Tymokhyna-Lab06-Loom",
+  "event": "push",
+  "headSha": "97c7ea10a293ca8959ad756e6e6de27155807e9c",
+  "updatedAt": "2026-10-22T05:49:03Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T05:48:02Z",
+    "completedAt": "2026-10-22T05:49:03Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T05:48:02Z",
+    "completedAt": "2026-10-22T05:48:36Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 206,
+   "title": "docs: add links to Lab 6 video_Tymokhyna.txt",
+   "mergedAt": "2026-10-22T05:47:57Z",
+   "firstCommitAuthoredDate": "2026-10-22T05:24:29Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-22T04:37:10Z",
+  "databaseId": 39723381333,
+  "displayTitle": "feat: merge TDD_room_suggestions",
+  "event": "push",
+  "headSha": "74d39588cc89f5a6408c85a0c3a1b461de69134a",
+  "updatedAt": "2026-10-22T04:38:15Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T04:37:13Z",
+    "completedAt": "2026-10-22T04:38:14Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T04:37:13Z",
+    "completedAt": "2026-10-22T04:37:47Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 196,
+   "title": "feat/TDD room suggestions",
+   "mergedAt": "2026-10-22T04:37:08Z",
+   "firstCommitAuthoredDate": "2026-10-21T19:58:16Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T22:55:39Z",
+  "databaseId": 39689958991,
+  "displayTitle": "Merge pull request feat/tdd-duration",
+  "event": "push",
+  "headSha": "42bce2968fe8e6af751bd2aae97168b15a477f93",
+  "updatedAt": "2026-10-21T22:56:43Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T22:55:42Z",
+    "completedAt": "2026-10-21T22:56:16Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T22:55:42Z",
+    "completedAt": "2026-10-21T22:56:42Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 194,
+   "title": "feat/tdd duration",
+   "mergedAt": "2026-10-21T22:55:37Z",
+   "firstCommitAuthoredDate": "2026-10-21T18:53:22Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T22:41:14Z",
+  "databaseId": 39688274707,
+  "displayTitle": "Merge pull request feat/add-mutation-testing",
+  "event": "push",
+  "headSha": "b726eb8ae5ecbc91c056d67f20b46ec6dee42079",
+  "updatedAt": "2026-10-21T22:42:22Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T22:41:16Z",
+    "completedAt": "2026-10-21T22:41:51Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T22:41:16Z",
+    "completedAt": "2026-10-21T22:42:21Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 198,
+   "title": "test:add mutation testing",
+   "mergedAt": "2026-10-21T22:41:12Z",
+   "firstCommitAuthoredDate": "2026-10-21T21:36:00Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T21:49:36Z",
+  "databaseId": 39681863265,
+  "displayTitle": "Docs/ci comment and rtm sec001 Merge pull request",
+  "event": "push",
+  "headSha": "4a10d39c710e0a605378ab830180ed2cebbac8e0",
+  "updatedAt": "2026-10-21T21:51:17Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T21:49:48Z",
+    "completedAt": "2026-10-21T21:50:32Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T21:50:16Z",
+    "completedAt": "2026-10-21T21:51:16Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 200,
+   "title": "Docs/ci comment and rtm sec001",
+   "mergedAt": "2026-10-21T21:49:33Z",
+   "firstCommitAuthoredDate": "2026-10-21T21:39:13Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T20:01:40Z",
+  "databaseId": 39666715869,
+  "displayTitle": "test: restore security tests for booking deletion and unignore htmlco…",
+  "event": "push",
+  "headSha": "31b37cffdaf7e276a6cad30c333d634da916d1f1",
+  "updatedAt": "2026-10-21T20:02:41Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T20:01:42Z",
+    "completedAt": "2026-10-21T20:02:40Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T20:01:42Z",
+    "completedAt": "2026-10-21T20:02:16Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 192,
+   "title": "test: restore security tests for booking deletion and unignore htmlcov report",
+   "mergedAt": "2026-10-21T20:01:36Z",
+   "firstCommitAuthoredDate": "2026-10-21T15:48:56Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T19:44:05Z",
+  "databaseId": 39664205384,
+  "displayTitle": "test: add fixtures, mocks and boundary case tests",
+  "event": "push",
+  "headSha": "01ba803d94f3346026bc568f16a2da470fe3e89f",
+  "updatedAt": "2026-10-21T19:45:06Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T19:44:08Z",
+    "completedAt": "2026-10-21T19:44:43Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T19:44:07Z",
+    "completedAt": "2026-10-21T19:45:05Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 191,
+   "title": "test: add fixtures, mocks and boundary case tests",
+   "mergedAt": "2026-10-21T19:44:02Z",
+   "firstCommitAuthoredDate": "2026-10-21T14:38:25Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T19:39:19Z",
+  "databaseId": 39663520616,
+  "displayTitle": "docs: resolve remaining documentation review findings",
+  "event": "push",
+  "headSha": "16da532e9bad5ca8cd18073e9f85498290dda19b",
+  "updatedAt": "2026-10-21T19:41:58Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T19:39:56Z",
+    "completedAt": "2026-10-21T19:40:34Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T19:40:55Z",
+    "completedAt": "2026-10-21T19:41:57Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 189,
+   "title": "docs: resolve remaining documentation review findings",
+   "mergedAt": "2026-10-21T19:39:16Z",
+   "firstCommitAuthoredDate": "2026-10-21T13:59:48Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T19:37:01Z",
+  "databaseId": 39663194153,
+  "displayTitle": "docs: sync data model and quality attributes with implementation",
+  "event": "push",
+  "headSha": "1fab32eaf562b907650661fa74122cf9bc7b77d8",
+  "updatedAt": "2026-10-21T19:38:07Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T19:37:03Z",
+    "completedAt": "2026-10-21T19:38:07Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T19:37:03Z",
+    "completedAt": "2026-10-21T19:37:37Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 188,
+   "title": "docs: sync data model and quality attributes with implementation",
+   "mergedAt": "2026-10-21T19:36:58Z",
+   "firstCommitAuthoredDate": "2026-10-21T13:45:16Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T13:25:42Z",
+  "databaseId": 39607903689,
+  "displayTitle": "Merge pull request #176 from ukma-fin-ssdm-2026/feat/ci-coverage-gate",
+  "event": "push",
+  "headSha": "ed4ff6f96b0828f058c71bb5ffeae093c6337431",
+  "updatedAt": "2026-10-21T13:26:45Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T13:25:45Z",
+    "completedAt": "2026-10-21T13:26:44Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T13:25:45Z",
+    "completedAt": "2026-10-21T13:26:19Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 176,
+   "title": "ci: add coverage gate with 75% threshold",
+   "mergedAt": "2026-10-21T13:25:38Z",
+   "firstCommitAuthoredDate": "2026-10-18T20:15:28Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T13:13:36Z",
+  "databaseId": 39606127868,
+  "displayTitle": "Merge pull request #174 from ukma-fin-ssdm-2026/docs/update-docs-lab06",
+  "event": "push",
+  "headSha": "32d5e53ece6c21553bc8d7c7d09de9c8881ff25e",
+  "updatedAt": "2026-10-21T13:14:37Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T13:13:39Z",
+    "completedAt": "2026-10-21T13:14:13Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T13:13:39Z",
+    "completedAt": "2026-10-21T13:14:37Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 174,
+   "title": "docs: update TeamCharter with Lab06 roles and responsibilities",
+   "mergedAt": "2026-10-21T13:13:32Z",
+   "firstCommitAuthoredDate": "2026-10-18T19:45:00Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T13:03:33Z",
+  "databaseId": 39604673403,
+  "displayTitle": "docs: merge fix_review_report_after_feedback",
+  "event": "push",
+  "headSha": "1a13fed098ba862d70cc195b6f3ba5cf5dccae4a",
+  "updatedAt": "2026-10-21T13:04:34Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T13:03:36Z",
+    "completedAt": "2026-10-21T13:04:33Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T13:03:36Z",
+    "completedAt": "2026-10-21T13:04:10Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 184,
+   "title": "docs: fix review-report.md after feedback",
+   "mergedAt": "2026-10-21T13:03:30Z",
+   "firstCommitAuthoredDate": "2026-10-20T18:02:58Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T12:52:45Z",
+  "databaseId": 39603163913,
+  "displayTitle": "docs: update AI usage note and sync progress.md",
+  "event": "push",
+  "headSha": "86394163e78d34e72767ffe2dabe34b16c0696f0",
+  "updatedAt": "2026-10-21T12:53:47Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T12:52:48Z",
+    "completedAt": "2026-10-21T12:53:21Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T12:52:48Z",
+    "completedAt": "2026-10-21T12:53:46Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 187,
+   "title": "docs: update AI usage note and sync progress.md",
+   "mergedAt": "2026-10-21T12:52:42Z",
+   "firstCommitAuthoredDate": "2026-10-21T09:13:57Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T12:50:04Z",
+  "databaseId": 39602790370,
+  "displayTitle": "fix: update SyncLog model with trigger field and in_progress status",
+  "event": "push",
+  "headSha": "1db791f6ab0fbeab8feacb7e71b8590c5c83ebf2",
+  "updatedAt": "2026-10-21T12:51:04Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T12:50:07Z",
+    "completedAt": "2026-10-21T12:50:40Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T12:50:07Z",
+    "completedAt": "2026-10-21T12:51:04Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 186,
+   "title": "fix: update SyncLog model with trigger field and in_progress status",
+   "mergedAt": "2026-10-21T12:50:01Z",
+   "firstCommitAuthoredDate": "2026-10-21T08:47:32Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-21T08:26:13Z",
+  "databaseId": 39569246294,
+  "displayTitle": "Integration: booking UUID api",
+  "event": "push",
+  "headSha": "23a5d60ef1efbcfd83f29970d730dcda734ab360",
+  "updatedAt": "2026-10-21T08:27:15Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T08:26:16Z",
+    "completedAt": "2026-10-21T08:26:48Z",
+    "failedSteps": []
+   },
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-21T08:26:16Z",
+    "completedAt": "2026-10-21T08:27:14Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 185,
+   "title": "Integration/booking UUID api",
+   "mergedAt": "2026-10-21T08:26:10Z",
+   "firstCommitAuthoredDate": "2026-10-18T18:26:42Z"
+  }
+ },
+ {
+  "attempt": 1,
+  "conclusion": "success",
+  "createdAt": "2026-10-20T18:14:21Z",
+  "databaseId": 39472999088,
+  "displayTitle": "CI: запуск workflow на серверах курсу Merge pull request",
+  "event": "push",
+  "headSha": "57307251dc2b2514473f9841228ab0ad99fdca35",
+  "updatedAt": "2026-10-20T18:15:25Z",
+  "workflowName": "CI Pipeline",
+  "jobs": [
+   {
+    "name": "build-and-test",
+    "conclusion": "success",
+    "startedAt": "2026-10-20T18:14:25Z",
+    "completedAt": "2026-10-20T18:15:24Z",
+    "failedSteps": []
+   },
+   {
+    "name": "frontend",
+    "conclusion": "success",
+    "startedAt": "2026-10-20T18:14:23Z",
+    "completedAt": "2026-10-20T18:14:58Z",
+    "failedSteps": []
+   }
+  ],
+  "pr": {
+   "number": 178,
+   "title": "CI: запуск workflow на серверах курсу",
+   "mergedAt": "2026-10-20T18:14:19Z",
+   "firstCommitAuthoredDate": "2026-10-19T17:15:46Z"
+  }
+ }
+]

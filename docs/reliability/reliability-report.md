@@ -309,14 +309,6 @@
 
 **Відповідальна:** Ольга Михайлик.
 
-### Ендпоінт перевірки стану (Health Check)
-- **Реалізація:** Додано неавторизований ендпоінт `GET /api/v1/health/` (`Backend/api/views.py`), який перевіряє реальну доступність PostgreSQL запитом `SELECT 1` із обмеженням часу виконання (`statement_timeout = 2000` мс).
-- **Поведінка при відмові:** У разі виникнення `OperationalError` (недоступність БД або перевищення тайм-ауту) ендпоінт повертає статус `503 Service Unavailable` із тілом `{"status": "unavailable", "database": "down"}`; при робочій БД — `200 OK`.
-- **Докази:**
-  - Pull Request: [PR #340](https://github.com/ukma-fin-ssdm-2026/unispace/pull/340) ; [PR #341](https://github.com/ukma-fin-ssdm-2026/unispace/pull/341) .
-  - Автоматизовані тести: `Backend/api/tests/reliability/test_health.py` (перевіряють сценарії `200 OK` та `503 Service Unavailable` при `OperationalError`).
-  - Відеодемонстрація: [Loom-відео Дарʼї Мельник (Lab 09)](https://github.com/ukma-fin-ssdm-2026/unispace/pull/348).
-
 ---
 
 ### Перевірка здоров'я сервісу (Health Check)

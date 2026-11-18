@@ -5,6 +5,23 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.6.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.5.1...v0.6.0) (2026-11-18)
+
+
+### Features
+
+* skip heavy CI jobs for documentation-only PRs ([#374](https://github.com/ukma-fin-ssdm-2026/unispace/issues/374)) ([8e1e503](https://github.com/ukma-fin-ssdm-2026/unispace/commit/8e1e503b5c7204d51ee4db6d0327192e141078a5))
+
+
+### Documentation
+
+* add charts to dora-summary.md ([#372](https://github.com/ukma-fin-ssdm-2026/unispace/issues/372)) ([490f810](https://github.com/ukma-fin-ssdm-2026/unispace/commit/490f8107137f966686eb0a8eb35864f3d2a7988e))
+* add individual video report link for Daria Melnyk ([#375](https://github.com/ukma-fin-ssdm-2026/unispace/issues/375)) ([9efe007](https://github.com/ukma-fin-ssdm-2026/unispace/commit/9efe0075e7e970501e51b72bf90bcf9240a9eea5))
+* add second bonus section for concurrency pipeline optimization ([#371](https://github.com/ukma-fin-ssdm-2026/unispace/issues/371)) ([43f8b7e](https://github.com/ukma-fin-ssdm-2026/unispace/commit/43f8b7ec5ec7783ec79d90c066ac27bfc0dba764))
+* add Spirina Lab10 Loom video ([#377](https://github.com/ukma-fin-ssdm-2026/unispace/issues/377)) ([c1dd30f](https://github.com/ukma-fin-ssdm-2026/unispace/commit/c1dd30f46fbee9647bb7c7a5e1041f776d94ea5a))
+* finalize Lab10 status and video link ([#378](https://github.com/ukma-fin-ssdm-2026/unispace/issues/378)) ([1caf021](https://github.com/ukma-fin-ssdm-2026/unispace/commit/1caf021ed1f8f9ee8d0fca837db32ed891b50ba6))
+* record CI filtering implementation ([#376](https://github.com/ukma-fin-ssdm-2026/unispace/issues/376)) ([63dc30f](https://github.com/ukma-fin-ssdm-2026/unispace/commit/63dc30fe9821a474fe00761afb52454ad0907508))
+
 ## [0.5.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.5.0...v0.5.1) (2026-11-18)
 
 

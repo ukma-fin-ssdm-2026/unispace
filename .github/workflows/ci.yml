@@ -8,6 +8,9 @@
 # Lab05: сервіс PostgreSQL і перевірки міграцій додано з допомогою ШІ (Claude), перевірено проходженням CI.
 # Lab05: job frontend (ті самі перевірки для Frontend/) додано з допомогою ШІ (Claude).
 # Lab06: запуск тестів через pytest з покриттям гілок додано з допомогою ШІ (Claude).
+# Lab10: фільтрацію документаційних PR підготовлено Дар'єю Спіріною за допомогою ШІ (Claude).
+# Перевірки та результати верифікації зазначено у PR.
+# Lab10: відступи YAML та умови запуску jobs уточнено за допомогою ChatGPT.
 
 name: CI Pipeline
 
@@ -23,7 +26,33 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  changes:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: [self-hosted, linux]
+    timeout-minutes: 3
+    outputs:
+      run_full: ${{ steps.scope.outputs.run_full }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Detect documentation-only changes
+        id: scope
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git diff --no-renames --name-only -z "$BASE_SHA" "$HEAD_SHA" -- > "$RUNNER_TEMP/ci-paths"
+          python Backend/scripts/ci_change_scope.py < "$RUNNER_TEMP/ci-paths" >> "$GITHUB_OUTPUT"
+
   build-and-test:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.run_full != 'false') }}
     runs-on: [self-hosted, linux]
     timeout-minutes: 20
 
@@ -156,6 +185,8 @@ jobs:
   # (branch protection перевіряє саме job, а не крок). Додано з допомогою ШІ (Claude), перевірено прогоном CI.
   # PostgreSQL на іншому порту хоста (5433), щоб не конфліктувати з build-and-test на тому самому self-hosted runner.
   reliability-tests:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.run_full != 'false') }}
     runs-on: [self-hosted, linux]
     timeout-minutes: 10
 
@@ -239,6 +270,8 @@ jobs:
 
   # Lab05: перевірки фронтенду (окремий Django-проєкт у Frontend/) після огляду іншої команди.
   frontend:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.run_full != 'false') }}
     runs-on: [self-hosted, linux]
     timeout-minutes: 10
 

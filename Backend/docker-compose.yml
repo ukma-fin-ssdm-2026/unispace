@@ -15,7 +15,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:?Задайте POSTGRES_USER у Backend/.env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Задайте POSTGRES_PASSWORD у Backend/.env}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

@@ -5,6 +5,14 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.5.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.5.0...v0.5.1) (2026-11-18)
+
+
+### Documentation
+
+* revise team roles and responsibilities for Labs 09 and 10 ([#369](https://github.com/ukma-fin-ssdm-2026/unispace/issues/369)) ([7778c12](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7778c12e714deebe03cd8a95b4cb85a008fbaafe))
+* update Lab 10 roles, add DORA reports and CI improvements ([#367](https://github.com/ukma-fin-ssdm-2026/unispace/issues/367)) ([7308bde](https://github.com/ukma-fin-ssdm-2026/unispace/commit/7308bdeda25fade8d333ebd707e8ba38e87723a4))
+
 ## [0.5.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.4.3...v0.5.0) (2026-11-16)
 
 

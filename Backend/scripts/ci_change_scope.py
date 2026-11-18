@@ -21,7 +21,7 @@ def requires_full_ci(paths):
 
 
 def main():
-    raw = Path(sys.argv[1]).read_bytes()
+    raw = sys.stdin.buffer.read()
     paths = [part.decode("utf-8", errors="surrogateescape") for part in raw.split(b"\0") if part]
     print(f"run_full={str(requires_full_ci(paths)).lower()}")
 

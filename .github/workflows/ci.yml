@@ -48,7 +48,7 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           git diff --no-renames --name-only -z "$BASE_SHA" "$HEAD_SHA" -- > "$RUNNER_TEMP/ci-paths"
-          python Backend/scripts/ci_change_scope.py "$RUNNER_TEMP/ci-paths" >> "$GITHUB_OUTPUT"
+          python Backend/scripts/ci_change_scope.py < "$RUNNER_TEMP/ci-paths" >> "$GITHUB_OUTPUT"
 
   build-and-test:
     needs: changes
@@ -316,4 +316,3 @@ jobs:
 
     - name: Django system check
       run: python manage.py check
-      

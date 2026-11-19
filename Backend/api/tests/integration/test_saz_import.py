@@ -1,22 +1,27 @@
 """
-Тести імпорту розкладу САЗ (FR-004), ручної синхронізації (FR-005) і збереження даних
-при невдалій спробі (REL-002). Фікстура: fixtures/saz/schedule_preview.html (анонімізована).
+Тести імпорту розкладу САЗ (FR-004), ручної синхронізації (FR-005), збереження даних
+при невдалій спробі (REL-002) та стійкості до конкурентних запусків (REL-001).
+Фікстура: fixtures/saz/schedule_preview.html (анонімізована).
 
 Розклад фікстури (тиждень 1 починається 31.08.2026):
 - Пн 8:30 лекція «Алгоритми» тижні 2-4, ауд. 1-223; Пн 10:00 гр.1 тижні 2-3, ауд. 1-225 (гібридно);
 - Пн 13:30 гр.2 тижні 2,4 дистанційно; Вт 10:00 лекція і гр.2 в одній ауд. 1-223 тижні 2-3 (накладка);
 - Вт 11:40 гр.1 тижні 2-3 в ауд. «10к», якої немає в довіднику.
 
-Примітка щодо використання ШІ: тести згенеровано ШІ (Claude), переглянуто автором PR.
+Примітка щодо використання ШІ: базові тести згенеровано ШІ (Claude) та перевірено автором PR;
+тест конкурентного імпорту написала, інтегрувала й перевірила локальним запуском pytest
+Мельник Дар'я із використанням ШІ для підготовки шаблону.
 """
 
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, time
 from pathlib import Path
 from unittest.mock import patch
+from threading import Barrier
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.db import DatabaseError, OperationalError
+from django.db import DatabaseError, OperationalError, connections
 from django.urls import reverse
 from rest_framework import status
 
@@ -279,3 +284,33 @@ def test_only_dispatcher_can_import_schedule(api_client, role):
     # Assert
     assert response.status_code == status.HTTP_403_FORBIDDEN
     assert not Lesson.objects.exists()
+
+
+@pytest.mark.req("REL-001")
+def test_concurrent_saz_imports_do_not_duplicate_lessons_or_bookings(transactional_db):
+    # Створюємо аудиторії з фікстури, щоб імпорт реально створював бронювання та перевіряв їх унікальність.
+    Room.objects.create(building="1", number="223", capacity=60)
+    Room.objects.create(building="1", number="1-225", capacity=30)
+
+    barrier = Barrier(2)
+
+    def run_worker(_):
+        try:
+            barrier.wait(timeout=15)
+            log, _ = run_sync(HTML, SEMESTER_START)
+            return log.status
+        finally:
+            connections.close_all()
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        statuses = list(executor.map(run_worker, range(2)))
+
+    # Обидва запуски або успішно завершуються ідемпотентно, або один коректно логує збій без дублів у БД.
+    assert SyncLog.objects.count() == 2
+    assert set(statuses).issubset({SyncLog.SyncStatus.SUCCESS, SyncLog.SyncStatus.FAILED})
+    assert SyncLog.SyncStatus.SUCCESS in statuses
+
+    # Унікальність занять за source_key та відсутність дубльованих бронювань на одне заняття.
+    assert Lesson.objects.count() == 13
+    assert Lesson.objects.values("source_key").distinct().count() == 13
+    assert Booking.objects.filter(status=Booking.BookingStatus.ACTIVE).count() == 7

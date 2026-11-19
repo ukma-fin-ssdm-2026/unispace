@@ -42,6 +42,16 @@ def change_room(client, booking, room, **extra):
 
 
 @pytest.mark.req("US-03")
+def test_create_booking_with_invalid_payload_returns_400(api_client, teacher):
+    api_client.force_authenticate(user=teacher)
+
+    response = api_client.post(reverse("booking-list-create"), {"lesson_id": "not-a-uuid"}, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+
+
+@pytest.mark.req("US-03")
 def test_teacher_creates_booking_for_own_lesson(api_client, teacher, room, make_lesson):
     lesson = make_lesson(at(10), at(11, 30))
     api_client.force_authenticate(user=teacher)
@@ -390,3 +400,33 @@ def test_change_room_of_unknown_booking_returns_404(api_client, dispatcher, room
     response = api_client.post(reverse("booking-change-room", args=[UNKNOWN_ID]), payload, format="json")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.req("US-03")
+def test_change_room_with_invalid_payload_returns_400(api_client, teacher, make_booking):
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    response = api_client.post(
+        reverse("booking-change-room", args=[booking.id]), {"room_id": "bad-uuid"}, format="json"
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+    assert not AuditLog.objects.filter(booking=booking).exists()
+
+
+@pytest.mark.req("US-03")
+def test_change_to_unavailable_room_returns_409(api_client, teacher, room, other_room, make_booking):
+    other_room.is_available = False
+    other_room.save()
+    booking = make_booking(at(10), at(11, 30))
+    api_client.force_authenticate(user=teacher)
+
+    response = change_room(api_client, booking, other_room)
+
+    booking.refresh_from_db()
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert response.json()["error"]["code"] == "CONFLICT"
+    assert booking.room == room
+    assert not AuditLog.objects.filter(booking=booking).exists()

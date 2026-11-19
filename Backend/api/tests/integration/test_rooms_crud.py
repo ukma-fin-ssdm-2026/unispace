@@ -113,6 +113,17 @@ def test_list_filters_by_building(api_client, room):
     assert [item["id"] for item in response.json()] == [str(other_building.id)]
 
 
+@pytest.mark.req("US-01")
+def test_list_filters_by_has_computers(api_client, room, other_room):
+    room.has_computers = True
+    room.save()
+
+    response = api_client.get(reverse("room-list"), {"has_computers": "true"})
+
+    assert response.status_code == status.HTTP_200_OK
+    assert [item["id"] for item in response.json()] == [str(room.id)]
+
+
 def test_anyone_can_retrieve_room(api_client, room):
     response = api_client.get(reverse("room-detail", args=[room.id]))
 

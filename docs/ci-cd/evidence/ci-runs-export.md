@@ -18,13 +18,16 @@ gh run view <databaseId> -R ukma-fin-ssdm-2026/unispace --log-failed      # ли
 
 ## Структура запису
 
-| Поле | Звідки | Для чого в `metrics-raw.md` |
-|---|---|---|
-| `databaseId`, `headSha`, `displayTitle` | `gh run list` | ідентифікація запуску; колонка «Коміт» = перші 7 символів `headSha` |
-| `conclusion`, `attempt` | `gh run list` | колонка «Статус»; `attempt` = 1 в усіх 155 запусках (перезапусків не було) |
-| `createdAt` | `gh run list` | початок черги |
-| `jobs[].startedAt`, `jobs[].completedAt`, `jobs[].failedSteps` | `gh run view --json jobs` | «Черга» (до найранішого `startedAt`), «Виконання» і «Запуск завершено» (найпізніший `completedAt`), причина збою |
-| `pr.number`, `pr.firstCommitAuthoredDate` | `gh api …/pulls`, `gh pr view --json commits` | колонки «PR» і «Перший коміт PR» |
-| `failedLogTail` | `gh run view --log-failed` | останні 40 рядків логу червоного запуску (№136, PR #328) |
+| Поле                                                           | Звідки                                        | Для чого в `metrics-raw.md`                                                                                      |
+|----------------------------------------------------------------|-----------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| `databaseId`, `headSha`, `displayTitle`                        | `gh run list`                                 | ідентифікація запуску; колонка «Коміт» = перші 7 символів `headSha`                                              |
+| `conclusion`, `attempt`                                        | `gh run list`                                 | колонка «Статус»; `attempt` = 1 в усіх 155 запусках (перезапусків не було)                                       |
+| `createdAt`                                                    | `gh run list`                                 | початок черги                                                                                                    |
+| `jobs[].startedAt`, `jobs[].completedAt`, `jobs[].failedSteps` | `gh run view --json jobs`                     | «Черга» (до найранішого `startedAt`), «Виконання» і «Запуск завершено» (найпізніший `completedAt`), причина збою |
+| `pr.number`, `pr.firstCommitAuthoredDate`                      | `gh api …/pulls`, `gh pr view --json commits` | колонки «PR» і «Перший коміт PR»                                                                                 |
+| `failedLogTail`                                                | `gh run view --log-failed`                    | останні 40 рядків логу червоного запуску (№136, PR #328)                                                         |
 
 Знайти запуск з таблиці: шукати в JSON за 7 символами з колонки «Коміт» (`"headSha": "a828582…"`) або за номером PR (`"number": 328`).
+
+---
+> **Примітка щодо використання ШІ:** Цей документ структуровано та оформлено за допомогою ШІ-асистента для опису методики вивантаження телеметрії GitHub Actions через GitHub CLI та схеми JSON-файлу доказів (`ci-runs-main-2026-10-20_2026-11-13.json`). Збір даних, команди CLI та відповідність структури записів таблиці [`metrics-raw.md`](../metrics-raw.md) виконала та верифікувала аналітик даних CI/CD (Михайлик Ольга).

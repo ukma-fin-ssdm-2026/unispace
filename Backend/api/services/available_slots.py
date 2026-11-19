@@ -1,7 +1,12 @@
+"""
+Пошук зайнятих інтервалів та вільних часових слотів аудиторії за вибрану дату.
+
+Примітка щодо використання ШІ: модуль створено за допомогою ШІ-асистента
+та верифіковано командою.
+"""
+
 from datetime import datetime, time, timedelta
-
 from django.utils import timezone
-
 from api.models import Booking
 
 

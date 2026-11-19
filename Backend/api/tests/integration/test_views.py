@@ -170,6 +170,9 @@ class UserBookingsTests(ErrorFormatMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(response.json(), list)
 
+    def test_invalid_limit_returns_400(self):
+        self.assert_validation_error(self.client.get(self.url, {"limit": 0}), "limit")
+
 
 class OpenApiSchemaTests(APITestCase):
     def test_schema_is_served(self):

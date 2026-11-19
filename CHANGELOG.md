@@ -5,6 +5,14 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.6.2](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.1...v0.6.2) (2026-11-19)
+
+
+### Documentation
+
+* standardize AI usage notes, fix paths, metrics, and typos acros… ([#384](https://github.com/ukma-fin-ssdm-2026/unispace/issues/384)) ([257bbb7](https://github.com/ukma-fin-ssdm-2026/unispace/commit/257bbb7cf018bd6d354ec699800f560f6c0546bc))
+* update testing strategy and RTM for 96% coverage (413 tests) ([#386](https://github.com/ukma-fin-ssdm-2026/unispace/issues/386)) ([6482057](https://github.com/ukma-fin-ssdm-2026/unispace/commit/648205785eac183d99f2bdf92b270a052b260aa3))
+
 ## [0.6.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.0...v0.6.1) (2026-11-19)
 
 

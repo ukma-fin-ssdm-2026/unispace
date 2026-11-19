@@ -5,6 +5,16 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.6.1](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.0...v0.6.1) (2026-11-19)
+
+
+### Documentation
+
+* add Lab10 video link to video_Trekurova.txt ([#380](https://github.com/ukma-fin-ssdm-2026/unispace/issues/380)) ([74a1a3f](https://github.com/ukma-fin-ssdm-2026/unispace/commit/74a1a3fcb274db6cd6950a491619e3a5206b0699))
+* add link for Lab10 Tymokhyna ([#382](https://github.com/ukma-fin-ssdm-2026/unispace/issues/382)) ([d046645](https://github.com/ukma-fin-ssdm-2026/unispace/commit/d0466450029fa5172bd1dc090a238f775dea19e4))
+* Add video link to video_Mykhailyk.txt ([#383](https://github.com/ukma-fin-ssdm-2026/unispace/issues/383)) ([659817c](https://github.com/ukma-fin-ssdm-2026/unispace/commit/659817c6fc15eb65264ad9d1b0b381447deab4b6))
+* update dora-summary.md ([#379](https://github.com/ukma-fin-ssdm-2026/unispace/issues/379)) ([b053bef](https://github.com/ukma-fin-ssdm-2026/unispace/commit/b053bef439bf1c603407b9d8b074ecce8f8aa6b5))
+
 ## [0.6.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.5.1...v0.6.0) (2026-11-18)
 
 

@@ -65,9 +65,6 @@ class User(AbstractUser):
         blank=True,
     )
 
-    # TODO (модель): Перевірити, чи потрібні додаткові поля профілю
-    # відповідно до остаточних вимог системи.
-
     class Meta:
         verbose_name = "Користувач"
         verbose_name_plural = "Користувачі"
@@ -82,9 +79,6 @@ class AcademicGroup(UUIDModel):
 
     name = models.CharField("Назва групи", max_length=100)
     source_key = models.CharField("Зовнішній ключ САЗ", max_length=255, unique=True)
-
-    # TODO (модель): Перевірити формат і стабільність зовнішнього ключа
-    # групи відповідно до фактичної структури даних САЗ.
 
     class Meta:
         verbose_name = "Академічна група"
@@ -109,9 +103,6 @@ class Lesson(UUIDModel):
     group = models.ForeignKey(
         AcademicGroup, on_delete=models.PROTECT, verbose_name="Академічна група", related_name="lessons"
     )
-
-    # TODO (модель): Перевірити, чи достатньо source_key для стабільної
-    # ідентифікації заняття між різними імпортами САЗ.
 
     class Meta:
         verbose_name = "Заняття"

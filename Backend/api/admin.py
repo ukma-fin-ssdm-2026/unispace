@@ -98,7 +98,9 @@ class DispatcherCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("email", "full_name", "role", "group", "is_staff", "is_superuser")
+        # Прибрано is_staff та is_superuser з форми створення:
+        # is_staff виставляється автоматично за роллю, а суперюзерів створюють через CLI або промоутять окремо
+        fields = ("email", "full_name", "role", "group")
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -121,7 +123,7 @@ class UserAdmin(BaseUserAdmin):
     list_select_related = ("group",)
     autocomplete_fields = ("group",)
     ordering = ("email",)
-    readonly_fields = ("last_login", "date_joined")
+    readonly_fields = ("external_identity_id", "last_login", "date_joined")
 
     fieldsets = (
         (None, {"fields": ("email",)}),
@@ -138,14 +140,38 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("email", "full_name", "role", "group", "is_staff", "is_superuser"),
+                "fields": ("email", "full_name", "role", "group"),
             },
         ),
     )
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly = list(super().get_readonly_fields(request, obj))
+        if not request.user.is_superuser:
+            readonly.extend(["is_staff", "is_superuser", "groups", "user_permissions"])
+            # Не даємо диспетчеру змінювати чи деактивувати акаунт суперюзера
+            if obj and obj.is_superuser:
+                readonly.extend(["email", "role", "is_active"])
+        return readonly
+
+    def has_change_permission(self, request, obj=None):
+        if obj and obj.is_superuser and not request.user.is_superuser:
+            return False
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_superuser and not request.user.is_superuser:
+            return False
+        return super().has_delete_permission(request, obj)
+
+    def delete_queryset(self, request, queryset):
+        if not request.user.is_superuser:
+            queryset = queryset.filter(is_superuser=False)
+        super().delete_queryset(request, queryset)
+
     def save_model(self, request, obj, form, change):
-        if obj.role == User.RoleChoices.DISPATCHER:
-            obj.is_staff = True
+        if not obj.is_superuser:
+            obj.is_staff = obj.role == User.RoleChoices.DISPATCHER
         super().save_model(request, obj, form, change)
 
 
@@ -245,13 +271,13 @@ class ConflictAdmin(admin.ModelAdmin):
 
 
 @admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
+class NotificationAdmin(ReadOnlyAdmin):
+    """Сповіщення формує лише система (зміна аудиторії, конфлікти), тому в адмінці — лише перегляд."""
+
     list_display = ("user", "type", "is_read", "created_at")
     list_filter = ("is_read", "type", "created_at")
     search_fields = ("user__email", "user__full_name", "type", "message")
     list_select_related = ("user",)
-    autocomplete_fields = ("user",)
-    readonly_fields = ("created_at",)
     date_hierarchy = "created_at"
 
 

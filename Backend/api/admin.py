@@ -98,7 +98,9 @@ class DispatcherCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("email", "full_name", "role", "group", "is_staff", "is_superuser")
+        # Прибрано is_staff та is_superuser з форми створення:
+        # is_staff виставляється автоматично за роллю, а суперюзерів створюють через CLI або промоутять окремо
+        fields = ("email", "full_name", "role", "group")
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -121,7 +123,7 @@ class UserAdmin(BaseUserAdmin):
     list_select_related = ("group",)
     autocomplete_fields = ("group",)
     ordering = ("email",)
-    readonly_fields = ("last_login", "date_joined")
+    readonly_fields = ("external_identity_id", "last_login", "date_joined")
 
     fieldsets = (
         (None, {"fields": ("email",)}),
@@ -138,14 +140,38 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("email", "full_name", "role", "group", "is_staff", "is_superuser"),
+                "fields": ("email", "full_name", "role", "group"),
             },
         ),
     )
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly = list(super().get_readonly_fields(request, obj))
+        if not request.user.is_superuser:
+            readonly.extend(["is_staff", "is_superuser", "groups", "user_permissions"])
+            # Не даємо диспетчеру змінювати чи деактивувати акаунт суперюзера
+            if obj and obj.is_superuser:
+                readonly.extend(["email", "role", "is_active"])
+        return readonly
+
+    def has_change_permission(self, request, obj=None):
+        if obj and obj.is_superuser and not request.user.is_superuser:
+            return False
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_superuser and not request.user.is_superuser:
+            return False
+        return super().has_delete_permission(request, obj)
+
+    def delete_queryset(self, request, queryset):
+        if not request.user.is_superuser:
+            queryset = queryset.filter(is_superuser=False)
+        super().delete_queryset(request, queryset)
+
     def save_model(self, request, obj, form, change):
-        if obj.role == User.RoleChoices.DISPATCHER:
-            obj.is_staff = True
+        if not obj.is_superuser:
+            obj.is_staff = obj.role == User.RoleChoices.DISPATCHER
         super().save_model(request, obj, form, change)
 
 
@@ -163,23 +189,18 @@ class RoomAdmin(admin.ModelAdmin):
 
 
 @admin.register(Lesson)
-class LessonAdmin(admin.ModelAdmin):
+class LessonAdmin(ReadOnlyAdmin):
     """
-    Заняття приходять із САЗу; source_key - ключ синхронізації, його диспетчер не змінює (див. AcademicGroupAdmin).
-    Ручне створення занять вимкнено: без парсерного source_key запис зламав би наступний імпорт.
+    Заняття приходять із САЗу, тому в адмінці лише перегляд.
+    Ручне редагування часу розсинхронізувало б Booking.start_time/end_time та зламало б повторний імпорт.
     """
 
     list_display = ("subject", "date", "start_time", "end_time", "teacher", "group")
     list_filter = ("date", "group")
     search_fields = ("subject", "source_key", "teacher__email", "teacher__full_name", "group__name")
     list_select_related = ("teacher", "group")
-    autocomplete_fields = ("teacher", "group")
-    readonly_fields = ("source_key",)
     date_hierarchy = "date"
     inlines = [BookingInline]
-
-    def has_add_permission(self, request):
-        return False
 
 
 @admin.register(Booking)
@@ -227,14 +248,36 @@ class BookingAdmin(ReadOnlyAdmin):
 
 @admin.register(Conflict)
 class ConflictAdmin(admin.ModelAdmin):
+    """Конфлікти виявляє лише парсер САЗ; диспетчер може тільки переглядати їх і позначати вирішеними."""
+
     list_display = ("room", "first_lesson", "second_lesson", "overlap_start", "overlap_end", "status", "detected_at")
     list_filter = ("status", "detected_at", "room__building")
     search_fields = ("room__number", "first_lesson__subject", "second_lesson__subject")
     list_select_related = ("room", "first_lesson", "second_lesson")
-    autocomplete_fields = ("first_lesson", "second_lesson", "room")
-    readonly_fields = ("detected_at",)
+    readonly_fields = (
+        "first_lesson",
+        "second_lesson",
+        "room",
+        "overlap_start",
+        "overlap_end",
+        "detected_at",
+        "resolved_at",
+    )
     date_hierarchy = "detected_at"
     actions = ["mark_resolved"]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        if obj.status == Conflict.ConflictStatus.RESOLVED and not obj.resolved_at:
+            obj.resolved_at = timezone.now()
+        elif obj.status == Conflict.ConflictStatus.OPEN:
+            obj.resolved_at = None
+        super().save_model(request, obj, form, change)
 
     @admin.action(description="Позначити вибрані конфлікти вирішеними")
     def mark_resolved(self, request, queryset):
@@ -245,13 +288,13 @@ class ConflictAdmin(admin.ModelAdmin):
 
 
 @admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
+class NotificationAdmin(ReadOnlyAdmin):
+    """Сповіщення формує лише система (зміна аудиторії, конфлікти), тому в адмінці — лише перегляд."""
+
     list_display = ("user", "type", "is_read", "created_at")
     list_filter = ("is_read", "type", "created_at")
     search_fields = ("user__email", "user__full_name", "type", "message")
     list_select_related = ("user",)
-    autocomplete_fields = ("user",)
-    readonly_fields = ("created_at",)
     date_hierarchy = "created_at"
 
 

@@ -5,6 +5,18 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.6.3](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.2...v0.6.3) (2026-11-20)
+
+
+### Bug Fixes
+
+* harden permissions and restrict edits on system-managed models ([#391](https://github.com/ukma-fin-ssdm-2026/unispace/issues/391)) ([f18cca6](https://github.com/ukma-fin-ssdm-2026/unispace/commit/f18cca6d5d9a62b4ec8d3319752cd64f0cb24284))
+
+
+### Documentation
+
+* align data-model and api-design with cleaned ORM models ([#390](https://github.com/ukma-fin-ssdm-2026/unispace/issues/390)) ([48bba17](https://github.com/ukma-fin-ssdm-2026/unispace/commit/48bba17294aafb22638ccd50e708b495ba53a5c2))
+
 ## [0.6.2](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.1...v0.6.2) (2026-11-19)
 
 

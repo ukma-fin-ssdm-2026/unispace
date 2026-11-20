@@ -189,23 +189,18 @@ class RoomAdmin(admin.ModelAdmin):
 
 
 @admin.register(Lesson)
-class LessonAdmin(admin.ModelAdmin):
+class LessonAdmin(ReadOnlyAdmin):
     """
-    Заняття приходять із САЗу; source_key - ключ синхронізації, його диспетчер не змінює (див. AcademicGroupAdmin).
-    Ручне створення занять вимкнено: без парсерного source_key запис зламав би наступний імпорт.
+    Заняття приходять із САЗу, тому в адмінці лише перегляд.
+    Ручне редагування часу розсинхронізувало б Booking.start_time/end_time та зламало б повторний імпорт.
     """
 
     list_display = ("subject", "date", "start_time", "end_time", "teacher", "group")
     list_filter = ("date", "group")
     search_fields = ("subject", "source_key", "teacher__email", "teacher__full_name", "group__name")
     list_select_related = ("teacher", "group")
-    autocomplete_fields = ("teacher", "group")
-    readonly_fields = ("source_key",)
     date_hierarchy = "date"
     inlines = [BookingInline]
-
-    def has_add_permission(self, request):
-        return False
 
 
 @admin.register(Booking)

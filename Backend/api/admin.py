@@ -248,14 +248,36 @@ class BookingAdmin(ReadOnlyAdmin):
 
 @admin.register(Conflict)
 class ConflictAdmin(admin.ModelAdmin):
+    """Конфлікти виявляє лише парсер САЗ; диспетчер може тільки переглядати їх і позначати вирішеними."""
+
     list_display = ("room", "first_lesson", "second_lesson", "overlap_start", "overlap_end", "status", "detected_at")
     list_filter = ("status", "detected_at", "room__building")
     search_fields = ("room__number", "first_lesson__subject", "second_lesson__subject")
     list_select_related = ("room", "first_lesson", "second_lesson")
-    autocomplete_fields = ("first_lesson", "second_lesson", "room")
-    readonly_fields = ("detected_at",)
+    readonly_fields = (
+        "first_lesson",
+        "second_lesson",
+        "room",
+        "overlap_start",
+        "overlap_end",
+        "detected_at",
+        "resolved_at",
+    )
     date_hierarchy = "detected_at"
     actions = ["mark_resolved"]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        if obj.status == Conflict.ConflictStatus.RESOLVED and not obj.resolved_at:
+            obj.resolved_at = timezone.now()
+        elif obj.status == Conflict.ConflictStatus.OPEN:
+            obj.resolved_at = None
+        super().save_model(request, obj, form, change)
 
     @admin.action(description="Позначити вибрані конфлікти вирішеними")
     def mark_resolved(self, request, queryset):

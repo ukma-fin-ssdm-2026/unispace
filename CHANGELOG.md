@@ -5,6 +5,13 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.6.4](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.3...v0.6.4) (2026-11-23)
+
+
+### Documentation
+
+* scaffold final report and individual reflection files ([#395](https://github.com/ukma-fin-ssdm-2026/unispace/issues/395)) ([104aa03](https://github.com/ukma-fin-ssdm-2026/unispace/commit/104aa03faa3b3f363f0f4e727331b6b160c5a75a))
+
 ## [0.6.3](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.2...v0.6.3) (2026-11-20)
 
 

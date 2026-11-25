@@ -25,4 +25,5 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("bookings/", views.bookings_view, name="bookings"),
     path("import/", views.saz_import_view, name="saz-import"),
+    path("schedule/", views.schedule_view, name="schedule"),
 ]

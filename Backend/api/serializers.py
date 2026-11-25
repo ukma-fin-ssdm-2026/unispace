@@ -16,7 +16,7 @@ test_rooms_crud.py і test_bookings_crud.py.
 
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
-from .models import AuditLog, Room, User
+from .models import AuditLog, Room, User, AcademicGroup
 
 
 # --- Узгоджена структура помилок ---
@@ -245,6 +245,14 @@ class ScheduleItemSerializer(serializers.Serializer):
     room_changed = serializers.BooleanField(
         help_text="Маркер «Змінено»: аудиторію змінено менш ніж за 24 години до початку заняття"
     )
+
+
+class AcademicGroupSerializer(serializers.ModelSerializer):
+    """Академічна група для фільтрації розкладу диспетчером."""
+
+    class Meta:
+        model = AcademicGroup
+        fields = ["id", "name"]
 
 
 # --- Ресурс: Аудит-лог (AuditLog, FR-017) ---

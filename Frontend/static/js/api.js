@@ -114,3 +114,49 @@ function el(tag, { className = '', text = '', attrs = {} } = {}, children = []) 
     children.forEach((child) => child && node.append(child));
     return node;
 }
+
+const GROUP_ABBR_EXCEPTIONS = {
+    "зв'язки з громадськістю": "PR",
+    "міжнародні відносини, суспільні комунікації та регіональні студії": "МВ",
+    "філологія (германські мови та літератури (переклад включно))": "Філ. (герм.)",
+    "філологія (українська мова та література)": "Філ. (укр.)"
+};
+
+const STOP_WORDS = new Set(["та", "і", "й", "з", "із", "в", "у", "на", "для"]);
+
+/** Скорочує назву групи із САЗ: "Інженерія програмного забезпечення, 3 р.н., група 1" -> "ІПЗ-3, гр. 1". */
+function formatGroupName(rawName) {
+    if (!rawName) return "";
+
+    const normalized = rawName.trim().replace(/[’`]/g, "'");
+    // Відокремлюємо назву спеціальності від хвоста (", 3 р.н., група 1" або ", 3 р.н. (лекційний потік)")
+    const match = normalized.match(/^(.+?)(,\s*\d+\s*р\.н\..*)$/i);
+    if (!match) return normalized;
+
+    const specialty = match[1].trim();
+    const suffix = match[2]
+        .replace(/^,\s*(\d+)\s*р\.н\./i, "-$1")
+        .replace(/,\s*група\s*/i, ", гр. ")
+        .replace(/\s*\(лекційний потік\)/i, "")
+
+    const lower = specialty.toLowerCase();
+    let shortSpecialty = GROUP_ABBR_EXCEPTIONS[lower];
+
+    if (!shortSpecialty) {
+        const words = specialty
+            .replace(/[,()]/g, " ")
+            .split(/[\s-]+/)
+            .filter((word) => word && !STOP_WORDS.has(word.toLowerCase()));
+
+        shortSpecialty = words.length > 1
+            ? words.map((word) => word[0].toUpperCase()).join("")
+            : specialty;
+    }
+
+    return `${shortSpecialty}${suffix}`;
+}
+
+function formatSubjectName(rawSubject) {
+    if (!rawSubject) return "";
+    return rawSubject.trim().replace(/\s*\([^)]*\)\s*$/, "");
+}

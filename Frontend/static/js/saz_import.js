@@ -1,9 +1,14 @@
 /*
  * «Імпорт із САЗ» (диспетчер): POST /api/v1/sync/ (multipart: file, semester_start) і журнал GET /api/v1/sync-logs/.
+ * Використовує UniSpaceApi та el() із api.js, а також initDatePicker() та setPickerDate() із datepicker.js.
  * Примітка щодо використання ШІ: скрипт згенеровано ШІ (Claude).
  */
 document.addEventListener('unispace:user', (event) => {
     const form = document.getElementById('import-form');
+    const semesterStartInput = document.getElementById('semester-start');
+    const fileInput = document.getElementById('schedule-file');
+    const fileNameEl = document.getElementById('schedule-file-name');
+    const filePickerEl = document.getElementById('schedule-file-picker');
     const importButton = document.getElementById('btn-import');
     const resultPanel = document.getElementById('result-panel');
     const resultNotice = document.getElementById('result-notice');
@@ -19,6 +24,50 @@ document.addEventListener('unispace:user', (event) => {
         document.getElementById('import-panel').hidden = true;
         logsBox.closest('.panel').hidden = true;
         return;
+    }
+
+    if (semesterStartInput) {
+        initDatePicker(semesterStartInput);
+    }
+
+    function updateFileName() {
+        if (!fileInput || !fileNameEl) return;
+        const file = fileInput.files && fileInput.files[0];
+        if (file) {
+            fileNameEl.textContent = file.name;
+            fileNameEl.title = file.name;
+            fileNameEl.classList.add('has-file');
+        } else {
+            fileNameEl.textContent = 'Файл не обрано';
+            fileNameEl.removeAttribute('title');
+            fileNameEl.classList.remove('has-file');
+        }
+    }
+
+    fileInput?.addEventListener('change', updateFileName);
+
+    if (filePickerEl && fileInput) {
+        ['dragenter', 'dragover'].forEach((eventName) => {
+            filePickerEl.addEventListener(eventName, (dragEvent) => {
+                dragEvent.preventDefault();
+                filePickerEl.classList.add('is-dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach((eventName) => {
+            filePickerEl.addEventListener(eventName, (dragEvent) => {
+                dragEvent.preventDefault();
+                filePickerEl.classList.remove('is-dragover');
+            });
+        });
+
+        filePickerEl.addEventListener('drop', (dropEvent) => {
+            const droppedFiles = dropEvent.dataTransfer?.files;
+            if (droppedFiles && droppedFiles.length) {
+                fileInput.files = droppedFiles;
+                updateFileName();
+            }
+        });
     }
 
     const STATUS_LABELS = { success: 'Успішно', failed: 'Помилка', in_progress: 'Виконується' };
@@ -90,6 +139,10 @@ document.addEventListener('unispace:user', (event) => {
         try {
             showResult(await UniSpaceApi.post('sync/', { body: new FormData(form) }));
             form.reset();
+            if (semesterStartInput) {
+                setPickerDate(semesterStartInput, '');
+            }
+            updateFileName();
         } catch (error) {
             resultPanel.hidden = false;
             resultStats.replaceChildren();

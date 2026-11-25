@@ -21,7 +21,7 @@
                 Сучасний простір для керування аудиторним фондом. Переглядайте розклад, знаходьте кабінети та запобігайте накладкам пар без жодних зусиль.
             </p>
             <div class="hero-actions">
-                <a href="#" class="btn-primary-pill">
+                <a href="{% url 'schedule' %}" class="btn-primary-pill">
                     <i class="fa-solid fa-calendar-check"></i> Розклад занять
                 </a>
                 <a href="#" class="btn-secondary-pill">
@@ -62,7 +62,7 @@
                 <div>
                     <section class="panel">
                         <h2 class="panel-title"><i class="fa-solid fa-bolt"></i> Швидкі дії</h2>
-                        <div id="quick-actions" class="quick-actions-list">
+                        <div id="quick-actions" class="quick-actions-list" data-saz-import-url="{% url 'saz-import' %}">
                             <!-- Кнопки генеруватимуться через JS залежно від ролі -->
                         </div>
                     </section>

@@ -58,6 +58,9 @@ document.addEventListener('unispace:user', (event) => {
     // --- Список занять ---
 
     function lessonCard(item) {
+        const subjectLabel = formatSubjectName(item.subject);
+        const groupLabel = formatGroupName(item.group);
+
         const roomBadge = item.room
             ? el('span', { className: 'badge badge-room' }, [el('i', { className: 'fa-solid fa-door-open' }), el('span', { text: roomLabel(item.room) })])
             : el('span', { className: 'badge badge-none', text: 'Без аудиторії' });
@@ -81,9 +84,9 @@ document.addEventListener('unispace:user', (event) => {
         return el('div', { className: 'lesson-card' }, [
             el('div', { className: 'lesson-time', text: `${shortTime(item.start_time)}–${shortTime(item.end_time)}` }),
             el('div', {}, [
-                el('div', { className: 'lesson-subject', text: item.subject }),
+                el('div', { className: 'lesson-subject', text: subjectLabel, attrs: { title: item.subject } }),
                 el('div', { className: 'lesson-meta' }, [
-                    el('span', { text: item.group }),
+                    el('span', { text: groupLabel, attrs: { title: item.group } }),
                     el('span', { text: item.teacher }),
                     roomBadge,
                     changedBadge,
@@ -181,8 +184,9 @@ document.addEventListener('unispace:user', (event) => {
     function openChange(item) {
         current = item;
         reasonInput.value = '';
+        const subjectLabel = formatSubjectName(item.subject);
         document.getElementById('change-lesson').textContent =
-            `${item.subject} · ${item.date} ${shortTime(item.start_time)}–${shortTime(item.end_time)} · зараз: ${roomLabel(item.room)}`;
+            `${subjectLabel} · ${item.date} ${shortTime(item.start_time)}–${shortTime(item.end_time)} · зараз: ${roomLabel(item.room)}`;
         setModal(changeModal, true);
         void loadAlternatives(false);
     }
@@ -199,7 +203,8 @@ document.addEventListener('unispace:user', (event) => {
                 json: { room_id: selectedRoomId, reason: reasonInput.value.trim() },
             });
             setModal(changeModal, false);
-            showNotice(pageNotice, 'success', `Заняття «${current.subject}» перенесено. Групу сповіщено.`);
+            const subjectLabel = formatSubjectName(current.subject);
+            showNotice(pageNotice, 'success', `Заняття «${subjectLabel}» перенесено. Групу сповіщено.`);
             void loadLessons();
         } catch (error) {
             // 409: аудиторію щойно зайняли - оновлюємо список варіантів
@@ -212,8 +217,9 @@ document.addEventListener('unispace:user', (event) => {
 
     function openCancel(item) {
         current = item;
+        const subjectLabel = formatSubjectName(item.subject);
         document.getElementById('cancel-lesson').textContent =
-            `${item.subject}, ${item.date} о ${shortTime(item.start_time)} (${roomLabel(item.room)}). Аудиторія звільниться.`;
+            `${subjectLabel}, ${item.date} о ${shortTime(item.start_time)} (${roomLabel(item.room)}). Аудиторія звільниться.`;
         setModal(cancelModal, true);
     }
 
@@ -223,7 +229,8 @@ document.addEventListener('unispace:user', (event) => {
         try {
             await UniSpaceApi.del(`bookings/${current.booking_id}/`);
             setModal(cancelModal, false);
-            showNotice(pageNotice, 'success', `Бронювання «${current.subject}» скасовано.`);
+            const subjectLabel = formatSubjectName(current.subject);
+            showNotice(pageNotice, 'success', `Бронювання «${subjectLabel}» скасовано.`);
             void loadLessons();
         } catch (error) {
             setModal(cancelModal, false);

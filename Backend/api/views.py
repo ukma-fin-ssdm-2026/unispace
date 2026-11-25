@@ -28,7 +28,7 @@ from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 
-from .models import AuditLog, Room, Booking, Lesson, SyncLog, User
+from .models import AuditLog, Room, Booking, Lesson, SyncLog, User, AcademicGroup
 from api.services import bookings, saz_import, schedule
 from api.services.room_suggestions import suggest_rooms
 from api.services.room_occupancy import get_previous_booking
@@ -56,6 +56,7 @@ from .serializers import (
     AuditLogQuerySerializer,
     AuditLogEntrySerializer,
     PreviousLessonResponseSerializer,
+    AcademicGroupSerializer,
 )
 
 # Межі дня стали константами в межах рефакторингу технікою Replace Magic Number with Constant
@@ -574,6 +575,19 @@ class UserBookingsAPIView(APIView):
     # ==========================================
 
 
+class AcademicGroupListAPIView(APIView):
+    permission_classes = [IsDispatcher]
+
+    @extend_schema(
+        summary="Список академічних груп",
+        description="Повертає перелік усіх академічних груп",
+        responses={200: AcademicGroupSerializer(many=True), 403: ErrorResponseSerializer},
+    )
+    def get(self, request, format=None):
+        groups = AcademicGroup.objects.all()
+        return Response(AcademicGroupSerializer(groups, many=True).data, status=status.HTTP_200_OK)
+
+
 class ScheduleAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -685,10 +699,11 @@ class SyncTriggerAPIView(APIView):
     @extend_schema(
         summary="Імпортувати розклад із САЗ",
         description=(
-            "Ручна синхронізація (FR-004, FR-005). САЗ показує розклад лише після входу, тому диспетчер завантажує "
-            "збережену HTML-сторінку попереднього перегляду розкладу (multipart/form-data: file, semester_start). "
-            "Кожна спроба пишеться в журнал синхронізації; якщо сторінку не вдалося розібрати, статус failed, "
-            "а раніше імпортовані дані не змінюються (REL-002). Повторний імпорт того самого розкладу не дублює даних."
+            "Ручна синхронізація (FR-004, FR-005). САЗ показує розклад лише після входу, тому диспетчер "
+            "завантажує збережену HTML-сторінку попереднього перегляду розкладу "
+            "(multipart/form-data: file, semester_start). Кожна спроба пишеться в журнал синхронізації; "
+            "якщо сторінку не вдалося розібрати, статус failed, а раніше імпортовані дані не змінюються (REL-002). "
+            "Повторний імпорт того самого розкладу не дублює даних."
         ),
         request={"multipart/form-data": SazImportRequestSerializer},
         responses={201: SyncResultSerializer, 400: ErrorResponseSerializer, 403: ErrorResponseSerializer},

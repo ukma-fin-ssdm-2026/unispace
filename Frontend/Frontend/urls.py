@@ -26,4 +26,5 @@ urlpatterns = [
     path("bookings/", views.bookings_view, name="bookings"),
     path("import/", views.saz_import_view, name="saz-import"),
     path("schedule/", views.schedule_view, name="schedule"),
+    path("my-disciplines/", views.my_disciplines, name="my-disciplines"),
 ]

@@ -17,4 +17,7 @@ urlpatterns = [
     path("sync/", views.SyncTriggerAPIView.as_view(), name="sync-trigger"),
     path("health/", views.HealthCheckAPIView.as_view(), name="health-check"),
     path("groups/", views.AcademicGroupListAPIView.as_view(), name="group-list"),
+    path("disciplines/available/", views.AvailableDisciplinesAPIView.as_view(), name="available-disciplines"),
+    path("my-disciplines/", views.StudentDisciplineListCreateAPIView.as_view(), name="my-disciplines-list"),
+    path("my-disciplines/<uuid:pk>/", views.StudentDisciplineDetailAPIView.as_view(), name="my-disciplines-detail"),
 ]

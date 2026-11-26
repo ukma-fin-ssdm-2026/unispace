@@ -38,3 +38,9 @@ def saz_import_view(request):
 def schedule_view(request):
     """Розклад занять за роллю користувача (студент, викладач, диспетчер). Дані завантажує schedule.js."""
     return render(request, "schedule.html")
+
+
+@require_GET
+def my_disciplines(request):
+    """Сторінка налаштування дисциплін та практичних груп студента."""
+    return render(request, "my_disciplines.html")

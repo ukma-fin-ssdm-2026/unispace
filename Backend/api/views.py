@@ -28,7 +28,7 @@ from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 
-from .models import AuditLog, Room, Booking, Lesson, SyncLog, User, AcademicGroup
+from .models import AuditLog, Room, Booking, Lesson, SyncLog, User, AcademicGroup, StudentDiscipline
 from api.services import bookings, saz_import, schedule
 from api.services.room_suggestions import suggest_rooms
 from api.services.room_occupancy import get_previous_booking
@@ -57,6 +57,10 @@ from .serializers import (
     AuditLogEntrySerializer,
     PreviousLessonResponseSerializer,
     AcademicGroupSerializer,
+    StudentDisciplineSerializer,
+    StudentDisciplineUpdateSerializer,
+    StudentDisciplineCreateSerializer,
+    AvailableDisciplineSerializer,
 )
 
 # Межі дня стали константами в межах рефакторингу технікою Replace Magic Number with Constant
@@ -71,6 +75,13 @@ DEFAULT_DAY_END_TIME = "20:00"
 def has_allowed_role(user, allowed_roles):
     """Check authentication and role."""
     return bool(user and user.is_authenticated and getattr(user, "role", None) in allowed_roles)
+
+
+class IsStudent(BasePermission):
+    message = "Only students can manage personal disciplines."
+
+    def has_permission(self, request, view):
+        return has_allowed_role(request.user, ("student",))
 
 
 class IsTeacherOrDispatcher(BasePermission):
@@ -97,9 +108,10 @@ class IsDispatcher(BasePermission):
             ("dispatcher",),
         )
 
-    # ==========================================
-    # Допоміжні функції (Форматування відповідей)
-    # ==========================================
+
+# ==========================================
+# Допоміжні функції (Форматування відповідей)
+# ==========================================
 
 
 def get_validation_error_response(errors):
@@ -570,9 +582,10 @@ class UserBookingsAPIView(APIView):
         serializer = BookingResponseSerializer(user_bookings, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # ==========================================
-    # API Розкладу (Schedule)
-    # ==========================================
+
+# ==========================================
+# API Розкладу (Schedule)
+# ==========================================
 
 
 class AcademicGroupListAPIView(APIView):
@@ -726,9 +739,10 @@ class SyncTriggerAPIView(APIView):
         }
         return Response(SyncResultSerializer(data).data, status=status.HTTP_201_CREATED)
 
-    # ==========================================
-    # API Системи (System Health)
-    # ==========================================
+
+# ==========================================
+# API Системи (System Health)
+# ==========================================
 
 
 HEALTH_CHECK_DB_TIMEOUT_MS = "2000"
@@ -757,3 +771,227 @@ class HealthCheckAPIView(APIView):
                 {"status": "unhealthy", "dependency": "database"},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
+
+
+# ==========================================
+# API Моїх дисциплін (StudentDiscipline)
+# ==========================================
+
+
+def _normalize_subject(raw_subject):
+    """Прибирає хвіст у дужках на кшталт '(лекція)', якщо він є в назві."""
+    text = (raw_subject or "").strip()
+    if text.endswith(")"):
+        idx = text.rfind("(")
+        if idx != -1:
+            return text[:idx].strip()
+    return text
+
+
+def _get_groups_by_subject():
+    """Повертає словник {назва_дисципліни: [AcademicGroup, ...]} з усіх наявних занять."""
+    pairs = Lesson.objects.select_related("group").values_list("subject", "group_id", "group__name").distinct()
+    subject_groups = {}
+    for raw_subject, group_id, group_name in pairs:
+        base_subject = _normalize_subject(raw_subject)
+        if not base_subject:
+            continue
+        bucket = subject_groups.setdefault(base_subject, {})
+        bucket[group_id] = {"id": group_id, "name": group_name}
+
+    result = {}
+    for subj, groups_map in subject_groups.items():
+        all_groups = sorted(groups_map.values(), key=lambda g: g["name"])
+        practice_groups = [g for g in all_groups if "лекційний потік" not in g["name"].lower()]
+        result[subj] = practice_groups or all_groups
+    return result
+
+
+def _filter_groups_for_student(groups, user):
+    """Залишає лише групи спеціальності й курсу студента, якщо вони є для цієї дисципліни."""
+    if not user.group_id:
+        return groups
+
+    specialty_course = schedule.extract_specialty_course(user.group.name)
+    if not specialty_course:
+        return groups
+
+    prefix = specialty_course.lower()
+    matching_groups = [group for group in groups if group["name"].lower().startswith(prefix)]
+    return matching_groups or groups
+
+
+def _seed_mandatory_disciplines(user):
+    """Якщо у студента ще порожній список, додає предмети його спеціальності й курсу."""
+    if not user.group_id or StudentDiscipline.objects.filter(user=user).exists():
+        return
+
+    specialty_course = schedule.extract_specialty_course(user.group.name)
+    if not specialty_course:
+        return
+
+    existing_subjects = set(StudentDiscipline.objects.filter(user=user).values_list("subject", flat=True))
+
+    course_lessons = (
+        Lesson.objects.filter(group__name__istartswith=specialty_course)
+        .select_related("group")
+        .values_list("subject", "group_id", "group__name")
+        .distinct()
+    )
+
+    subject_to_group_id = {}
+    for raw_subject, group_id, group_name in course_lessons:
+        base_subject = _normalize_subject(raw_subject)
+        if not base_subject or base_subject in existing_subjects:
+            continue
+        is_lecture = "лекційний потік" in group_name.lower()
+        if group_id == user.group_id:
+            subject_to_group_id[base_subject] = group_id
+        elif base_subject not in subject_to_group_id:
+            subject_to_group_id[base_subject] = group_id
+        elif not is_lecture and subject_to_group_id[base_subject] != user.group_id:
+            subject_to_group_id[base_subject] = group_id
+
+    if subject_to_group_id:
+        StudentDiscipline.objects.bulk_create(
+            [
+                StudentDiscipline(user=user, subject=subject, group_id=group_id)
+                for subject, group_id in subject_to_group_id.items()
+            ],
+            ignore_conflicts=True,
+        )
+
+
+class AvailableDisciplinesAPIView(APIView):
+    permission_classes = [IsStudent]
+
+    @extend_schema(
+        summary="Пошук доступних дисциплін та їхніх груп",
+        responses={200: AvailableDisciplineSerializer(many=True), 403: ErrorResponseSerializer},
+    )
+    def get(self, request, format=None):
+        query_text = (request.query_params.get("q") or "").strip().lower()
+        groups_by_subject = _get_groups_by_subject()
+
+        items = [
+            {"subject": subj, "groups": groups}
+            for subj, groups in sorted(groups_by_subject.items())
+            if not query_text or query_text in subj.lower()
+        ]
+        return Response(AvailableDisciplineSerializer(items, many=True).data, status=status.HTTP_200_OK)
+
+
+class StudentDisciplineListCreateAPIView(APIView):
+    permission_classes = [IsStudent]
+
+    @extend_schema(
+        summary="Список обраних дисциплін студента",
+        responses={200: StudentDisciplineSerializer(many=True), 403: ErrorResponseSerializer},
+    )
+    def get(self, request, format=None):
+        _seed_mandatory_disciplines(request.user)
+        groups_by_subject = _get_groups_by_subject()
+        records = StudentDiscipline.objects.filter(user=request.user).select_related("group")
+        payload = [
+            {
+                "id": rec.id,
+                "subject": rec.subject,
+                "group": rec.group,
+                "available_groups": _filter_groups_for_student(
+                    groups_by_subject.get(rec.subject, [{"id": rec.group_id, "name": rec.group.name}]),
+                    request.user,
+                ),
+            }
+            for rec in records
+        ]
+        return Response(StudentDisciplineSerializer(payload, many=True).data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="Додати дисципліну до списку студента",
+        request=StudentDisciplineCreateSerializer,
+        responses={
+            201: StudentDisciplineSerializer,
+            400: ErrorResponseSerializer,
+            403: ErrorResponseSerializer,
+            409: ErrorResponseSerializer,
+        },
+    )
+    def post(self, request, format=None):
+        serializer = StudentDisciplineCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(get_validation_error_response(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        subject = _normalize_subject(serializer.validated_data["subject"])
+        group = AcademicGroup.objects.filter(pk=serializer.validated_data["group_id"]).first()
+        if group is None:
+            return unknown_reference_response("group_id", "Академічну групу")
+
+        if StudentDiscipline.objects.filter(user=request.user, subject=subject).exists():
+            return conflict_response("Ця дисципліна вже додана до вашого списку")
+
+        record = StudentDiscipline.objects.create(user=request.user, subject=subject, group=group)
+        groups_by_subject = _get_groups_by_subject()
+        payload = {
+            "id": record.id,
+            "subject": record.subject,
+            "group": record.group,
+            "available_groups": _filter_groups_for_student(
+                groups_by_subject.get(subject, [{"id": group.id, "name": group.name}]),
+                request.user,
+            ),
+        }
+        return Response(StudentDisciplineSerializer(payload).data, status=status.HTTP_201_CREATED)
+
+
+class StudentDisciplineDetailAPIView(APIView):
+    permission_classes = [IsStudent]
+
+    @extend_schema(
+        summary="Змінити групу для обраної дисципліни",
+        request=StudentDisciplineUpdateSerializer,
+        responses={
+            200: StudentDisciplineSerializer,
+            400: ErrorResponseSerializer,
+            403: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    )
+    def patch(self, request, pk, format=None):
+        record = StudentDiscipline.objects.select_related("group").filter(pk=pk, user=request.user).first()
+        if record is None:
+            return not_found_response("Дисципліну", pk)
+
+        serializer = StudentDisciplineUpdateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(get_validation_error_response(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+
+        group = AcademicGroup.objects.filter(pk=serializer.validated_data["group_id"]).first()
+        if group is None:
+            return unknown_reference_response("group_id", "Академічну групу")
+
+        record.group = group
+        record.save(update_fields=["group"])
+
+        groups_by_subject = _get_groups_by_subject()
+        payload = {
+            "id": record.id,
+            "subject": record.subject,
+            "group": record.group,
+            "available_groups": _filter_groups_for_student(
+                groups_by_subject.get(record.subject, [{"id": group.id, "name": group.name}]),
+                request.user,
+            ),
+        }
+        return Response(StudentDisciplineSerializer(payload).data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="Видалити дисципліну зі списку студента",
+        responses={204: None, 403: ErrorResponseSerializer, 404: ErrorResponseSerializer},
+    )
+    def delete(self, request, pk, format=None):
+        record = StudentDiscipline.objects.filter(pk=pk, user=request.user).first()
+        if record is None:
+            return not_found_response("Дисципліну", pk)
+
+        record.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -99,6 +99,7 @@ const UniSpaceApi = (() => {
     return {
         get: (path) => request(path),
         post: (path, options = {}) => request(path, { ...options, method: 'POST' }),
+        patch: (path, options = {}) => request(path, { ...options, method: 'PATCH' }),
         del: (path) => request(path, { method: 'DELETE' }),
         logout: () => request('/auth/logout/', { method: 'POST', absolute: true }),
         describeError
@@ -130,14 +131,16 @@ function formatGroupName(rawName) {
 
     const normalized = rawName.trim().replace(/[’`]/g, "'");
     // Відокремлюємо назву спеціальності від хвоста (", 3 р.н., група 1" або ", 3 р.н. (лекційний потік)")
-    const match = normalized.match(/^(.+?)(,\s*\d+\s*р\.н\..*)$/i);
-    if (!match) return normalized;
+    const yearMarkerMatch = /,\s*\d+\s*р\.н\./i.exec(normalized);
+    if (!yearMarkerMatch || yearMarkerMatch.index === 0) return normalized;
 
-    const specialty = match[1].trim();
-    const suffix = match[2]
+    const specialty = normalized.slice(0, yearMarkerMatch.index).trim();
+    const suffix = normalized
+        .slice(yearMarkerMatch.index)
         .replace(/^,\s*(\d+)\s*р\.н\./i, "-$1")
         .replace(/,\s*група\s*/i, ", гр. ")
-        .replace(/\s*\(лекційний потік\)/i, "")
+        .replace(/\(лекційний потік\)/i, "")
+        .trimEnd();
 
     const lower = specialty.toLowerCase();
     let shortSpecialty = GROUP_ABBR_EXCEPTIONS[lower];
@@ -158,5 +161,12 @@ function formatGroupName(rawName) {
 
 function formatSubjectName(rawSubject) {
     if (!rawSubject) return "";
-    return rawSubject.trim().replace(/\s*\([^)]*\)\s*$/, "");
+
+    const trimmed = rawSubject.trim();
+    if (!trimmed.endsWith(")")) return trimmed;
+
+    const openParenIndex = trimmed.lastIndexOf("(");
+    if (openParenIndex === -1) return trimmed;
+
+    return trimmed.slice(0, openParenIndex).trimEnd();
 }

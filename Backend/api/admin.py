@@ -20,6 +20,7 @@ from .models import (
     Room,
     SyncLog,
     User,
+    StudentDiscipline,
 )
 
 # ==========================================
@@ -239,6 +240,15 @@ class BookingAdmin(ReadOnlyAdmin):
     @admin.display(description="Викладач", ordering="lesson__teacher__full_name")
     def get_teacher(self, obj):
         return obj.lesson.teacher
+
+
+@admin.register(StudentDiscipline)
+class StudentDisciplineAdmin(admin.ModelAdmin):
+    list_display = ("user", "subject", "group", "created_at")
+    list_filter = ("group",)
+    search_fields = ("user__email", "user__full_name", "subject", "group__name")
+    list_select_related = ("user", "group")
+    autocomplete_fields = ("user", "group")
 
 
 # ==========================================

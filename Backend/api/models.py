@@ -120,6 +120,39 @@ class Lesson(UUIDModel):
         return f"{self.subject} — {self.date} ({self.group.name})"
 
 
+class StudentDiscipline(UUIDModel):
+    """Вибір групи студентом для конкретної дисципліни."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Студент",
+        related_name="disciplines",
+    )
+    subject = models.CharField("Назва дисципліни", max_length=255)
+    group = models.ForeignKey(
+        AcademicGroup,
+        on_delete=models.PROTECT,
+        verbose_name="Академічна група",
+        related_name="student_disciplines",
+    )
+    created_at = models.DateTimeField("Дата додавання", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Дисципліна студента"
+        verbose_name_plural = "Дисципліни студентів"
+        ordering = ["subject"]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "subject"], name="uniq_student_discipline"),
+        ]
+        indexes = [
+            models.Index(fields=["user", "subject"], name="student_disc_user_subj_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.user} — {self.subject} ({self.group.name})"
+
+
 class Room(UUIDModel):
     """Аудиторія університету."""
 

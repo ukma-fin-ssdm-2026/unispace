@@ -248,14 +248,23 @@ def parse_schedule(html):
         raise SazParseError("Не знайдено спеціальність і рік навчання в заголовку розкладу")
     schedule = ParsedSchedule(specialty=_normalize(match.group(1)), year=int(match.group(2)))
 
+    current_weekday = None
+    last_start = None
+
     for number, row in enumerate(grid[header_index + 1 :], start=header_index + 2):
         day, slot, subject_cell, group, weeks_cell, room_cell = (row + [""] * 6)[:6]
         if not subject_cell:
             continue  # порожній слот
         weekday, times = _day_index(day), _parse_time(slot)
+        if weekday is None and not day.strip() and times is not None and current_weekday is not None:
+            if last_start is not None and times[0] < last_start and current_weekday < 6:
+                current_weekday += 1
+            weekday = current_weekday
         if weekday is None or times is None:
             schedule.warnings.append(f"Рядок {number}: не розпізнано день або час ({day!r}, {slot!r})")
             continue
+        current_weekday = weekday
+        last_start = times[0]
         try:
             weeks = parse_weeks(weeks_cell)
         except ValueError as error:

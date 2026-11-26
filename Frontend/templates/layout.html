@@ -41,6 +41,9 @@
                 <a href="{% url 'schedule' %}" class="nav-item {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}" data-tooltip="Розклад">
                     <i class="fa-regular fa-calendar-days"></i> <span>Розклад</span>
                 </a>
+                <a href="{% url 'my-disciplines' %}" class="nav-item js-student-only {% if request.resolver_match.url_name == 'my-disciplines' %}active{% endif %}" data-tooltip="Мої дисципліни" data-roles="student" style="display: none;">
+                    <i class="fa-solid fa-book-open"></i> <span>Мої дисципліни</span>
+                </a>
                 <a href="#" class="nav-item" data-tooltip="Аудиторії">
                     <i class="fa-solid fa-door-open"></i> <span>Аудиторії</span>
                 </a>

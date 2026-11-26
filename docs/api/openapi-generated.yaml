@@ -415,6 +415,55 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+  /api/v1/disciplines/available/:
+    get:
+      operationId: v1_disciplines_available_list
+      summary: Пошук доступних дисциплін та їхніх груп
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailableDiscipline'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/groups/:
+    get:
+      operationId: v1_groups_list
+      description: Повертає перелік усіх академічних груп
+      summary: Список академічних груп
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AcademicGroup'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /api/v1/health/:
     get:
       operationId: v1_health_retrieve
@@ -437,6 +486,157 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthCheckResponse'
+          description: ''
+  /api/v1/my-disciplines/:
+    get:
+      operationId: v1_my_disciplines_list
+      summary: Список обраних дисциплін студента
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDiscipline'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    post:
+      operationId: v1_my_disciplines_create
+      summary: Додати дисципліну до списку студента
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentDisciplineCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentDisciplineCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentDisciplineCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentDiscipline'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/v1/my-disciplines/{id}/:
+    patch:
+      operationId: v1_my_disciplines_partial_update
+      summary: Змінити групу для обраної дисципліни
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentDisciplineUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentDisciplineUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentDisciplineUpdate'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentDiscipline'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    delete:
+      operationId: v1_my_disciplines_destroy
+      summary: Видалити дисципліну зі списку студента
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
           description: ''
   /api/v1/rooms/:
     get:
@@ -868,6 +1068,21 @@ paths:
           description: ''
 components:
   schemas:
+    AcademicGroup:
+      type: object
+      description: Академічна група для фільтрації розкладу диспетчером.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          title: Назва групи
+          maxLength: 100
+      required:
+      - id
+      - name
     AuditLogEntry:
       type: object
       description: 'Запис аудиту лише для читання: хто, коли, з якої аудиторії в яку
@@ -942,6 +1157,20 @@ components:
       required:
       - email
       - id
+    AvailableDiscipline:
+      type: object
+      properties:
+        subject:
+          type: string
+          description: Назва дисципліни
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcademicGroup'
+          description: Доступні групи для цієї дисципліни
+      required:
+      - groups
+      - subject
     AvailableSlotsResponse:
       type: object
       properties:
@@ -1138,6 +1367,13 @@ components:
         is_available:
           type: boolean
           title: Доступна для використання
+    PatchedStudentDisciplineUpdate:
+      type: object
+      properties:
+        group_id:
+          type: string
+          format: uuid
+          description: ID нової групи
     PreviousLesson:
       type: object
       properties:
@@ -1403,6 +1639,44 @@ components:
       - building
       - id
       - number
+    StudentDiscipline:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        subject:
+          type: string
+          readOnly: true
+        group:
+          allOf:
+          - $ref: '#/components/schemas/AcademicGroup'
+          readOnly: true
+        available_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcademicGroup'
+          readOnly: true
+      required:
+      - available_groups
+      - group
+      - id
+      - subject
+    StudentDisciplineCreate:
+      type: object
+      properties:
+        subject:
+          type: string
+          description: Назва дисципліни
+          maxLength: 255
+        group_id:
+          type: string
+          format: uuid
+          description: ID обраної групи
+      required:
+      - group_id
+      - subject
     SyncLog:
       type: object
       properties:

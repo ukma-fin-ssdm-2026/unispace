@@ -62,11 +62,11 @@ document.addEventListener('unispace:user', (event) => {
         setPickerDate(dateToInput, dateTo);
     }
 
-    function shiftCurrentRange(daysOffset) {
+   function shiftCurrentRange(daysOffset) {
         const baseDate = dateFromInput.value ? new Date(`${dateFromInput.value}T00:00:00`) : new Date();
         baseDate.setDate(baseDate.getDate() + daysOffset);
         setWeekRange(baseDate);
-        loadSchedule();
+        void loadSchedule();
     }
 
     function isLongerThanWeek() {
@@ -136,7 +136,7 @@ document.addEventListener('unispace:user', (event) => {
         syncSelectedOptionStyles();
         closeDropdown();
         if (shouldReload) {
-            loadSchedule();
+            void loadSchedule();
         }
     }
 
@@ -266,7 +266,7 @@ document.addEventListener('unispace:user', (event) => {
 
         btn.addEventListener('click', () => {
             if (!isLoadingMore) {
-                loadSchedule({ append: true });
+                void loadSchedule({ append: true });
             }
         });
 
@@ -379,8 +379,12 @@ document.addEventListener('unispace:user', (event) => {
     });
     initDatePicker(dateToInput);
 
-    dateFromInput.addEventListener('change', () => loadSchedule());
-    dateToInput.addEventListener('change', () => loadSchedule());
+    dateFromInput.addEventListener('change', () => {
+        void loadSchedule();
+    });
+    dateToInput.addEventListener('change', () => {
+        void loadSchedule();
+    });
 
     if (groupTriggerBtn) {
         groupTriggerBtn.addEventListener('click', (clickEvent) => {
@@ -410,16 +414,16 @@ document.addEventListener('unispace:user', (event) => {
     nextWeekBtn.addEventListener('click', () => shiftCurrentRange(7));
     currentWeekBtn.addEventListener('click', () => {
         setWeekRange(new Date());
-        loadSchedule();
+        void loadSchedule();
     });
 
     resetFiltersBtn.addEventListener('click', () => {
         selectGroup('', 'Усі групи', false);
         setWeekRange(new Date());
-        loadSchedule();
+        void loadSchedule();
     });
 
     setWeekRange(new Date());
-    loadGroups();
-    loadSchedule();
+    void loadGroups();
+    void loadSchedule();
 });

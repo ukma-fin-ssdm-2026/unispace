@@ -5,6 +5,18 @@
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/), 
 а цей проєкт дотримується [Семантичного версіонування](https://semver.org/lang/uk/).
 
+## [0.7.0](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.4...v0.7.0) (2026-11-28)
+
+
+### Features
+
+* add schedule page with flatpickr and pagination ([#398](https://github.com/ukma-fin-ssdm-2026/unispace/issues/398)) ([5a45dae](https://github.com/ukma-fin-ssdm-2026/unispace/commit/5a45dae236a50f29ad47460d828b412d10641d92))
+
+
+### Documentation
+
+* update testing metrics, Dev Login note, and final defense links ([#397](https://github.com/ukma-fin-ssdm-2026/unispace/issues/397)) ([408b23d](https://github.com/ukma-fin-ssdm-2026/unispace/commit/408b23d027b44e11399108b4765647e25910a015))
+
 ## [0.6.4](https://github.com/ukma-fin-ssdm-2026/unispace/compare/v0.6.3...v0.6.4) (2026-11-23)
 
 

@@ -99,6 +99,7 @@ const UniSpaceApi = (() => {
     return {
         get: (path) => request(path),
         post: (path, options = {}) => request(path, { ...options, method: 'POST' }),
+        patch: (path, options = {}) => request(path, { ...options, method: 'PATCH' }),
         del: (path) => request(path, { method: 'DELETE' }),
         logout: () => request('/auth/logout/', { method: 'POST', absolute: true }),
         describeError
@@ -113,4 +114,59 @@ function el(tag, { className = '', text = '', attrs = {} } = {}, children = []) 
     Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
     children.forEach((child) => child && node.append(child));
     return node;
+}
+
+const GROUP_ABBR_EXCEPTIONS = {
+    "зв'язки з громадськістю": "PR",
+    "міжнародні відносини, суспільні комунікації та регіональні студії": "МВ",
+    "філологія (германські мови та літератури (переклад включно))": "Філ. (герм.)",
+    "філологія (українська мова та література)": "Філ. (укр.)"
+};
+
+const STOP_WORDS = new Set(["та", "і", "й", "з", "із", "в", "у", "на", "для"]);
+
+/** Скорочує назву групи із САЗ: "Інженерія програмного забезпечення, 3 р.н., група 1" -> "ІПЗ-3, гр. 1". */
+function formatGroupName(rawName) {
+    if (!rawName) return "";
+
+    const normalized = rawName.trim().replace(/[’`]/g, "'");
+    // Відокремлюємо назву спеціальності від хвоста (", 3 р.н., група 1" або ", 3 р.н. (лекційний потік)")
+    const yearMarkerMatch = /,\s*\d+\s*р\.н\./i.exec(normalized);
+    if (!yearMarkerMatch || yearMarkerMatch.index === 0) return normalized;
+
+    const specialty = normalized.slice(0, yearMarkerMatch.index).trim();
+    const suffix = normalized
+        .slice(yearMarkerMatch.index)
+        .replace(/^,\s*(\d+)\s*р\.н\./i, "-$1")
+        .replace(/,\s*група\s*/i, ", гр. ")
+        .replace(/\(лекційний потік\)/i, "")
+        .trimEnd();
+
+    const lower = specialty.toLowerCase();
+    let shortSpecialty = GROUP_ABBR_EXCEPTIONS[lower];
+
+    if (!shortSpecialty) {
+        const words = specialty
+            .replace(/[,()]/g, " ")
+            .split(/[\s-]+/)
+            .filter((word) => word && !STOP_WORDS.has(word.toLowerCase()));
+
+        shortSpecialty = words.length > 1
+            ? words.map((word) => word[0].toUpperCase()).join("")
+            : specialty;
+    }
+
+    return `${shortSpecialty}${suffix}`;
+}
+
+function formatSubjectName(rawSubject) {
+    if (!rawSubject) return "";
+
+    const trimmed = rawSubject.trim();
+    if (!trimmed.endsWith(")")) return trimmed;
+
+    const openParenIndex = trimmed.lastIndexOf("(");
+    if (openParenIndex === -1) return trimmed;
+
+    return trimmed.slice(0, openParenIndex).trimEnd();
 }

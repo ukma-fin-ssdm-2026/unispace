@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .services import microsoft_auth
-from .models import User
+from .models import User, Lesson
 
 # ==========================================
 # Допоміжні функції
@@ -134,6 +134,14 @@ def dev_login(request):
     if role not in [User.RoleChoices.STUDENT, User.RoleChoices.TEACHER, User.RoleChoices.DISPATCHER]:
         return _error("INVALID_ROLE", "Невідома роль. Доступні: student, teacher, dispatcher", 400)
 
+    if role == User.RoleChoices.TEACHER:
+        teacher_with_lessons = (
+            User.objects.filter(role=User.RoleChoices.TEACHER, lessons_taught__isnull=False).distinct().first()
+        )
+        if teacher_with_lessons is not None:
+            login(request, teacher_with_lessons, backend="django.contrib.auth.backends.ModelBackend")
+            return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+
     email = f"demo_{role}@ukma.edu.ua"
     user, created = User.objects.get_or_create(
         email=email,
@@ -147,6 +155,12 @@ def dev_login(request):
     if not created and user.role != role:
         user.role = role
         user.save(update_fields=["role"])
+
+    if role == User.RoleChoices.STUDENT and user.group_id is None:
+        first_lesson = Lesson.objects.select_related("group").first()
+        if first_lesson is not None:
+            user.group = first_lesson.group
+            user.save(update_fields=["group"])
 
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 

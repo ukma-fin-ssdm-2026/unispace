@@ -27,9 +27,16 @@
         </div>
         <form id="import-form" novalidate>
             <div class="form-row">
-                <div class="field">
+               <div class="field">
                     <label for="schedule-file">Сторінка розкладу (.html)</label>
-                    <input id="schedule-file" name="file" type="file" accept=".html,.htm,text/html" required>
+                    <div class="file-picker" id="schedule-file-picker">
+                        <input id="schedule-file" name="file" type="file" accept=".html,.htm,text/html" class="file-picker__input" required>
+                        <label for="schedule-file" class="btn btn-outline file-picker__btn">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span>Обрати файл</span>
+                        </label>
+                        <span class="file-picker__name" id="schedule-file-name">Файл не обрано</span>
+                    </div>
                 </div>
                 <div class="field">
                     <label for="semester-start">Початок семестру</label>

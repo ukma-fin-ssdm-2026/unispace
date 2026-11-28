@@ -1,0 +1,225 @@
+/**
+ * Примітка щодо використання ШІ:
+ * Стилі сторінки розкладу згенеровано за допомогою ШІ у стилі pages.css.
+ */
+
+/* =====================================================
+   НАВІГАЦІЯ ПО ТИЖНЯХ ТА ФІЛЬТРИ РОЗКЛАДУ
+   ===================================================== */
+.week-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.schedule-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.schedule-filters .field {
+    margin-bottom: 0;
+    min-width: 180px;
+    flex: 1 1 180px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* =====================================================
+   КАРТКИ ЗАНЯТЬ ТА ПІДВАНТАЖЕННЯ
+   ===================================================== */
+.lesson-card.is-changed {
+    border-left: 4px solid #f59e0b;
+}
+
+.lesson-teacher,
+.lesson-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.load-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25rem;
+}
+
+/* =====================================================
+   ВИПАДНИЙ СПИСОК ГРУП (GROUP DROPDOWN)
+   ===================================================== */
+.group-dropdown-field {
+    position: relative;
+}
+
+.group-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.group-dropdown-trigger {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    font: inherit;
+    color: var(--text-main);
+    background-color: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.group-dropdown-trigger:hover {
+    border-color: var(--c-blue-300);
+}
+
+.group-dropdown-trigger:focus-visible,
+.group-dropdown.is-open .group-dropdown-trigger {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(74, 119, 168, 0.18);
+}
+
+.group-dropdown-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.group-dropdown-chevron {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.group-dropdown.is-open .group-dropdown-chevron {
+    transform: rotate(180deg);
+    color: var(--color-primary);
+}
+
+.group-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--bg-surface);
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg), 0 12px 28px -6px rgba(15, 23, 42, 0.12);
+    z-index: 120;
+    padding: 6px;
+    animation: dropdownFadeIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group-dropdown-list {
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.group-dropdown-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.group-dropdown-list::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.25);
+    border-radius: var(--radius-pill);
+}
+
+.group-option-heading {
+    padding: 8px 10px 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.group-option-heading:first-child {
+    margin-top: 0;
+}
+
+.group-option-item {
+    width: 100%;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    padding: 8px 10px 8px 18px;
+    font: inherit;
+    font-size: 0.92rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.group-option-item--all {
+    padding-left: 10px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.group-option-item:hover {
+    background-color: var(--c-blue-50);
+    color: var(--c-blue-800);
+}
+
+.group-option-item.is-selected {
+    background-color: var(--c-blue-100);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.group-option-check {
+    font-size: 0.8rem;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+/* =====================================================
+   АНІМАЦІЇ ТА АДАПТИВНІСТЬ
+   ===================================================== */
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 720px) {
+    .week-nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .filter-actions {
+        width: 100%;
+    }
+
+    .filter-actions .btn {
+        flex: 1;
+        justify-content: center;
+    }
+}

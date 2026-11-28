@@ -16,7 +16,7 @@ test_rooms_crud.py і test_bookings_crud.py.
 
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
-from .models import AuditLog, Room, User
+from .models import AuditLog, Room, User, AcademicGroup
 
 
 # --- Узгоджена структура помилок ---
@@ -247,6 +247,14 @@ class ScheduleItemSerializer(serializers.Serializer):
     )
 
 
+class AcademicGroupSerializer(serializers.ModelSerializer):
+    """Академічна група для фільтрації розкладу диспетчером."""
+
+    class Meta:
+        model = AcademicGroup
+        fields = ["id", "name"]
+
+
 # --- Ресурс: Аудит-лог (AuditLog, FR-017) ---
 class AuditLogQuerySerializer(serializers.Serializer):
     booking_id = serializers.UUIDField(required=False, help_text="Лише записи цього бронювання")
@@ -305,3 +313,25 @@ class PreviousLessonResponseSerializer(serializers.Serializer):
     message = serializers.CharField(
         allow_null=True, help_text="«Попередньої пари не було», якщо previous_lesson = null"
     )
+
+
+# --- Ресурс: Мої дисципліни (StudentDiscipline) ---
+class AvailableDisciplineSerializer(serializers.Serializer):
+    subject = serializers.CharField(help_text="Назва дисципліни")
+    groups = AcademicGroupSerializer(many=True, help_text="Доступні групи для цієї дисципліни")
+
+
+class StudentDisciplineSerializer(serializers.Serializer):
+    id = serializers.UUIDField(read_only=True)
+    subject = serializers.CharField(read_only=True)
+    group = AcademicGroupSerializer(read_only=True)
+    available_groups = AcademicGroupSerializer(many=True, read_only=True)
+
+
+class StudentDisciplineCreateSerializer(serializers.Serializer):
+    subject = serializers.CharField(max_length=255, help_text="Назва дисципліни")
+    group_id = serializers.UUIDField(help_text="ID обраної групи")
+
+
+class StudentDisciplineUpdateSerializer(serializers.Serializer):
+    group_id = serializers.UUIDField(help_text="ID нової групи")

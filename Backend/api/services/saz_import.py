@@ -182,7 +182,7 @@ def import_schedule(schedule, semester_start: date):
             group = _group(schedule, entry.group)
             teacher = _teacher(entry.teacher or "Викладач не вказаний", result, teachers)
             room = _room(entry, rooms) if entry.room else None
-            if room is None and not entry.online_only:
+            if room is None and not entry.online_only and (entry.room or entry.room_raw):
                 # «1-225» і «1-225 /онлайн» - та сама аудиторія, тож у попередженні вона одна
                 unknown_rooms.add("-".join(entry.room) if entry.room else entry.room_raw)
             if entry.online_only:

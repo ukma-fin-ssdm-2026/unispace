@@ -272,3 +272,26 @@ def test_room_changed_marker_is_not_set_without_changes(api_client, student, mak
     item = get_schedule(api_client).json()[0]
 
     assert item["room_changed"] is False
+
+    # ==========================================
+    # Список академічних груп (GET /api/v1/groups/)
+    # ==========================================
+
+
+def test_dispatcher_gets_sorted_academic_groups_list(api_client, dispatcher):
+    AcademicGroup.objects.create(name="ІПЗ-32", source_key="ipz-32")
+    AcademicGroup.objects.create(name="ІПЗ-31", source_key="ipz-31")
+    api_client.force_authenticate(user=dispatcher)
+
+    response = api_client.get(reverse("group-list"))
+
+    assert response.status_code == status.HTTP_200_OK
+    assert [item["name"] for item in response.json()] == ["ІПЗ-31", "ІПЗ-32"]
+    assert all("id" in item for item in response.json())
+
+
+def test_student_and_teacher_cannot_list_academic_groups(api_client, student, teacher):
+    for user in (student, teacher):
+        api_client.force_authenticate(user=user)
+        response = api_client.get(reverse("group-list"))
+        assert response.status_code == status.HTTP_403_FORBIDDEN

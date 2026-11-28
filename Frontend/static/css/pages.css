@@ -110,3 +110,56 @@
     .form-row { grid-template-columns: 1fr; }
     .content-area { padding: 1.25rem; }
 }
+
+.file-picker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: var(--radius-md, 10px);
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background-color: var(--bg-surface, #fff);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.file-picker:hover {
+    border-color: var(--c-blue-300, #93c5fd);
+}
+
+.file-picker.is-dragover {
+    border-color: var(--color-primary, #4a77a8);
+    box-shadow: 0 0 0 3px rgba(74, 119, 168, 0.18);
+}
+
+/* Приховуємо нативний інпут, але залишаємо доступним для клавіатури та form.reportValidity() */
+.file-picker__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.file-picker__input:focus-visible + .file-picker__btn {
+    outline: 2px solid var(--color-primary, #4a77a8);
+    outline-offset: 2px;
+}
+
+.file-picker__btn {
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.file-picker__name {
+    font-size: 0.92rem;
+    color: var(--text-muted, #64748b);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-picker__name.has-file {
+    color: var(--text-main, #0f172a);
+    font-weight: 500;
+}

@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
 
             // --- ВАШІ РОЛІ ТА КЛАСИ (працюють надійтно) ---
+            if (userData.role === 'student') {
+                document.querySelectorAll('.js-student-only').forEach(el => {
+                    el.style.display = 'flex';
+                });
+            }
+
             if (userData.role === 'teacher' || userData.role === 'dispatcher') {
                 document.querySelectorAll('.js-teacher-dispatcher-only').forEach(el => {
                     el.style.display = 'flex';

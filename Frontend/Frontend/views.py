@@ -32,3 +32,15 @@ def bookings_view(request):
 def saz_import_view(request):
     """Імпорт розкладу із САЗ (диспетчер). Дані надсилає й показує saz_import.js."""
     return render(request, "saz_import.html")
+
+
+@require_GET
+def schedule_view(request):
+    """Розклад занять за роллю користувача (студент, викладач, диспетчер). Дані завантажує schedule.js."""
+    return render(request, "schedule.html")
+
+
+@require_GET
+def my_disciplines(request):
+    """Сторінка налаштування дисциплін та практичних груп студента."""
+    return render(request, "my_disciplines.html")
